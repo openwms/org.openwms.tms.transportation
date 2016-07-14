@@ -19,35 +19,40 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.openwms.common;
+package org.openwms.tms;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.catalina.servlet4preview.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriTemplate;
 
 /**
- * A TestCommonFeignClient.
+ * A TransportationController.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  * @version 1.0
  * @since 1.0
  */
 @RestController
-public class TestCommonFeignClient implements CommonFeignClient {
+class TransportationController {
 
-    TestCommonFeignClient() {
-        System.out.println("init");
+    @Autowired
+    private TransportationService<TransportOrder> service;
+
+    @RequestMapping(method = RequestMethod.POST, value = "/transportorders")
+    public void createTO(CreateTransportOrderVO vo, HttpServletRequest req, HttpServletResponse resp) {
+        TransportOrder to = service.createTransportOrder(vo.getBarcode(), vo.getTarget(), vo.getPriority());
+        resp.addHeader(HttpHeaders.LOCATION, getLocationForCreatedResource(req, to.getPersistentKey()));
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/locations", params = {"locationPK"})
-    public Location getLocation(@RequestParam("locationPK") String locationPk) {
-        return null;
+    private String getLocationForCreatedResource(javax.servlet.http.HttpServletRequest req, String objId) {
+        StringBuffer url = req.getRequestURL();
+        UriTemplate template = new UriTemplate(url.append("/{objId}/").toString());
+        return template.expand(objId).toASCIIString();
     }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/locationGroups", params = {"name"})
-    public LocationGroup getLocationGroup(@RequestParam("name") String name) {
-        return null;
-    }
-
 }
