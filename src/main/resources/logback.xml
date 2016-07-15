@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false" scan="true">
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+    </appender>
+
+    <logger name="org.openwms" level="DEBUG"/>
+    <logger name="org.hibernate" level="warn"/>
+
+    <!-- Specialized loggers -->
+    <logger name="PRESENTATION_LAYER_EXCEPTION" level="ERROR" additivity="false">
+    </logger>
+    <logger name="SERVICE_LAYER_ACCESS" level="INFO" additivity="false">
+    </logger>
+    <logger name="SERVICE_LAYER_EXCEPTION" level="ERROR" additivity="false">
+    </logger>
+    <logger name="INTEGRATION_LAYER_ACCESS" level="INFO" additivity="false">
+    </logger>
+    <logger name="INTEGRATION_LAYER_EXCEPTION" level="ERROR" additivity="false">
+    </logger>
+    <logger name="MEASURED" level="INFO" additivity="false">
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>
