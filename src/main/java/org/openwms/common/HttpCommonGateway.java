@@ -41,16 +41,20 @@ class HttpCommonGateway implements CommonGateway {
 
     @Override
     public Optional<LocationGroup> getLocationGroup(String target) {
-        return Optional.of(commonFeignClient.getLocationGroup(target));
+        try {
+            return Optional.ofNullable(commonFeignClient.getLocationGroup(target));
+        } catch (Exception ex) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public Optional<Location> getLocation(String target) {
-        return Optional.of(commonFeignClient.getLocation(target));
+        return Optional.ofNullable(commonFeignClient.getLocation(target));
     }
 
     @Override
     public Optional<TransportUnit> getTransportUnit(String transportUnitBK) {
-        return Optional.of(commonFeignClient.getTransportUnit(transportUnitBK));
+        return Optional.ofNullable(commonFeignClient.getTransportUnit(transportUnitBK));
     }
 }
