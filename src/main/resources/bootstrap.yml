@@ -36,6 +36,10 @@ eureka:
   instance:
     secure-port-enabled: false
     non-secure-port-enabled: true
+    metadata-map:
+      # need to be overridden in the cloud environment props!
+      username: user
+      password: ${security.user.password}
 
 ---
 spring:
