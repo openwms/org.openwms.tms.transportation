@@ -32,9 +32,10 @@
         <relativePath />
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
-    <name>${project.artifactId}</name>
+    <name>OpenWMS.org TMS: Transportation Services</name>
     <properties>
         <moduleDir>../..</moduleDir>
+        <sonar.projectKey>OpenWMS.org_TMS:TransportationServices</sonar.projectKey>
     </properties>
 
     <build>
@@ -51,6 +52,15 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludedGroups>org.ameba.test.categories.IntegrationTests</excludedGroups>
+                    <excludes>
+                        <exclude>**/*Documentation.java</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

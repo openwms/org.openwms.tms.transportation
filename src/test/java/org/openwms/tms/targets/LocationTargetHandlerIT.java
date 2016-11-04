@@ -21,7 +21,9 @@
  */
 package org.openwms.tms.targets;
 
+import org.ameba.test.categories.IntegrationTests;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.openwms.common.Location;
 import org.openwms.core.test.IntegrationTest;
@@ -32,10 +34,9 @@ import org.springframework.test.context.junit4.SpringRunner;
  * A LocationTargetHandlerIT.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
- * @version 1.0
- * @since 1.0
  */
 @RunWith(SpringRunner.class)
+@Category(IntegrationTests.class)
 @IntegrationTest
 public class LocationTargetHandlerIT {
 
