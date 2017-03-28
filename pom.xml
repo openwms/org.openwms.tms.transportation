@@ -52,7 +52,7 @@
             <url>http://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <site>
-            <id>${distribution.serverId}</id>
+            <id>ftp-io</id>
             <name>OpenWMS.org WebSite</name>
             <url>scp://${distribution.serverUrl.rootPath}/tms/routing</url>
         </site>

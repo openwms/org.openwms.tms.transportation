@@ -25,6 +25,12 @@ node {
           git push heroku master -f
       '''
     }
+    stage('\u27A1 Documentation') {
+      configFileProvider(
+          [configFile(fileId: 'maven-local-settings', variable: 'MAVEN_SETTINGS')]) {
+            sh "'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS site site:deploy -Ddocumentation.dir=${WORKSPACE} -Dverbose=false -Psordocs,sonatype"
+      }
+    }
     stage('\u27A1 Sonar') {
       sh "'${mvnHome}/bin/mvn' clean org.jacoco:jacoco-maven-plugin:prepare-agent sonar:sonar -Djacoco.propertyName=jacocoArgLine -Dbuild.number=${BUILD_NUMBER} -Dbuild.date=${BUILD_ID} -Ddocumentation.dir=${WORKSPACE} -Pjenkins"
     }
