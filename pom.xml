@@ -37,7 +37,6 @@
     <properties>
         <moduleDir>../..</moduleDir>
         <sonar.projectKey>OpenWMS.org_TMS:TransportationServices</sonar.projectKey>
-        <distribution.serverUrl.rootPath>ftp.interface21.io/docs</distribution.serverUrl.rootPath>
     </properties>
 
     <distributionManagement>
@@ -54,7 +53,7 @@
         <site>
             <id>ftp-io</id>
             <name>OpenWMS.org WebSite</name>
-            <url>ftps://${distribution.serverUrl.rootPath}/tms/transportation</url>
+            <url>ftps://ftp.interface21.io/tms/transportation</url>
         </site>
     </distributionManagement>
 
@@ -65,13 +64,6 @@
     </scm>
 
     <build>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ftp</artifactId>
-                <version>2.12</version>
-            </extension>
-        </extensions>
         <finalName>openwms-tms-transportation</finalName>
         <plugins>
             <plugin>
