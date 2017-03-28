@@ -54,7 +54,7 @@
         <site>
             <id>ftp-io</id>
             <name>OpenWMS.org WebSite</name>
-            <url>scp://${distribution.serverUrl.rootPath}/tms/transportation</url>
+            <url>ftps://${distribution.serverUrl.rootPath}/tms/transportation</url>
         </site>
     </distributionManagement>
 
@@ -65,6 +65,13 @@
     </scm>
 
     <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ftp</artifactId>
+                <version>2.12</version>
+            </extension>
+        </extensions>
         <finalName>openwms-tms-transportation</finalName>
         <plugins>
             <plugin>
