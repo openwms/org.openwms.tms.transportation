@@ -21,11 +21,11 @@
  */
 package org.openwms.tms;
 
-import java.io.Serializable;
-
 import org.ameba.exception.BehaviorAwareException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.io.Serializable;
 
 /**
  * A StateChangeException signals that the request to change the state of a {@code TransportOrder} was not allowed.
@@ -37,18 +37,20 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class StateChangeException extends BehaviorAwareException {
 
     /**
-     * {@inheritDoc}
+     * Create a new with a message text.
+     *
+     * @param message The message text
      */
-    public StateChangeException(String s) {
-        super(s);
+    public StateChangeException(String message) {
+        super(message);
     }
 
     /**
-     * {@inheritDoc}
+     * Create a new with all fields.
      *
-     * @param message
-     * @param msgKey
-     * @param data
+     * @param message The message text
+     * @param msgKey The message key
+     * @param data Any data passed to the exception
      */
     public StateChangeException(String message, String msgKey, Serializable... data) {
         super(message, msgKey, data);
