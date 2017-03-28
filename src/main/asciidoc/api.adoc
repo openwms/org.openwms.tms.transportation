@@ -1,5 +1,5 @@
 = RESTful API
-({bdate}-{bnumber})
+({ci.buildDate}-{ci.buildNumber})
 Heiko Scherrer;
 :doctype: book
 :toc:
