@@ -37,7 +37,7 @@
     <properties>
         <moduleDir>../..</moduleDir>
         <sonar.projectKey>OpenWMS.org_TMS:TransportationServices</sonar.projectKey>
-        <distribution.serverUrl.rootPath>interface21.io/docs/</distribution.serverUrl.rootPath>
+        <distribution.serverUrl.rootPath>ftp.interface21.io/docs/</distribution.serverUrl.rootPath>
     </properties>
 
     <distributionManagement>
