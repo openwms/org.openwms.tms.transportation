@@ -1,5 +1,5 @@
 = RESTful API
-({bversion}-{bnumber})
+({bdate}-{bnumber})
 Heiko Scherrer;
 :doctype: book
 :toc:
