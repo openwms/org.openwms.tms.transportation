@@ -21,6 +21,18 @@
  */
 package org.openwms.tms;
 
+import org.junit.Test;
+import org.openwms.DocumentationBase;
+import org.openwms.common.Location;
+import org.openwms.tms.api.CreateTransportOrderVO;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
@@ -29,17 +41,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Optional;
-
-import org.junit.Test;
-import org.openwms.common.Location;
-import org.openwms.tms.api.CreateTransportOrderVO;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * A CreateTODocumentation is a system test to test the public API of the component. It is marked as {@link Transactional} and to be

@@ -21,17 +21,18 @@
  */
 package org.openwms.tms;
 
+import org.junit.Test;
+import org.openwms.DocumentationBase;
+import org.openwms.tms.api.CreateTransportOrderVO;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultMatcher;
+
+import java.util.Optional;
+
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Optional;
-
-import org.junit.Test;
-import org.openwms.tms.api.CreateTransportOrderVO;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.ResultMatcher;
 
 /**
  * A RedirectTODocumentation.

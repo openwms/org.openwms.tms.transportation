@@ -19,14 +19,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.openwms.tms;
-
-import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Optional;
+package org.openwms;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
@@ -36,11 +29,14 @@ import org.openwms.common.CommonGateway;
 import org.openwms.common.Location;
 import org.openwms.common.LocationGroup;
 import org.openwms.common.TransportUnit;
+import org.openwms.tms.PriorityLevel;
+import org.openwms.tms.TMSConstants;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
@@ -53,6 +49,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.util.Optional;
+
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 /**
  * A DocumentationBase.
  *
@@ -61,6 +64,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@EnableEurekaServer
 @Transactional
 public abstract class DocumentationBase {
 

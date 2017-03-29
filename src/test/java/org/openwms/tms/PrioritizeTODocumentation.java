@@ -21,6 +21,14 @@
  */
 package org.openwms.tms;
 
+import org.junit.Test;
+import org.openwms.DocumentationBase;
+import org.openwms.common.TransportUnit;
+import org.openwms.tms.api.CreateTransportOrderVO;
+import org.springframework.http.MediaType;
+
+import java.util.Optional;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -28,13 +36,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Optional;
-
-import org.junit.Test;
-import org.openwms.common.TransportUnit;
-import org.openwms.tms.api.CreateTransportOrderVO;
-import org.springframework.http.MediaType;
 
 /**
  * A PrioritizeTODocumentation.

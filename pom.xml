@@ -119,16 +119,6 @@
                 <artifactId>aspectj-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <excludedGroups>org.ameba.test.categories.IntegrationTests
-                    </excludedGroups>
-                    <excludes>
-                        <exclude>**/*Documentation.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
             </plugin>
         </plugins>
@@ -220,6 +210,12 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-eureka-server</artifactId>
+            <!-- We use the server for tests -->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-feign</artifactId>
         </dependency>
         <dependency>
@@ -287,5 +283,4 @@
             </releases>
         </repository>
     </repositories>
-
 </project>

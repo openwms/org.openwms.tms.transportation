@@ -1,0 +1,4 @@
+owms:
+  eureka:
+    # Override this in cloud environment!
+    url: http://user:sa@localhost:8761
