@@ -35,7 +35,6 @@ public interface OnRemovalListener<T> {
      * Do something prior the <code>entity</code> instance is been removed.
      *
      * @param entity The instance to be removed.
-     * @return <code>true</code> if removal is allowed, otherwise <code>false</code>
      * @throws RemovalNotAllowedException When it is not allowed to remove the entity, because depending items exist
      */
     void preRemove(T entity) throws RemovalNotAllowedException;

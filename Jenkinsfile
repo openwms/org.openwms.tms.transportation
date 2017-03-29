@@ -28,7 +28,7 @@ node {
     stage('\u27A1 Documentation') {
       configFileProvider(
           [configFile(fileId: 'maven-local-settings', variable: 'MAVEN_SETTINGS')]) {
-            sh "'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS site site:deploy -Dci.buildNumber=${BUILD_NUMBER} -Dci.buildDate=${BUILD_TIMESTAMP} -Ddocumentation.dir=${WORKSPACE} -Dverbose=false -Psordocs,sonatype"
+            sh "'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS install site site:deploy -Dci.buildNumber=${BUILD_NUMBER} -Dci.buildDate=${BUILD_TIMESTAMP} -Ddocumentation.dir=${WORKSPACE} -Psonatype"
       }
     }
     stage('\u27A1 Sonar') {
