@@ -37,6 +37,7 @@
     <properties>
         <moduleDir>../..</moduleDir>
         <sonar.projectKey>OpenWMS.org_TMS:TransportationServices</sonar.projectKey>
+        <common.version>1.1.0-SNAPSHOT</common.version>
     </properties>
 
     <distributionManagement>
