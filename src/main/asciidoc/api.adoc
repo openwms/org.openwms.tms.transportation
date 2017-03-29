@@ -26,6 +26,29 @@ API to operate on TransportOrders.
 ==== Request
 Example request.
 
+include::{generated}/to-create/curl-request.adoc[]
+
 ==== Response
 
+nclude::{generated}/to-create/http-response.adoc[]
 
+[[resources-to-create]]
+
+=== Redirect TransportOrders
+
+==== Request
+Example request.
+
+include::{generated}/to-patch-target-blocked/curl-request.adoc[]
+
+==== Response
+
+include::{generated}/to-patch-target-blocked/curl-response.adoc[]
+
+[[resources-to-create]]
+=== Prioritize TransportOrder
+
+==== Request
+Example request.
+
+==== Response
