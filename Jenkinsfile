@@ -1,4 +1,4 @@
-#!/usr/bin/env groovy
+#!groovy
 
 node {
   try {
@@ -10,7 +10,7 @@ node {
     stage('\u27A1 Build & Deploy') {
       configFileProvider(
           [configFile(fileId: 'maven-local-settings', variable: 'MAVEN_SETTINGS')]) {
-            sh "'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS clean install -Ddocumentation.dir=${WORKSPACE} -Dverbose=false -Psordocs,sonatype -U"
+            sh "'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS clean install -Ddocumentation.dir=${WORKSPACE} -Psordocs,sonatype -U"
       }
     }
     stage('\u27A1 Heroku Staging') {
@@ -28,7 +28,7 @@ node {
     stage('\u27A1 Documentation') {
       configFileProvider(
           [configFile(fileId: 'maven-local-settings', variable: 'MAVEN_SETTINGS')]) {
-            sh "'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS install site site:deploy -Dci.buildNumber=${BUILD_NUMBER} -Dci.buildDate=${BUILD_TIMESTAMP} -Ddocumentation.dir=${WORKSPACE} -Psonatype"
+            sh "'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS site site:deploy -Dci.buildNumber=${BUILD_NUMBER} -Ddocumentation.dir=${WORKSPACE}/target -Psonatype"
       }
     }
     stage('\u27A1 Sonar') {

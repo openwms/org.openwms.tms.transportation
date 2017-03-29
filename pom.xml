@@ -22,20 +22,21 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.openwms</groupId>
         <artifactId>org.openwms.tms</artifactId>
         <version>1.1.0-SNAPSHOT</version>
-        <relativePath />
+        <relativePath/>
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
-    <name>OpenWMS.org TMS: Transportation Services</name>
+    <name>TMS: Transportation Services</name>
+    <url>https://www.interface21.io/docs/tms/transportation/index.html</url>
 
     <properties>
-        <moduleDir>../..</moduleDir>
         <sonar.projectKey>OpenWMS.org_TMS:TransportationServices</sonar.projectKey>
         <common.version>1.1.0-SNAPSHOT</common.version>
     </properties>
@@ -58,11 +59,49 @@
         </site>
     </distributionManagement>
 
+    <developers>
+        <developer>
+            <id>scherrer</id>
+            <name>Heiko Scherrer</name>
+            <email>scherrer@openwms.org</email>
+            <url>https://openwms.github.io/</url>
+            <organization>Interface21.io</organization>
+            <organizationUrl>https://www.interface21.io</organizationUrl>
+            <timezone>+2</timezone>
+            <roles>
+                <role>Project Lead</role>
+                <role>Architect</role>
+                <role>Developer</role>
+                <role>Deployer</role>
+            </roles>
+        </developer>
+    </developers>
     <scm>
         <url>https://github.com/openwms/org.openwms.tms.transportation</url>
-        <connection>scm:git:git://github.com/openwms/org.openwms.tms.transportation.git</connection>
-        <developerConnection>scm:git:git@github.com:openwms/org.openwms.tms.transportation.git</developerConnection>
+        <connection>scm:git:git://github.com/openwms/org.openwms.tms.transportation.git
+        </connection>
+        <developerConnection>
+            scm:git:git@github.com:openwms/org.openwms.tms.transportation.git
+        </developerConnection>
     </scm>
+
+    <ciManagement>
+        <system>Jenkins</system>
+        <url>http://openwms.mooo.com/jenkins/job/org.openwms.tms.transportation</url>
+        <notifiers>
+            <notifier>
+                <type>mail</type>
+                <configuration>
+                    <address>product@openwms.org</address>
+                </configuration>
+            </notifier>
+        </notifiers>
+    </ciManagement>
+
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/openwms/org.openwms.tms.transportation/issues</url>
+    </issueManagement>
 
     <build>
         <finalName>openwms-tms-transportation</finalName>
@@ -82,7 +121,8 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <excludedGroups>org.ameba.test.categories.IntegrationTests</excludedGroups>
+                    <excludedGroups>org.ameba.test.categories.IntegrationTests
+                    </excludedGroups>
                     <excludes>
                         <exclude>**/*Documentation.java</exclude>
                     </excludes>
@@ -94,6 +134,25 @@
         </plugins>
     </build>
 
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>summary</report>
+                            <report>project-team</report>
+                            <report>issue-tracking</report>
+                            <report>cim</report>
+                            <report>scm</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
     <dependencyManagement>
         <dependencies>
             <dependency>
