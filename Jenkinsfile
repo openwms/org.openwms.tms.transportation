@@ -7,7 +7,7 @@ node {
       git 'git@github.com:openwms/org.openwms.tms.transportation.git'
       mvnHome = tool 'M3'
     }
-    stage('\u27A1 Build & Deploy') {
+    stage('\u27A1 Build') {
       configFileProvider(
           [configFile(fileId: 'maven-local-settings', variable: 'MAVEN_SETTINGS')]) {
             sh "'${mvnHome}/bin/mvn' -s $MAVEN_SETTINGS clean install -Dci.buildNumber=${BUILD_NUMBER} -Ddocumentation.dir=${WORKSPACE}/target -Psordocs,sonatype -U"
@@ -15,11 +15,11 @@ node {
     }
     stage('\u27A1 Heroku Staging') {
       sh '''
-          if git remote | grep heroku > /dev/null; then
-             git remote remove heroku
-          fi
-          git remote add heroku https://:${HEROKU_API_KEY}@git.heroku.com/openwms-tms-transportation.git
-          git push heroku master -f
+        if git remote | grep heroku > /dev/null; then
+           git remote remove heroku
+        fi
+        git remote add heroku https://:${HEROKU_API_KEY}@git.heroku.com/openwms-tms-transportation.git
+        git push heroku master -f
       '''
     }
     stage('\u27A1 Results') {
