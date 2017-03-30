@@ -21,14 +21,6 @@
  */
 package org.openwms.tms.api;
 
-import static java.util.Arrays.asList;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ameba.exception.BehaviorAwareException;
 import org.ameba.exception.BusinessRuntimeException;
 import org.ameba.exception.NotFoundException;
@@ -38,6 +30,8 @@ import org.openwms.tms.PriorityLevel;
 import org.openwms.tms.TMSConstants;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -53,6 +47,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriTemplate;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+
 /**
  * A TransportationController.
  *
@@ -62,6 +64,7 @@ import org.springframework.web.util.UriTemplate;
 @RestController(TMSConstants.ROOT_ENTITIES)
 class TransportationController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransportationController.class);
     @Autowired
     private BeanMapper m;
     @Autowired
@@ -74,6 +77,7 @@ class TransportationController {
 
     @GetMapping(TMSConstants.ROOT_ENTITIES + "/{pKey}")
     public TransportOrder findByPKey(@PathVariable String pKey) {
+        LOGGER.debug("Find TransportOrder with persistent key:" + pKey);
         return service.findByPKey(pKey);
     }
 

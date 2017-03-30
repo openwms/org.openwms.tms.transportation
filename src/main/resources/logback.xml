@@ -4,13 +4,22 @@
     <property name="LOG_TEMP" value="/tmp/owms"/>
     <property name="MODULE_NAME" value="TMS"/>
 
+    <appender name="syslog" class="ch.qos.logback.classic.net.SyslogAppender">
+        <syslogHost>openwms.mooo.com</syslogHost>
+        <facility>SYSLOG</facility>
+        <port>514</port>
+        <suffixPattern>java %d{ISO8601,UTC} %p %t %c %M - %m%n</suffixPattern>
+    </appender>
+
     <include resource="logback-appenders.xml" />
     <include resource="logback-loggers.xml" />
 
     <logger name="org.dozer" level="ERROR"/>
     <logger name="org.hibernate.SQL" level="OFF"/>
     <logger name="org.hibernate.type" level="OFF"/>
-    <logger name="org.openwms" level="DEBUG"/>
+    <logger name="org.openwms" level="DEBUG">
+        <appender-ref ref="syslog" />
+    </logger>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
