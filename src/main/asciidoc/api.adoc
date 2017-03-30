@@ -30,7 +30,7 @@ include::{generated}/to-create/curl-request.adoc[]
 
 ==== Response
 
-nclude::{generated}/to-create/http-response.adoc[]
+include::{generated}/to-create/http-response.adoc[]
 
 [[resources-to-create]]
 

@@ -80,9 +80,7 @@
         <url>https://github.com/openwms/org.openwms.tms.transportation</url>
         <connection>scm:git:git://github.com/openwms/org.openwms.tms.transportation.git
         </connection>
-        <developerConnection>
-            scm:git:git@github.com:openwms/org.openwms.tms.transportation.git
-        </developerConnection>
+        <developerConnection>scm:git:git@github.com:openwms/org.openwms.tms.transportation.git</developerConnection>
     </scm>
 
     <ciManagement>
