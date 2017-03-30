@@ -76,10 +76,10 @@
             </roles>
         </developer>
     </developers>
+
     <scm>
         <url>https://github.com/openwms/org.openwms.tms.transportation</url>
-        <connection>scm:git:git://github.com/openwms/org.openwms.tms.transportation.git
-        </connection>
+        <connection>scm:git:git://github.com/openwms/org.openwms.tms.transportation.git</connection>
         <developerConnection>scm:git:git@github.com:openwms/org.openwms.tms.transportation.git</developerConnection>
     </scm>
 
@@ -141,6 +141,7 @@
             </plugin>
         </plugins>
     </reporting>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -152,7 +153,6 @@
     </dependencyManagement>
 
     <dependencies>
-
         <!-- Project dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
