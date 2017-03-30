@@ -39,11 +39,11 @@ include::{generated}/to-create/http-response.adoc[]
 ==== Request
 Example request.
 
-include::{generated}/to-patch-target-blocked/curl-request.adoc[]
+include::{generated}/to-patch-target-blocked-loc/curl-request.adoc[]
 
 ==== Response
 
-include::{generated}/to-patch-target-blocked/curl-response.adoc[]
+include::{generated}/to-patch-target-blocked-loc/http-response.adoc[]
 
 [[resources-to-create]]
 === Prioritize TransportOrder
