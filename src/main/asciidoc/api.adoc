@@ -18,21 +18,34 @@ a more use-case-driven approach.
 [[resources-to]]
 == TransportOrders
 
-API to operate on TransportOrders.
+API to deal with `TransportOrder`s.
 
 [[resources-to-create]]
 === Create a new TransportOrder
 
-==== Request
-Example request.
+At least the `Barcode` of the `TransportUnit` that needs to be moved and the `Target` destination must be given to create a new `TransportOrder`.
+In this example we also define the `Priority` of the `TransportOrder`.
+
+==== Request to move TransportUnit to Location
 
 include::{generated}/to-create/curl-request.adoc[]
 
-==== Response
+If the `TransportOrder` has been created successfully, the server responds with status code 201 and returns the URI of the created
+`TransportOrder` in the `LOCATION` header.
+
+==== Response if created
 
 include::{generated}/to-create/http-response.adoc[]
 
-[[resources-to-create]]
+The URI can be used to lookup the created `TransportOrder` with the persistent key. A `GET` request looks like:
+
+==== Lookup the created TransportOrder
+
+include::{generated}/to-create-and-get/curl-request.adoc[]
+
+and the server responds with
+
+include::{generated}/to-create-and-get/http-response.adoc[]
 
 === Redirect TransportOrders
 
