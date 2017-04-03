@@ -18,7 +18,7 @@ a more use-case-driven approach.
 [[resources-to]]
 == TransportOrders
 
-API to deal with `TransportOrder`s.
+API to deal with `TransportOrders`.
 
 [[resources-to-create]]
 === Create a new TransportOrder
@@ -26,42 +26,57 @@ API to deal with `TransportOrder`s.
 At least the `Barcode` of the `TransportUnit` that needs to be moved and the `Target` destination must be given to create a new `TransportOrder`.
 In this example we also define the `Priority` of the `TransportOrder`.
 
-==== Request to move TransportUnit to Location
+==== Request to move TransportUnit to a Location
 
 include::{generated}/to-create/curl-request.adoc[]
 
-If the `TransportOrder` has been created successfully, the server responds with status code 201 and returns the URI of the created
+If the `TransportOrder` has been created successfully, the server responds with status code `201` and returns the URI of the created
 `TransportOrder` in the `LOCATION` header.
 
 ==== Response if created
 
 include::{generated}/to-create/http-response.adoc[]
 
-The URI can be used to lookup the created `TransportOrder` with the persistent key. A `GET` request looks like:
+The URI can be used to lookup the created `TransportOrder` by it's persistent key. A `GET` request would look like this:
 
 ==== Lookup the created TransportOrder
 
 include::{generated}/to-create-and-get/curl-request.adoc[]
 
-and the server responds with
+and the server returns the representation of the created `TransportOrder`
 
 include::{generated}/to-create-and-get/http-response.adoc[]
 
-=== Redirect TransportOrders
+==== Fails to create a TransportOrder
+The creation of a new `TransportOrder` may fail for several reasons. At first the `TransportUnit` with the given `Barcode` must already exist.
+If no `TransportUnit` exists, the server responds with a http status code `404` (Not Found):
 
-==== Request
-Example request.
+include::{generated}/to-create-uk-to/http-response.adoc[]
+
+Another reason why the server cannot create a requested `TransportOrder` may be, because the Targert
+
+=== Changing TransportOrders
+
+Already existing and active `TransportOrders` can be redirected to a new `Target`. This redirection happens through an PATCH request
+where the API expects the partial structure of the `TransportOrder` as request body. Sending a PATCH request allows also changing the
+`Priority` of an `TransportOrder`.
+
+==== Redirect to new Target
+Redirect the `TransportOrder` with the given persistent key to a new `Target`
 
 include::{generated}/to-patch-target-blocked-loc/curl-request.adoc[]
 
-==== Response
+==== Change Priority
+The follow example shows the request to decrease the `Priority` of an existing `TransportOrder` identified by the given persistent key to `NORMAL`.
+Notice that the `TransportOrder` does not need to be started yet.
 
-include::{generated}/to-patch-target-blocked-loc/http-response.adoc[]
+include::{generated}/to-patch-priority-ok/curl-request.adoc[]
 
-[[resources-to-create]]
-=== Prioritize TransportOrder
+On a successfully executed `PATCH` request the server responds with a http status code `204`
 
-==== Request
-Example request.
+include::{generated}/to-patch-priority-ok/http-response.adoc[]
 
-==== Response
+If the server does not accept the passed `Priority` level the response status is `400` (Bad Request),
+
+include::{generated}/to-patch-priority-with-null/http-response.adoc[]
+

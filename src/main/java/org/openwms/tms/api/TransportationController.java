@@ -23,7 +23,6 @@ package org.openwms.tms.api;
 
 import org.ameba.exception.BehaviorAwareException;
 import org.ameba.exception.BusinessRuntimeException;
-import org.ameba.exception.NotFoundException;
 import org.ameba.http.Response;
 import org.ameba.mapping.BeanMapper;
 import org.openwms.tms.PriorityLevel;
@@ -105,11 +104,16 @@ class TransportationController {
         return new ResponseEntity<>(new Response<>(ex.getMessage(), ex.getMsgKey(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), new String[]{ex.getMsgKey()}), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Response<Serializable>> handleBadRequests(HttpServletResponse res, IllegalArgumentException ex) throws Exception {
+        return new ResponseEntity<>(new Response<>(ex.getMessage(), HttpStatus.BAD_REQUEST.toString()), HttpStatus.BAD_REQUEST);
+    }
+
     private void validatePriority(@RequestBody CreateTransportOrderVO vo) {
         asList(PriorityLevel.values()).stream()
                 .filter(p -> p.name().equals(vo.getPriority()))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException(String.format("A priority level of %s is not defined", vo.getPriority())));
+                .orElseThrow(() -> new IllegalArgumentException(String.format("A priority level of %s is not defined", vo.getPriority())));
     }
 
     private String getCreatedResourceURI(HttpServletRequest req, String objId) {

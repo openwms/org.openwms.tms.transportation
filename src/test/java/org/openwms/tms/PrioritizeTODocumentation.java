@@ -57,7 +57,7 @@ public class PrioritizeTODocumentation extends DocumentationBase {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
                 )
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andDo(document("to-patch-priority-with-null"))
         ;
     }

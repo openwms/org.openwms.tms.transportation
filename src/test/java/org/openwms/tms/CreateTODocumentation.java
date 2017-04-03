@@ -141,7 +141,7 @@ public class CreateTODocumentation extends DocumentationBase {
         mockMvc.perform(post(TMSConstants.ROOT_ENTITIES)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(vo)))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isBadRequest())
                 .andReturn()
         ;
     }
