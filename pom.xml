@@ -28,7 +28,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.openwms</groupId>
-        <artifactId>org.openwms.tms</artifactId>
+        <artifactId>org.openwms</artifactId>
         <version>1.1.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
@@ -38,6 +38,7 @@
 
     <properties>
         <sonar.projectKey>OpenWMS.org_TMS:TransportationServices</sonar.projectKey>
+        <core.version>1.1.0-SNAPSHOT</core.version>
         <common.version>1.1.0-SNAPSHOT</common.version>
     </properties>
 
@@ -145,9 +146,15 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>${project.groupId}</groupId>
+                <groupId>org.openwms</groupId>
                 <artifactId>org.openwms.common.shared</artifactId>
                 <version>${common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openwms</groupId>
+                <artifactId>org.openwms.core.test</artifactId>
+                <version>${core.version}</version>
+                <type>test-jar</type>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -155,7 +162,7 @@
     <dependencies>
         <!-- Project dependencies -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.openwms</groupId>
             <artifactId>org.openwms.common.shared</artifactId>
         </dependency>
 
