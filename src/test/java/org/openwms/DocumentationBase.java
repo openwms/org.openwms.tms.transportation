@@ -75,7 +75,7 @@ public abstract class DocumentationBase {
     @MockBean
     protected CommonGateway commonGateway;
     @Rule
-    public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("./target/generated-snippets");
+    public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
     public static final String NOTLOGGED = "--";
     public static final String INIT_LOC_STRING = "INIT/0000/0000/0000/0000";
     protected Location INIT_LOC;

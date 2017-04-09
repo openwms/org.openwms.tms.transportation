@@ -93,7 +93,7 @@ The domain model of the RESTful API consists of a couple of classes with simple 
 other. One special implicit type is the `Date` type that defines the default date format if not otherwise requested by the consuming
 service.
 
-include::rest-model.png[]
+image::rest-model.png[]
 
 [[resources-to]]
 == TransportOrders
