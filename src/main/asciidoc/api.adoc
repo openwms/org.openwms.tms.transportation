@@ -97,7 +97,9 @@ image::rest-model.png[]
 
 [[resources-to]]
 == TransportOrders
-The main resource of the TMS Transportation module is the `TransportOrder`. 
+The main resource of the TMS Transportation module is the `TransportOrder`. A `TransportOrder` is used in automated warehouses to move `TransportUnits`
+between `Locations`. Automated warehouses means a Material Flow Controller (MFC, see (Material Flow)[https://en.wikipedia.org/wiki/Material_flow]) uses
+`TransportOrders` to route and track the movements within the warehouse. In manual warehouse OpenWMS.org uses `Movements` to track this in a manually.
 
 [[interaction-model]]
 = Interaction Model
