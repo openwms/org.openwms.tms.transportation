@@ -101,6 +101,43 @@ The main resource of the TMS Transportation module is the `TransportOrder`. A `T
 between `Locations`. Automated warehouses means a Material Flow Controller (MFC, see (Material Flow)[https://en.wikipedia.org/wiki/Material_flow]) uses
 `TransportOrders` to route and track the movements within the warehouse. In manual warehouse OpenWMS.org uses `Movements` to track this in a manually.
 
+The attributes of the `TransportOrder` representation:
+ 
+|===
+| Attribute | Description
+
+| `persistentKey`
+| A synthetic unique key that identifies `TransportOrder`. May be replaced with self-links in future.
+
+| `transportUnit`
+| The unique identifier of the TransportUnit that is carried. May be replaced with a link in future.
+
+| `priority`
+| The priority of the `TransportOrder` is used to control the order of execution.
+
+| `startDate`
+| The timestamp when the `TransportOrder` has been started.
+
+| `message`
+| The last error message occurred according to the `TransportOrder`.
+
+| `endDate`
+| The timestamp when the `TransportOrder` has been ended.
+
+| `state`
+| The current state of the `TransportOrder`.
+
+| `sourceLocation`
+| The `Location` taken from the `TransportUnit` where the `TransportOrder` has been started.
+
+| `targetLocation`
+| The `Location` as destination of the `TransportUnit`.
+
+| `targetLocationGroup`
+| The `LocationGroup` as destination of the `TransportUnit`.
+|===
+ 
+
 [[interaction-model]]
 = Interaction Model
 
