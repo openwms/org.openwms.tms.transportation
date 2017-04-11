@@ -17,5 +17,5 @@ across projects - perhaps in different flavor. The microservice is deployed as R
 
 | endpoints | billed | SLA |
 | --------- | ------ | --- |
-| https://openwms-tms-transportation.herokuapp.com<br/> | no | Heroku SLA for Europe region<br />depends on AWS Europe region |
+| https://openwms-tms-transportation.herokuapp.com<br> | no | Heroku SLA for Europe region<br>depends on AWS Europe region |
 
