@@ -1,7 +1,7 @@
 #TMS Transportation
 
 ## Purpose
-The **TMS Transportation** allows to create Transport Orders in automated warehouses. A
+**TMS Transportation** allows to create Transport Orders in automated warehouses. A
 Transport Order is used to transport pallets, boxes, cartons or other types of Transport
 Units between warehouse Locations. Usually more then one Transport Order are created
 when a customer order is received or when a lorry of goods arrives at the warehouse.
