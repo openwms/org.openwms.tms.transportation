@@ -1,5 +1,3 @@
-#TMS Transportation
-
 ## Purpose
 **TMS Transportation** allows to create Transport Orders in automated warehouses. A
 Transport Order is used to transport pallets, boxes, cartons or other types of Transport
@@ -17,5 +15,6 @@ across projects - perhaps in different flavor. The microservice is deployed as R
 
 | endpoints | billed | SLA |
 | --------- | ------ | --- |
-| https://openwms-tms-transportation.herokuapp.com https://openwms.org/uaa | no | Heroku SLA for Europe region depends on AWS Europe region |
+| https://openwms-tms-transportation.herokuapp.com
+  https://openwms.org/tms/transportation | no | Heroku SLA for Europe region depends on AWS Europe region |
 
