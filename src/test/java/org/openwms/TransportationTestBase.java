@@ -57,15 +57,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * A DocumentationBase.
+ * A TransportationTestBase.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
- * @since 1.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=RANDOM_PORT)
 @Transactional
-public abstract class DocumentationBase {
+public abstract class TransportationTestBase {
 
     @Autowired
     @Qualifier(TMSConstants.BEAN_NAME_OBJECTMAPPER)

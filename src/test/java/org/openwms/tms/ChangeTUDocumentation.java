@@ -23,7 +23,7 @@ package org.openwms.tms;
 
 import org.ameba.exception.NotFoundException;
 import org.junit.Test;
-import org.openwms.DocumentationBase;
+import org.openwms.TransportationTestBase;
 import org.openwms.common.CommonMessageCodes;
 import org.openwms.common.TransportUnit;
 import org.openwms.tms.api.CreateTransportOrderVO;
@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @version 1.0
  * @since 1.0
  */
-public class ChangeTUDocumentation extends DocumentationBase {
+public class ChangeTUDocumentation extends TransportationTestBase {
 
     public
     @Test

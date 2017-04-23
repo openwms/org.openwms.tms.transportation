@@ -23,7 +23,7 @@ package org.openwms.tms;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.openwms.DocumentationBase;
+import org.openwms.TransportationTestBase;
 import org.openwms.common.TransportUnit;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.slf4j.Logger;
@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-public class ChangeStateDocumentation extends DocumentationBase {
+public class ChangeStateDocumentation extends TransportationTestBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChangeStateDocumentation.class);
 

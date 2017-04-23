@@ -22,7 +22,7 @@
 package org.openwms.tms;
 
 import org.junit.Test;
-import org.openwms.DocumentationBase;
+import org.openwms.TransportationTestBase;
 import org.openwms.common.TransportUnit;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.springframework.http.MediaType;
@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-public class PrioritizeTODocumentation extends DocumentationBase {
+public class PrioritizeTODocumentation extends TransportationTestBase {
 
     public
     @Test

@@ -22,7 +22,7 @@
 package org.openwms.tms;
 
 import org.junit.Test;
-import org.openwms.DocumentationBase;
+import org.openwms.TransportationTestBase;
 import org.openwms.common.Location;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.springframework.http.HttpHeaders;
@@ -51,7 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @version 1.0
  * @since 1.0
  */
-public class CreateTODocumentation extends DocumentationBase {
+public class CreateTODocumentation extends TransportationTestBase {
 
     public
     @Test
