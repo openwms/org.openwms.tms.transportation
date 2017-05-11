@@ -21,14 +21,15 @@
  */
 package org.openwms;
 
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+import org.springframework.context.annotation.Configuration;
+
 /**
  * A TestConfiguration.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
- * @version 1.0
- * @since 1.0
  */
-//@Configuration
-//@EnableEurekaServer
+@Configuration
+@EnableEurekaServer
 class TestConfiguration {
 }
