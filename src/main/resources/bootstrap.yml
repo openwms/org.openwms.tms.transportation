@@ -48,6 +48,8 @@ eureka:
 ---
 spring:
   profiles: CLOUD
+  main:
+    banner-mode: "OFF"
 
 eureka:
   instance:
