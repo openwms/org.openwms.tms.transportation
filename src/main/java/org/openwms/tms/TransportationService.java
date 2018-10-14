@@ -52,7 +52,7 @@ public interface TransportationService<T extends TransportOrder> {
      * @param priority A {@link PriorityLevel} of the new {@link TransportOrder}
      * @return The newly created {@link TransportOrder}
      */
-    T create(String barcode, String target, PriorityLevel priority);
+    T create(String barcode, String target, String priority);
 
     /**
      * Modifies an existing {@link TransportOrder} according to the argument passed as {@code transportOrder}.

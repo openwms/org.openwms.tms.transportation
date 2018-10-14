@@ -22,6 +22,7 @@
 package org.openwms.tms;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * A PriorityLevel is used to prioritize {@link TransportOrder}s.
@@ -50,6 +51,13 @@ public enum PriorityLevel implements Serializable {
 
     /** Dear JPA... */
     PriorityLevel() {
+    }
+
+    public static PriorityLevel of(String priority) {
+        return Arrays.stream(PriorityLevel.values())
+                .filter(p -> p.name().equals(priority))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("A priority level of %s is not defined", priority)));
     }
 
     /**

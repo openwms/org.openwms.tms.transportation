@@ -21,6 +21,8 @@
  */
 package org.openwms.common;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 
 /**
@@ -31,7 +33,9 @@ import java.io.Serializable;
  */
 public class LocationGroup implements Target, Serializable {
 
+    @JsonProperty
     private boolean incomingActive = true;
+    @JsonProperty
     private String name;
 
     /* JSON */

@@ -21,9 +21,6 @@
  */
 package org.openwms.tms.state;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.ameba.exception.NotFoundException;
 import org.openwms.common.CommonGateway;
 import org.openwms.common.Location;
@@ -38,6 +35,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A Starter.
@@ -78,16 +78,22 @@ class Starter implements ApplicationListener<TransportServiceEvent> {
                     throw new NotFoundException(
                             "Neither a valid target LocationGroup nor a Location are set, hence it is not possible to start the TransportOrder");
                 }
-                lg.ifPresent(l -> {
-                    if (l.isInfeedBlocked())
+                if (lg.isPresent()) {
+                    if (lg.get().isInfeedBlocked()) {
                         throw new StateChangeException("Cannot start the TransportOrder because TargetLocationGroup is blocked");
-                });
-                loc.ifPresent(l -> {
-                    if (l.isInfeedBlocked())
+                    }
+                    to.setTargetLocationGroup(lg.get().asString());
+                } else {
+                    to.setTargetLocationGroup(null);
+                }
+                if (loc.isPresent()) {
+                    if (loc.get().isInfeedBlocked()) {
                         throw new StateChangeException("Cannot start the TransportOrder because TargetLocation is blocked");
-                });
-                lg.ifPresent(l -> to.setTargetLocationGroup(l.toString()));
-                loc.ifPresent(l -> to.setTargetLocation(l.toString()));
+                    }
+                    to.setTargetLocation(loc.get().asString());
+                } else {
+                    to.setTargetLocation(null);
+                }
 
                 List<TransportOrder> others = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.STARTED);
                 if (!others.isEmpty()) {

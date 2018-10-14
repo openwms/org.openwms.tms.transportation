@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  * @since 1.0
  */
-@FeignClient(name = "common-service", decode404 = true)
+@FeignClient(name = "common-service", decode404 = false)
 interface CommonFeignClient {
 
     @RequestMapping(method = RequestMethod.GET, value = CommonConstants.API_LOCATIONS, params = {"locationPK"})

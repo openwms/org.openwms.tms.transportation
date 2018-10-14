@@ -52,8 +52,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.util.Arrays.asList;
-
 /**
  * A TransportationController.
  *
@@ -82,21 +80,20 @@ class TransportationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createTO(@RequestBody CreateTransportOrderVO vo, HttpServletRequest req, HttpServletResponse resp) {
-        validatePriority(vo);
-        TransportOrder to = service.create(vo.getBarcode(), vo.getTarget(), PriorityLevel.valueOf(vo.getPriority()));
+    public void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target, @RequestParam(value = "priority", required = false) String priority, HttpServletRequest req, HttpServletResponse resp) {
+        TransportOrder to = service.create(barcode, target, priority);
         resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
     }
 
     @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateTO(@RequestBody CreateTransportOrderVO vo) {
-        validatePriority(vo);
+    public void updateTO(@RequestBody UpdateTransportOrderVO vo) {
+        PriorityLevel.of(vo.getPriority());
         service.update(m.map(vo, TransportOrder.class));
     }
 
     @ExceptionHandler(BusinessRuntimeException.class)
-    public ResponseEntity<Response<Serializable>> handleNotFound(HttpServletResponse res, BusinessRuntimeException ex) throws Exception {
+    public ResponseEntity<Response<Serializable>> handleNotFound(HttpServletResponse res, BusinessRuntimeException ex) {
         if (ex instanceof BehaviorAwareException) {
             BehaviorAwareException bae = (BehaviorAwareException) ex;
             return new ResponseEntity<>(new Response<>(ex.getMessage(), bae.getMsgKey(), bae.getStatus().toString(), bae.getData()), bae.getStatus());
@@ -105,15 +102,8 @@ class TransportationController {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Response<Serializable>> handleBadRequests(HttpServletResponse res, IllegalArgumentException ex) throws Exception {
+    public ResponseEntity<Response<Serializable>> handleBadRequests(HttpServletResponse res, IllegalArgumentException ex) {
         return new ResponseEntity<>(new Response<>(ex.getMessage(), HttpStatus.BAD_REQUEST.toString()), HttpStatus.BAD_REQUEST);
-    }
-
-    private void validatePriority(@RequestBody CreateTransportOrderVO vo) {
-        asList(PriorityLevel.values()).stream()
-                .filter(p -> p.name().equals(vo.getPriority()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("A priority level of %s is not defined", vo.getPriority())));
     }
 
     private String getCreatedResourceURI(HttpServletRequest req, String objId) {

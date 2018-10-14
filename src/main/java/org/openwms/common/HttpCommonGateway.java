@@ -21,8 +21,6 @@
  */
 package org.openwms.common;
 
-import java.util.Optional;
-
 import feign.FeignException;
 import feign.Response;
 import feign.Util;
@@ -34,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
  * A HttpCommonGateway.
@@ -53,7 +53,8 @@ class HttpCommonGateway implements CommonGateway {
     @Override
     public Optional<LocationGroup> getLocationGroup(String target) {
         try {
-            return Optional.of(commonFeignClient.getLocationGroup(target));
+            LocationGroup lg = commonFeignClient.getLocationGroup(target);
+            return Optional.of(lg);
         } catch (Exception ex) {
             int code = translate(ex);
             if (code == 404) {
@@ -67,13 +68,38 @@ class HttpCommonGateway implements CommonGateway {
 
     @Override
     public Optional<Location> getLocation(String target) {
-        return Optional.ofNullable(commonFeignClient.getLocation(target));
+        try {
+            return Optional.ofNullable(commonFeignClient.getLocation(target));
+        } catch (FeignException ex) {
+            if (ex.status() == 404) {
+                return Optional.empty();
+            } else {
+                LOGGER.error(ex.getMessage(), ex);
+                throw new ServiceLayerException(ex.getMessage());
+            }
+        } catch (Exception ex) {
+            int code = translate(ex);
+            if (code == 404) {
+                return Optional.empty();
+            } else {
+                LOGGER.error(ex.getMessage(), ex);
+                throw new ServiceLayerException(ex.getMessage());
+            }
+        }
     }
 
     @Override
     public Optional<TransportUnit> getTransportUnit(String transportUnitBK) {
         try {
-            return Optional.of(commonFeignClient.getTransportUnit(transportUnitBK));
+            TransportUnit tu = commonFeignClient.getTransportUnit(transportUnitBK);
+            return Optional.of(tu);
+        } catch (FeignException ex) {
+            if (ex.status() == 404) {
+                return Optional.empty();
+            } else {
+                LOGGER.error(ex.getMessage(), ex);
+                throw new ServiceLayerException(ex.getMessage());
+            }
         } catch (Exception ex) {
             if (translate(ex) == 404) {
                 return Optional.empty();

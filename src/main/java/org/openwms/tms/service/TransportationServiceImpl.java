@@ -21,13 +21,6 @@
  */
 package org.openwms.tms.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.ameba.exception.NotFoundException;
 import org.ameba.i18n.Translator;
 import org.openwms.common.Target;
@@ -48,6 +41,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A TransportationServiceImpl is a Spring managed transactional service.
@@ -103,7 +103,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
      * can be found.
      */
     @Override
-    public TransportOrder create(String barcode, String target, PriorityLevel priority) {
+    public TransportOrder create(String barcode, String target, String priority) {
         if (barcode == null) {
             throw new NotFoundException("Barcode cannot be null when creating a TransportOrder");
         }
@@ -112,7 +112,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
                 .setTargetLocation(target)
                 .setTargetLocationGroup(target);
         if (priority != null) {
-            transportOrder.setPriority(priority);
+            transportOrder.setPriority(PriorityLevel.of(priority));
         }
         transportOrder = repository.save(transportOrder);
         LOGGER.debug("TransportOrder for Barcode [{}] created. PKey is [{}], PK is [{}]", barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
