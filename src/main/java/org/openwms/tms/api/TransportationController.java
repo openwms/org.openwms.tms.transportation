@@ -21,6 +21,7 @@
  */
 package org.openwms.tms.api;
 
+import org.ameba.annotation.Measured;
 import org.ameba.exception.BehaviorAwareException;
 import org.ameba.exception.BusinessRuntimeException;
 import org.ameba.http.Response;
@@ -28,10 +29,10 @@ import org.ameba.mapping.BeanMapper;
 import org.openwms.tms.PriorityLevel;
 import org.openwms.tms.TMSConstants;
 import org.openwms.tms.TransportOrder;
+import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.TransportationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,37 +51,83 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * A TransportationController.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
- * @since 1.0
  */
 @RestController(TMSConstants.ROOT_ENTITIES)
 class TransportationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationController.class);
-    @Autowired
-    private BeanMapper m;
-    @Autowired
-    private TransportationService<TransportOrder> service;
+    private final BeanMapper m;
+    private final TransportationService<TransportOrder> service;
 
+    TransportationController(BeanMapper m, TransportationService<TransportOrder> service) {
+        this.m = m;
+        this.service = service;
+    }
+
+    @Measured
     @GetMapping(value = TMSConstants.ROOT_ENTITIES, params = {"barcode", "state"})
-    public List<TransportOrder> findBy(@RequestParam String barcode, @RequestParam String state) {
+    List<TransportOrder> findBy(@RequestParam String barcode, @RequestParam String state) {
         return new ArrayList<>(service.findBy(barcode, state));
     }
 
+    @Measured
     @GetMapping(TMSConstants.ROOT_ENTITIES + "/{pKey}")
-    public TransportOrder findByPKey(@PathVariable String pKey) {
-        LOGGER.debug("Find TransportOrder with persistent key:" + pKey);
+    TransportOrder findByPKey(@PathVariable String pKey) {
+        LOGGER.debug("Find TransportOrder with persistent key {}", pKey);
         return service.findByPKey(pKey);
     }
 
+    @Measured
+    @GetMapping(value = TMSConstants.ROOT_ENTITIES, params ={"sourceLocation", "state"})
+    TransportOrder getNextInfeed(@RequestParam("sourceLocation") String sourceLocation, @RequestParam("state") String state) {
+        LOGGER.debug("Find TransportOrders from infeed position {} in state {}", sourceLocation, state);
+        List<TransportOrder> tos = service.findInfeed(sourceLocation, TransportOrderState.valueOf(state));
+        if (tos.isEmpty()) {
+            LOGGER.debug("> No TransportOrder for infeed exists");
+            return null;
+        }
+        LOGGER.debug("> TransportOrder with id {} exists for infeed", tos.get(0).getPk());
+        return tos.get(0);
+    }
+
+    @Measured
+    @GetMapping(value = "/transportorders", params ={"sourceLocationGroupName", "targetLocationGroupName", "state"})
+    TransportOrder getNextInAisle(@RequestParam("sourceLocationGroupName") String sourceLocationGroupName, @RequestParam("targetLocationGroupName") String targetLocationGroupName, @RequestParam("state") String state) {
+        LOGGER.debug("Find TransportOrders within one aisle with source {} and target {} in state {}", sourceLocationGroupName, targetLocationGroupName, state);
+        Collection<TransportOrder> tos = service.findInAisle(sourceLocationGroupName, targetLocationGroupName, TransportOrderState.valueOf(state));
+        if (tos.isEmpty()) {
+            LOGGER.debug("> No TransportOrders exist");
+            return null;
+        }
+        LOGGER.debug("> {} TransportOrders exist", tos.size());
+        return tos.iterator().next();
+    }
+
+    @GetMapping(value = "/transportorders", params ={"sourceLocationGroupName", "state"})
+    TransportOrder getNextOutfeed(@RequestParam("sourceLocationGroupName") String sourceLocationGroupName,@RequestParam("state") String state) {
+        LOGGER.debug("Find TransportOrders for outfeed position {} in state {}", sourceLocationGroupName, state);
+        List<TransportOrder> tos = service.findOutfeed(sourceLocationGroupName, TransportOrderState.valueOf(state));
+        if (tos.isEmpty()) {
+            LOGGER.debug("> No TransportOrder for outfeed exists");
+            return null;
+        }
+        TransportOrder to = tos.get(0);
+        LOGGER.debug("> TransportOrder with id {} exists for outfeed", to.getPk());
+        return to;
+    }
+
+
+    @Measured
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target, @RequestParam(value = "priority", required = false) String priority, HttpServletRequest req, HttpServletResponse resp) {
+    void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target, @RequestParam(value = "priority", required = false) String priority, HttpServletRequest req, HttpServletResponse resp) {
         TransportOrder to = service.create(barcode, target, priority);
         resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
     }

@@ -21,9 +21,13 @@
  */
 package org.openwms.tms.service;
 
+import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
 import org.ameba.i18n.Translator;
+import org.openwms.common.CommonFeignClient;
+import org.openwms.common.Location;
 import org.openwms.common.Target;
+import org.openwms.common.TransportUnit;
 import org.openwms.tms.Message;
 import org.openwms.tms.PriorityLevel;
 import org.openwms.tms.StateChangeException;
@@ -39,11 +43,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,25 +56,27 @@ import java.util.stream.Stream;
  * A TransportationServiceImpl is a Spring managed transactional service.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
- * @see TransportationService
- * @since 1.0
  */
-@Transactional
-@Service
+@TxService
 class TransportationServiceImpl implements TransportationService<TransportOrder> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationServiceImpl.class);
 
-    @Autowired
-    private ApplicationContext ctx;
-    @Autowired
-    private TransportOrderRepository repository;
+    private final ApplicationContext ctx;
+    private final TransportOrderRepository repository;
     @Autowired(required = false)
     private List<TargetResolver<Target>> targetResolvers;
     @Autowired(required = false)
     private List<UpdateFunction> updateFunctions;
-    @Autowired
-    private Translator translator;
+    private final Translator translator;
+    private final CommonFeignClient commonClient;
+
+    TransportationServiceImpl(CommonFeignClient commonClient, Translator translator, TransportOrderRepository repository, ApplicationContext ctx) {
+        this.commonClient = commonClient;
+        this.translator = translator;
+        this.repository = repository;
+        this.ctx = ctx;
+    }
 
     @Override
     public List<TransportOrder> findBy(String barcode, String... states) {
@@ -161,6 +166,30 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     @Override
     public TransportOrder findByPKey(String pKey) {
         return findBy(pKey);
+    }
+
+    @Override
+    public List<TransportOrder> findInfeed(String sourceLocation, TransportOrderState state) {
+        List<TransportUnit> tus = commonClient.getTransportUnitsOn(sourceLocation);
+        if (tus == null || tus.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return repository.findByTransportUnitBKIsInAndStateOrderByStartDate(tus.stream().map(TransportUnit::getBarcode).collect(Collectors.toList()), state);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<TransportOrder> findInAisle(String sourceLocationGroupName, String targetLocationGroupName, TransportOrderState state) {
+        List<String> sourceLocations = commonClient.getLocationsForLocationGroup(sourceLocationGroupName).stream().map(Location::getLocationId).collect(Collectors.toList());
+        return repository.findByTargetLocationGroupAndStateAndSourceLocationIn(targetLocationGroupName, state, sourceLocations);
+    }
+
+    @Override
+    public List<TransportOrder> findOutfeed(String sourceLocationGroupName, TransportOrderState state) {
+        List<String> sourceLocations = commonClient.getLocationsForLocationGroup(sourceLocationGroupName).stream().map(Location::getLocationId).collect(Collectors.toList());
+        return repository.findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(sourceLocationGroupName, state, sourceLocations);
     }
 
     private TransportOrder findBy(String pKey) {

@@ -21,24 +21,29 @@
  */
 package org.openwms.tms;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A TransportOrderRepository provides CRUD functionality regarding {@link TransportOrder} entity classes. It requires an existing transaction.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
- * @since 1.0
  */
-//@Transactional(propagation = Propagation.MANDATORY)
 public interface TransportOrderRepository extends JpaRepository<TransportOrder, Long> {
 
     @Query("select to from TransportOrder to where to.pKey = ?1")
     Optional<TransportOrder> findByPKey(String pKey);
+
+//    @Query("select to from TransportOrder to where to.transportUnitBK in :transportUnitBKs and to.state = :state")
+    List<TransportOrder> findByTransportUnitBKIsInAndStateOrderByStartDate(List<String> transportUnitBKs, TransportOrderState state);
+
+    List<TransportOrder> findByTargetLocationGroupAndStateAndSourceLocationIn(String targetLocationGroup, TransportOrderState state, List<String> sourceLocation);
+
+    List<TransportOrder> findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(String targetLocationGroup, TransportOrderState state, List<String> sourceLocation);
 
     @Query("select to from TransportOrder to where to.pKey in ?1")
     List<TransportOrder> findByPKey(List<String> pKeys);

@@ -5,7 +5,7 @@
  * This file is part of openwms.org.
  *
  * openwms.org is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as 
+ * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
  *
@@ -21,23 +21,27 @@
  */
 package org.openwms.common;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import org.ameba.integration.jpa.ApplicationEntity;
+
+import java.io.Serializable;
 
 /**
  * A Location.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
- * @since 1.0
  */
-public class Location implements Target, Serializable {
+public class Location extends ApplicationEntity implements Target, Serializable {
 
     private String locationId;
     private boolean incomingActive = true;
 
     @JsonCreator
     public Location() {
+    }
+
+    public String getLocationId() {
+        return locationId;
     }
 
     @JsonCreator

@@ -32,7 +32,6 @@ import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.TransportServiceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
@@ -49,10 +48,13 @@ import java.util.Optional;
 class Starter implements ApplicationListener<TransportServiceEvent> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Starter.class);
-    @Autowired
-    private TransportOrderRepository repository;
-    @Autowired
-    private CommonGateway commonGateway;
+    private final TransportOrderRepository repository;
+    private final CommonGateway commonGateway;
+
+    Starter(TransportOrderRepository repository, CommonGateway commonGateway) {
+        this.repository = repository;
+        this.commonGateway = commonGateway;
+    }
 
     /**
      * Handle an application event.

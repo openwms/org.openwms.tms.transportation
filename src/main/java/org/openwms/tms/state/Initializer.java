@@ -21,9 +21,6 @@
  */
 package org.openwms.tms.state;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.ameba.exception.NotFoundException;
 import org.openwms.common.CommonGateway;
 import org.openwms.tms.StateChangeException;
@@ -33,12 +30,13 @@ import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.TransportServiceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * A Initializer.
@@ -50,12 +48,15 @@ import org.springframework.transaction.annotation.Transactional;
 class Initializer implements ApplicationListener<TransportServiceEvent> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Initializer.class);
-    @Autowired
-    private TransportOrderRepository repository;
-    @Autowired
-    private CommonGateway commonGateway;
-    @Autowired
-    private ApplicationContext ctx;
+    private final TransportOrderRepository repository;
+    private final CommonGateway commonGateway;
+    private final ApplicationContext ctx;
+
+    Initializer(TransportOrderRepository repository, CommonGateway commonGateway, ApplicationContext ctx) {
+        this.repository = repository;
+        this.commonGateway = commonGateway;
+        this.ctx = ctx;
+    }
 
     /**
      * Handle an application event.
@@ -63,11 +64,11 @@ class Initializer implements ApplicationListener<TransportServiceEvent> {
      * @param event the event to respond to
      */
     @Override
-    public void onApplicationEvent(TransportServiceEvent event) {
+    public void onApplicationEvent(final TransportServiceEvent event) {
         if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_CREATED) {
             TransportOrder to = repository.findOne((Long) event.getSource());
             List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.CREATED);
-            Collections.sort(transportOrders, new TransportStartComparator());
+            transportOrders.sort(new TransportStartComparator());
             for (TransportOrder transportOrder : transportOrders) {
                 try {
                     transportOrder

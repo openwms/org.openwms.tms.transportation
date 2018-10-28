@@ -74,11 +74,25 @@ public interface TransportationService<T extends TransportOrder> {
     Collection<String> change(Collection<String> pKeys, TransportOrderState state);
 
     /**
-     * Find and return the {@code TransportOrder} identified by the persisted key {@code pKey}.
+     * Find and return the {@link TransportOrder} identified by the persisted key {@code pKey}.
      *
      * @param pKey The persisted key
      * @return An {@code TransportOrder} instance
      * @throws org.ameba.exception.NotFoundException if no entity was found
      */
     T findByPKey(String pKey);
+
+    List<TransportOrder> findInfeed(String sourceLocation, TransportOrderState state);
+
+    /**
+     * Find and return all {@link TransportOrder}s with the given {@code state} and the sourceLocation and targetLocation.
+     *
+     * @param sourceLocationGroupName Name of the sourceLocation
+     * @param targetLocationGroupName Name of the targetLocation
+     * @param state The state
+     * @return All TransportOrders or an empty collection, never {@literal null}
+     */
+    Collection<T> findInAisle(String sourceLocationGroupName, String targetLocationGroupName, TransportOrderState state);
+
+    List<T> findOutfeed(String sourceLocationGroupName, TransportOrderState state);
 }

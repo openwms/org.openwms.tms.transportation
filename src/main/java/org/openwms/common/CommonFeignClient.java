@@ -23,29 +23,36 @@ package org.openwms.common;
 
 import feign.Response;
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 /**
  * A CommonFeignClient.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
- * @since 1.0
  */
-@FeignClient(name = "common-service", decode404 = false)
-interface CommonFeignClient {
+@FeignClient(name = "common-service")
+public interface CommonFeignClient {
 
-    @RequestMapping(method = RequestMethod.GET, value = CommonConstants.API_LOCATIONS, params = {"locationPK"})
+    @GetMapping(value = CommonConstants.API_LOCATIONS, params = {"locationPK"})
     Location getLocation(@RequestParam("locationPK") String locationPk);
 
-    @RequestMapping(method = RequestMethod.GET, value = CommonConstants.API_LOCATIONGROUPS, params = {"name"})
+    @GetMapping(value = CommonConstants.API_LOCATIONS, params = {"locationGroupName"})
+    List<Location> getLocationsForLocationGroup(@RequestParam("locationGroupName") String locationGroupName);
+
+    @GetMapping(value = CommonConstants.API_LOCATIONGROUPS, params = {"name"})
     LocationGroup getLocationGroup(@RequestParam("name") String name);
 
-    @RequestMapping(method = RequestMethod.GET, value = CommonConstants.API_TRANSPORTUNITS, params = {"bk"})
+    @GetMapping(value = CommonConstants.API_TRANSPORTUNITS, params = {"bk"})
     TransportUnit getTransportUnit(@RequestParam("bk") String transportUnitBK);
 
-    @RequestMapping(method = RequestMethod.PUT, value = CommonConstants.API_TRANSPORTUNITS, params = {"bk"})
+    @GetMapping(value = CommonConstants.API_TRANSPORTUNITS, params = {"actualLocation"})
+    List<TransportUnit> getTransportUnitsOn(@RequestParam("actualLocation") String actualLocation);
+
+    @PutMapping(value = CommonConstants.API_TRANSPORTUNITS, params = {"bk"})
     Response updateTU(@RequestParam("bk") String transportUnitBK, @RequestBody TransportUnitVO tu);
 }

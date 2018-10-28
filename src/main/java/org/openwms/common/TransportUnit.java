@@ -28,7 +28,6 @@ import java.util.Objects;
  * A TransportUnit.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
- * @since 1.0
  */
 public class TransportUnit implements Serializable {
 
