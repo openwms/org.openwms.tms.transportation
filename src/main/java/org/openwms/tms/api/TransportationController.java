@@ -125,16 +125,23 @@ class TransportationController {
 
 
     @Measured
-    @PostMapping
+    @PostMapping(params = {"barcode", "target"})
     @ResponseStatus(HttpStatus.CREATED)
     void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target, @RequestParam(value = "priority", required = false) String priority, HttpServletRequest req, HttpServletResponse resp) {
         TransportOrder to = service.create(barcode, target, priority);
         resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    void createTO(@RequestBody CreateTransportOrderVO vo, HttpServletRequest req, HttpServletResponse resp) {
+        TransportOrder to = service.create(vo.getBarcode(), vo.getTarget(), vo.getPriority());
+        resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
+    }
+
     @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateTO(@RequestBody UpdateTransportOrderVO vo) {
+    void updateTO(@RequestBody UpdateTransportOrderVO vo) {
         PriorityLevel.of(vo.getPriority());
         service.update(m.map(vo, TransportOrder.class));
     }

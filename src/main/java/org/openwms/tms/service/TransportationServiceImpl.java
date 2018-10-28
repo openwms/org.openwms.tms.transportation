@@ -21,7 +21,6 @@
  */
 package org.openwms.tms.service;
 
-import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
 import org.ameba.i18n.Translator;
 import org.openwms.common.CommonFeignClient;
@@ -43,6 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,7 +58,8 @@ import java.util.stream.Stream;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@TxService
+@Transactional
+@Service
 class TransportationServiceImpl implements TransportationService<TransportOrder> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationServiceImpl.class);
