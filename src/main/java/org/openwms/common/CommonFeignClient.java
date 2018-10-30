@@ -55,4 +55,7 @@ public interface CommonFeignClient {
 
     @PutMapping(value = CommonConstants.API_TRANSPORTUNITS, params = {"bk"})
     Response updateTU(@RequestParam("bk") String transportUnitBK, @RequestBody TransportUnitVO tu);
+
+    @GetMapping(value = "/stock", params = {"stockLocationGroupNames", "count"})
+    List<Location> findStockLocationSimple(@RequestParam("stockLocationGroupNames") List<String> stockLocationGroupNames, @RequestParam("count") int count);
 }

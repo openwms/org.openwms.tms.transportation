@@ -82,7 +82,7 @@ public interface TransportationService<T extends TransportOrder> {
      */
     T findByPKey(String pKey);
 
-    List<TransportOrder> findInfeed(String sourceLocation, TransportOrderState state);
+    List<TransportOrder> findInfeed(String sourceLocation, TransportOrderState state, String... searchTargetLocationGroups);
 
     /**
      * Find and return all {@link TransportOrder}s with the given {@code state} and the sourceLocation and targetLocation.
@@ -95,4 +95,6 @@ public interface TransportationService<T extends TransportOrder> {
     Collection<T> findInAisle(String sourceLocationGroupName, String targetLocationGroupName, TransportOrderState state);
 
     List<T> findOutfeed(String sourceLocationGroupName, TransportOrderState state);
+
+    void changeState(String id, TransportOrderState state);
 }

@@ -21,6 +21,12 @@
  */
 package org.openwms.tms;
 
+import org.ameba.integration.jpa.ApplicationEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -32,12 +38,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.util.Date;
-
-import org.ameba.integration.jpa.ApplicationEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 
 /**
  * A TransportOrder is used to move {@code TransportUnit}s from a current {@code Location} to a target.
@@ -221,6 +221,10 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
      */
     public String getTargetLocation() {
         return targetLocation;
+    }
+
+    public boolean hasTargetLocation() {
+        return this.targetLocation != null && !this.targetLocation.isEmpty();
     }
 
     /**

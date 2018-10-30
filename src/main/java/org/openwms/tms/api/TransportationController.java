@@ -85,10 +85,10 @@ class TransportationController {
     }
 
     @Measured
-    @GetMapping(value = TMSConstants.ROOT_ENTITIES, params ={"sourceLocation", "state"})
-    TransportOrder getNextInfeed(@RequestParam("sourceLocation") String sourceLocation, @RequestParam("state") String state) {
+    @GetMapping(value = TMSConstants.ROOT_ENTITIES, params ={"sourceLocation", "state", "searchTargetLocationGroupNames"})
+    TransportOrder getNextInfeed(@RequestParam("sourceLocation") String sourceLocation, @RequestParam("state") String state, @RequestParam("searchTargetLocationGroupNames") String searchTargetLocationGroups) {
         LOGGER.debug("Find TransportOrders from infeed position {} in state {}", sourceLocation, state);
-        List<TransportOrder> tos = service.findInfeed(sourceLocation, TransportOrderState.valueOf(state));
+        List<TransportOrder> tos = service.findInfeed(sourceLocation, TransportOrderState.valueOf(state), searchTargetLocationGroups);
         if (tos.isEmpty()) {
             LOGGER.debug("> No TransportOrder for infeed exists");
             return null;
@@ -145,6 +145,12 @@ class TransportationController {
         PriorityLevel.of(vo.getPriority());
         service.update(m.map(vo, TransportOrder.class));
     }
+
+    @PostMapping(value = "/transportorders/{id}", params = {"state"})
+    void finishTO(@PathVariable(value = "id") String id, @RequestParam(value = "state") String state) {
+        service.changeState(id, TransportOrderState.valueOf(state));
+    }
+
 
     @ExceptionHandler(BusinessRuntimeException.class)
     public ResponseEntity<Response<Serializable>> handleNotFound(HttpServletResponse res, BusinessRuntimeException ex) {

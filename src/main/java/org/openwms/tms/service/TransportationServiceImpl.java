@@ -5,7 +5,7 @@
  * This file is part of openwms.org.
  *
  * openwms.org is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as 
+ * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
  *
@@ -46,6 +46,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -107,7 +108,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
      * {@link TransportOrder} for the {@code TransportUnit} exist.
      *
      * @throws NotFoundException when the barcode is {@literal null} or no transportUnit with barcode can be found or no target
-     * can be found.
+     *                           can be found.
      */
     @Override
     public TransportOrder create(String barcode, String target, String priority) {
@@ -115,16 +116,13 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
             throw new NotFoundException("Barcode cannot be null when creating a TransportOrder");
         }
         LOGGER.debug("Trying to create TransportOrder with Barcode [{}], to Target [{}], with Priority [{}]", barcode, target, priority);
-        TransportOrder transportOrder = new TransportOrder(barcode)
-                .setTargetLocation(target)
-                .setTargetLocationGroup(target);
+        TransportOrder transportOrder = new TransportOrder(barcode).setTargetLocation(target).setTargetLocationGroup(target);
         if (priority != null) {
             transportOrder.setPriority(PriorityLevel.of(priority));
         }
         transportOrder = repository.save(transportOrder);
         LOGGER.debug("TransportOrder for Barcode [{}] created. PKey is [{}], PK is [{}]", barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
-        ctx.publishEvent(new TransportServiceEvent(transportOrder.getPk(),
-                TransportServiceEvent.TYPE.TRANSPORT_CREATED));
+        ctx.publishEvent(new TransportServiceEvent(transportOrder.getPk(), TransportServiceEvent.TYPE.TRANSPORT_CREATED));
         LOGGER.debug("TransportOrder for Barcode [{}] persisted. PKey is [{}], PK is [{}]", barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
         return transportOrder;
     }
@@ -150,8 +148,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
             try {
                 LOGGER.debug("Trying to turn TransportOrder [{}] into state [{}]", transportOrder.getPk(), state);
                 transportOrder.changeState(state);
-                ctx.publishEvent(new TransportServiceEvent(transportOrder.getPk(), TransportOrderUtil
-                        .convertToEventType(state)));
+                ctx.publishEvent(new TransportServiceEvent(transportOrder.getPk(), TransportOrderUtil.convertToEventType(state)));
             } catch (StateChangeException sce) {
                 LOGGER.error("Could not turn TransportOrder: [{}] into [{}], because of [{}]", transportOrder.getPk(), state, sce.getMessage());
                 Message problem = new Message.Builder().withMessage(sce.getMessage()).build();
@@ -171,12 +168,28 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     }
 
     @Override
-    public List<TransportOrder> findInfeed(String sourceLocation, TransportOrderState state) {
+    public List<TransportOrder> findInfeed(String sourceLocation, TransportOrderState state, String... searchTargetLocationGroups) {
         List<TransportUnit> tus = commonClient.getTransportUnitsOn(sourceLocation);
         if (tus == null || tus.isEmpty()) {
             return Collections.emptyList();
         }
-        return repository.findByTransportUnitBKIsInAndStateOrderByStartDate(tus.stream().map(TransportUnit::getBarcode).collect(Collectors.toList()), state);
+        List<TransportOrder> tos = repository.findByTransportUnitBKIsInAndStateOrderByStartDate(tus.stream().map(TransportUnit::getBarcode).collect(Collectors.toList()), state);
+        if (searchTargetLocationGroups != null && searchTargetLocationGroups.length > 0) {
+
+            // Required to search the final target first
+            int noTo = (int) tos.stream().filter(t -> !t.hasTargetLocation()).count();
+            List<Location> targets = commonClient.findStockLocationSimple(Arrays.asList(searchTargetLocationGroups), noTo);
+            for (TransportOrder to : tos) {
+                if (!to.hasTargetLocation()) {
+                    if (targets.iterator().hasNext()) {
+                        to.setTargetLocation(targets.iterator().next().getLocationId());
+                    } else {
+                        LOGGER.warn("Not enough free Locations to allocate all open TransportOrders");
+                    }
+                }
+            };
+        }
+        return tos;
     }
 
     /**
@@ -192,6 +205,12 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     public List<TransportOrder> findOutfeed(String sourceLocationGroupName, TransportOrderState state) {
         List<String> sourceLocations = commonClient.getLocationsForLocationGroup(sourceLocationGroupName).stream().map(Location::getLocationId).collect(Collectors.toList());
         return repository.findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(sourceLocationGroupName, state, sourceLocations);
+    }
+
+    @Override
+    public void changeState(String id, TransportOrderState state) {
+        TransportOrder to = repository.findByPKey(id).orElseThrow(NotFoundException::new);
+        to.changeState(state);
     }
 
     private TransportOrder findBy(String pKey) {
