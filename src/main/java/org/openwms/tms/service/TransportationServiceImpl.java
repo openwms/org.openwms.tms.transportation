@@ -21,6 +21,8 @@
  */
 package org.openwms.tms.service;
 
+import org.ameba.annotation.Measured;
+import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
 import org.ameba.i18n.Translator;
 import org.openwms.common.CommonFeignClient;
@@ -42,8 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,8 +59,7 @@ import java.util.stream.Stream;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Transactional
-@Service
+@TxService
 class TransportationServiceImpl implements TransportationService<TransportOrder> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationServiceImpl.class);
@@ -81,6 +80,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
         this.ctx = ctx;
     }
 
+    @Measured
     @Override
     public List<TransportOrder> findBy(String barcode, String... states) {
         return repository.findByTransportUnitBKAndStates(barcode, Stream.of(states).map(TransportOrderState::valueOf).collect(Collectors.toList()).toArray(new TransportOrderState[states.length]));
@@ -89,6 +89,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     /**
      * {@inheritDoc}
      */
+    @Measured
     @Override
     public int getNoTransportOrdersToTarget(String target, String... states) {
         int i = 0;
@@ -111,6 +112,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
      *                           can be found.
      */
     @Override
+    @Measured
     public TransportOrder create(String barcode, String target, String priority) {
         if (barcode == null) {
             throw new NotFoundException("Barcode cannot be null when creating a TransportOrder");
@@ -131,6 +133,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
      * {@inheritDoc}
      */
     @Override
+    @Measured
     public TransportOrder update(TransportOrder transportOrder) {
         TransportOrder saved = findBy(transportOrder.getPersistentKey());
         updateFunctions.forEach(up -> up.update(saved, transportOrder));
@@ -141,6 +144,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
      * {@inheritDoc}
      */
     @Override
+    @Measured
     public Collection<String> change(Collection<String> pKeys, TransportOrderState state) {
         List<String> failure = new ArrayList<>(pKeys.size());
         List<TransportOrder> transportOrders = repository.findByPKey(new ArrayList<>(pKeys));
@@ -163,11 +167,13 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
      * {@inheritDoc}
      */
     @Override
+    @Measured
     public TransportOrder findByPKey(String pKey) {
         return findBy(pKey);
     }
 
     @Override
+    @Measured
     public List<TransportOrder> findInfeed(String sourceLocation, TransportOrderState state, String... searchTargetLocationGroups) {
         List<TransportUnit> tus = commonClient.getTransportUnitsOn(sourceLocation);
         if (tus == null || tus.isEmpty()) {
@@ -196,18 +202,21 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
      * {@inheritDoc}
      */
     @Override
+    @Measured
     public Collection<TransportOrder> findInAisle(String sourceLocationGroupName, String targetLocationGroupName, TransportOrderState state) {
         List<String> sourceLocations = commonClient.getLocationsForLocationGroup(sourceLocationGroupName).stream().map(Location::getLocationId).collect(Collectors.toList());
         return repository.findByTargetLocationGroupAndStateAndSourceLocationIn(targetLocationGroupName, state, sourceLocations);
     }
 
     @Override
+    @Measured
     public List<TransportOrder> findOutfeed(String sourceLocationGroupName, TransportOrderState state) {
         List<String> sourceLocations = commonClient.getLocationsForLocationGroup(sourceLocationGroupName).stream().map(Location::getLocationId).collect(Collectors.toList());
         return repository.findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(sourceLocationGroupName, state, sourceLocations);
     }
 
     @Override
+    @Measured
     public void changeState(String id, TransportOrderState state) {
         TransportOrder to = repository.findByPKey(id).orElseThrow(NotFoundException::new);
         to.changeState(state);
