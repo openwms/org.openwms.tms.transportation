@@ -21,15 +21,15 @@
  */
 package org.openwms.common;
 
-import java.nio.charset.Charset;
-import java.util.Base64;
-
 import feign.RequestInterceptor;
 import org.ameba.Constants;
 import org.ameba.http.RequestIDHolder;
 import org.ameba.tenancy.TenantHolder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.nio.charset.Charset;
+import java.util.Base64;
 
 /**
  * A FeignConfiguration.
@@ -47,8 +47,8 @@ class FeignConfiguration {
             //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             //User user = (User) authentication.getPrincipal();
             String username = "user";//user.getUsername();
-            String password = "sa";//(String) authentication.getCredentials();
-            t.header("Authorization", "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes(Charset.forName("UTF-8"))));
+            String pw = "sa";//(String) authentication.getCredentials();
+            t.header("Authorization", "Basic " + Base64.getEncoder().encodeToString((username + ":" + pw).getBytes(Charset.forName("UTF-8"))));
             t.header(Constants.HEADER_VALUE_X_TENANT, TenantHolder.getCurrentTenant());
             String reqId = RequestIDHolder.getRequestID();
             if (reqId != null) {
