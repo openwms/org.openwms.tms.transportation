@@ -119,7 +119,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
         }
         LOGGER.debug("Trying to create TransportOrder with Barcode [{}], to Target [{}], with Priority [{}]", barcode, target, priority);
         TransportOrder transportOrder = new TransportOrder(barcode).setTargetLocation(target).setTargetLocationGroup(target);
-        if (priority != null) {
+        if (priority != null && !priority.isEmpty()) {
             transportOrder.setPriority(PriorityLevel.of(priority));
         }
         transportOrder = repository.save(transportOrder);
@@ -145,7 +145,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
      */
     @Override
     @Measured
-    public Collection<String> change(Collection<String> pKeys, TransportOrderState state) {
+    public Collection<String> change(TransportOrderState state, Collection<String> pKeys) {
         List<String> failure = new ArrayList<>(pKeys.size());
         List<TransportOrder> transportOrders = repository.findByPKey(new ArrayList<>(pKeys));
         for (TransportOrder transportOrder : transportOrders) {
@@ -174,7 +174,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
 
     @Override
     @Measured
-    public List<TransportOrder> findInfeed(String sourceLocation, TransportOrderState state, String... searchTargetLocationGroups) {
+    public List<TransportOrder> findInfeed(TransportOrderState state, String sourceLocation, String... searchTargetLocationGroups) {
         List<TransportUnit> tus = commonClient.getTransportUnitsOn(sourceLocation);
         if (tus == null || tus.isEmpty()) {
             return Collections.emptyList();
@@ -203,21 +203,21 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
      */
     @Override
     @Measured
-    public Collection<TransportOrder> findInAisle(String sourceLocationGroupName, String targetLocationGroupName, TransportOrderState state) {
+    public Collection<TransportOrder> findInAisle(TransportOrderState state, String sourceLocationGroupName, String targetLocationGroupName) {
         List<String> sourceLocations = commonClient.getLocationsForLocationGroup(sourceLocationGroupName).stream().map(Location::getLocationId).collect(Collectors.toList());
         return repository.findByTargetLocationGroupAndStateAndSourceLocationIn(targetLocationGroupName, state, sourceLocations);
     }
 
     @Override
     @Measured
-    public List<TransportOrder> findOutfeed(String sourceLocationGroupName, TransportOrderState state) {
-        List<String> sourceLocations = commonClient.getLocationsForLocationGroup(sourceLocationGroupName).stream().map(Location::getLocationId).collect(Collectors.toList());
-        return repository.findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(sourceLocationGroupName, state, sourceLocations);
+    public List<TransportOrder> findOutfeed(TransportOrderState state, String... sourceLocationGroupNames) {
+        List<String> sourceLocations = commonClient.getLocationsForLocationGroup(sourceLocationGroupNames).stream().map(Location::getLocationId).collect(Collectors.toList());
+        return repository.findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(state, sourceLocations);
     }
 
     @Override
     @Measured
-    public void changeState(String id, TransportOrderState state) {
+    public void changeState(TransportOrderState state, String id) {
         TransportOrder to = repository.findByPKey(id).orElseThrow(NotFoundException::new);
         to.changeState(state);
     }

@@ -65,13 +65,13 @@ public interface TransportationService<T extends TransportOrder> {
     /**
      * Try to turn a list of {@link TransportOrder}s into the given {@code state}.
      *
-     * @param pKeys The persisted keys of {@link TransportOrder}s
      * @param state The state to change all orders to
+     * @param pKeys The persisted keys of {@link TransportOrder}s
      * @return A list of persisted keys of {@link TransportOrder}s that have not been changed
      * @deprecated Use update instead
      */
     @Deprecated
-    Collection<String> change(Collection<String> pKeys, TransportOrderState state);
+    Collection<String> change(TransportOrderState state, Collection<String> pKeys);
 
     /**
      * Find and return the {@link TransportOrder} identified by the persisted key {@code pKey}.
@@ -82,19 +82,19 @@ public interface TransportationService<T extends TransportOrder> {
      */
     T findByPKey(String pKey);
 
-    List<TransportOrder> findInfeed(String sourceLocation, TransportOrderState state, String... searchTargetLocationGroups);
+    List<TransportOrder> findInfeed(TransportOrderState state, String sourceLocation, String... searchTargetLocationGroups);
 
     /**
      * Find and return all {@link TransportOrder}s with the given {@code state} and the sourceLocation and targetLocation.
      *
+     * @param state The state
      * @param sourceLocationGroupName Name of the sourceLocation
      * @param targetLocationGroupName Name of the targetLocation
-     * @param state The state
      * @return All TransportOrders or an empty collection, never {@literal null}
      */
-    Collection<T> findInAisle(String sourceLocationGroupName, String targetLocationGroupName, TransportOrderState state);
+    Collection<T> findInAisle(TransportOrderState state, String sourceLocationGroupName, String targetLocationGroupName);
 
-    List<T> findOutfeed(String sourceLocationGroupName, TransportOrderState state);
+    List<T> findOutfeed(TransportOrderState state, String... sourceLocationGroupNames);
 
-    void changeState(String id, TransportOrderState state);
+    void changeState(TransportOrderState state, String id);
 }

@@ -88,7 +88,7 @@ class TransportationController {
     @GetMapping(value = TMSConstants.ROOT_ENTITIES, params ={"sourceLocation", "state", "searchTargetLocationGroupNames"})
     TransportOrder getNextInfeed(@RequestParam("sourceLocation") String sourceLocation, @RequestParam("state") String state, @RequestParam("searchTargetLocationGroupNames") String searchTargetLocationGroups) {
         LOGGER.debug("Find TransportOrders from infeed position {} in state {}", sourceLocation, state);
-        List<TransportOrder> tos = service.findInfeed(sourceLocation, TransportOrderState.valueOf(state), searchTargetLocationGroups);
+        List<TransportOrder> tos = service.findInfeed(TransportOrderState.valueOf(state), sourceLocation, searchTargetLocationGroups);
         if (tos.isEmpty()) {
             LOGGER.debug("> No TransportOrder for infeed exists");
             return null;
@@ -101,7 +101,7 @@ class TransportationController {
     @GetMapping(value = "/transportorders", params ={"sourceLocationGroupName", "targetLocationGroupName", "state"})
     TransportOrder getNextInAisle(@RequestParam("sourceLocationGroupName") String sourceLocationGroupName, @RequestParam("targetLocationGroupName") String targetLocationGroupName, @RequestParam("state") String state) {
         LOGGER.debug("Find TransportOrders within one aisle with source {} and target {} in state {}", sourceLocationGroupName, targetLocationGroupName, state);
-        Collection<TransportOrder> tos = service.findInAisle(sourceLocationGroupName, targetLocationGroupName, TransportOrderState.valueOf(state));
+        Collection<TransportOrder> tos = service.findInAisle(TransportOrderState.valueOf(state), sourceLocationGroupName, targetLocationGroupName);
         if (tos.isEmpty()) {
             LOGGER.debug("> No TransportOrders exist");
             return null;
@@ -110,10 +110,10 @@ class TransportationController {
         return tos.iterator().next();
     }
 
-    @GetMapping(value = "/transportorders", params ={"sourceLocationGroupName", "state"})
-    TransportOrder getNextOutfeed(@RequestParam("sourceLocationGroupName") String sourceLocationGroupName,@RequestParam("state") String state) {
+    @GetMapping(value = "/transportorders", params = {"state", "sourceLocationGroupName"})
+    TransportOrder getNextOutfeed(@RequestParam("state") String state, @RequestParam("sourceLocationGroupName") String sourceLocationGroupName) {
         LOGGER.debug("Find TransportOrders for outfeed position {} in state {}", sourceLocationGroupName, state);
-        List<TransportOrder> tos = service.findOutfeed(sourceLocationGroupName, TransportOrderState.valueOf(state));
+        List<TransportOrder> tos = service.findOutfeed(TransportOrderState.valueOf(state), sourceLocationGroupName);
         if (tos.isEmpty()) {
             LOGGER.debug("> No TransportOrder for outfeed exists");
             return null;
@@ -148,7 +148,7 @@ class TransportationController {
 
     @PostMapping(value = "/transportorders/{id}", params = {"state"})
     void finishTO(@PathVariable(value = "id") String id, @RequestParam(value = "state") String state) {
-        service.changeState(id, TransportOrderState.valueOf(state));
+        service.changeState(TransportOrderState.valueOf(state), id);
     }
 
 

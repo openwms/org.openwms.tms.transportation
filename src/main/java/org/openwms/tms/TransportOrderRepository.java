@@ -43,7 +43,8 @@ public interface TransportOrderRepository extends JpaRepository<TransportOrder, 
 
     List<TransportOrder> findByTargetLocationGroupAndStateAndSourceLocationIn(String targetLocationGroup, TransportOrderState state, List<String> sourceLocation);
 
-    List<TransportOrder> findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(String targetLocationGroup, TransportOrderState state, List<String> sourceLocation);
+    @Query("select to from TransportOrder to where to.state = :state and to.sourceLocation in :sourceLocations")
+    List<TransportOrder> findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(@Param("state") TransportOrderState state, @Param("sourceLocations") List<String> sourceLocations);
 
     @Query("select to from TransportOrder to where to.pKey in ?1")
     List<TransportOrder> findByPKey(List<String> pKeys);

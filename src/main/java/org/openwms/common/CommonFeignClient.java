@@ -35,14 +35,14 @@ import java.util.List;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@FeignClient(name = "common-service")
+@FeignClient(name = "common-service", decode404 = true)
 public interface CommonFeignClient {
 
     @GetMapping(value = CommonConstants.API_LOCATIONS, params = {"locationPK"})
     Location getLocation(@RequestParam("locationPK") String locationPk);
 
-    @GetMapping(value = CommonConstants.API_LOCATIONS, params = {"locationGroupName"})
-    List<Location> getLocationsForLocationGroup(@RequestParam("locationGroupName") String locationGroupName);
+    @GetMapping(value = CommonConstants.API_LOCATIONS, params = {"locationGroupNames"})
+    List<Location> getLocationsForLocationGroup(@RequestParam("locationGroupNames") String... locationGroupNames);
 
     @GetMapping(value = CommonConstants.API_LOCATIONGROUPS, params = {"name"})
     LocationGroup getLocationGroup(@RequestParam("name") String name);
