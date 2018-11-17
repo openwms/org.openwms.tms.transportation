@@ -19,6 +19,10 @@ spring:
         web-allow-others: true
   jpa:
     generate-ddl: true
+  security:
+    user:
+      # Override this in cloud environment!
+      password: sa
 
 owms:
   eureka:
@@ -27,11 +31,6 @@ owms:
 
 server:
   port: ${PORT:8131}
-
-security:
-  user:
-    # Override this in cloud environment!
-    password: sa
 
 eureka:
   client:
@@ -44,7 +43,7 @@ eureka:
     metadata-map:
       # need to be overridden in the cloud environment props!
       username: user
-      password: ${security.user.password}
+      password: ${spring.security.user.password}
       protocol: http
 
 ---

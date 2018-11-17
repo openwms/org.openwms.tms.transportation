@@ -1,45 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-/*
- * openwms.org, the Open Warehouse Management System.
- * Copyright (C) 2014 Heiko Scherrer
- *
- * This file is part of openwms.org.
- *
- * openwms.org is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as 
- * published by the Free Software Foundation; either version 2 of the
- * License, or (at your option) any later version.
- *
- * openwms.org is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this software. If not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
--->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.openwms</groupId>
-        <artifactId>org.openwms</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
+        <artifactId>org.openwms.parent</artifactId>
+        <version>5</version>
         <relativePath/>
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
     <name>OpenWMS.org TMS: Transportation Services</name>
     <url>https://www.interface21.io/docs/tms/transportation/index.html</url>
 
-    <properties>
-        <core.version>1.1.0-SNAPSHOT</core.version>
-        <common.version>1.1.0-SNAPSHOT</common.version>
-    </properties>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/openwms/org.openwms.tms.transportation/issues</url>
+    </issueManagement>
 
     <distributionManagement>
         <repository>
@@ -59,6 +36,12 @@
         </site>
     </distributionManagement>
 
+    <scm>
+        <url>https://github.com/openwms/org.openwms.tms.transportation</url>
+        <connection>scm:git:git://github.com/openwms/org.openwms.tms.transportation.git</connection>
+        <developerConnection>scm:git:git@github.com:openwms/org.openwms.tms.transportation.git</developerConnection>
+    </scm>
+
     <developers>
         <developer>
             <id>scherrer</id>
@@ -77,15 +60,9 @@
         </developer>
     </developers>
 
-    <scm>
-        <url>https://github.com/openwms/org.openwms.tms.transportation</url>
-        <connection>scm:git:git://github.com/openwms/org.openwms.tms.transportation.git</connection>
-        <developerConnection>scm:git:git@github.com:openwms/org.openwms.tms.transportation.git</developerConnection>
-    </scm>
-
     <ciManagement>
-        <system>Jenkins</system>
-        <url>https://openwms.mooo.com/jenkins/job/org.openwms.tms.transportation</url>
+        <system>travis</system>
+        <url>https://travis-ci.com/openwms/org.openwms.tms.transportation</url>
         <notifiers>
             <notifier>
                 <type>mail</type>
@@ -96,10 +73,30 @@
         </notifiers>
     </ciManagement>
 
-    <issueManagement>
-        <system>Github</system>
-        <url>https://github.com/openwms/org.openwms.tms.transportation/issues</url>
-    </issueManagement>
+    <properties>
+        <core.version>1.3.0-SNAPSHOT</core.version>
+        <guava.version>19.0</guava.version>
+    </properties>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>summary</report>
+                            <report>project-team</report>
+                            <report>issue-tracking</report>
+                            <report>cim</report>
+                            <report>scm</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <build>
         <finalName>openwms-tms-transportation</finalName>
@@ -122,32 +119,19 @@
         </plugins>
     </build>
 
-    <reporting>
-        <plugins>
-            <plugin>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>index</report>
-                            <report>summary</report>
-                            <report>project-team</report>
-                            <report>issue-tracking</report>
-                            <report>cim</report>
-                            <report>scm</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-    </reporting>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.openwms</groupId>
-                <artifactId>org.openwms.common.shared</artifactId>
-                <version>${common.version}</version>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud-dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.openwms</groupId>
@@ -160,12 +144,12 @@
 
     <dependencies>
         <!-- Project dependencies -->
-        <dependency>
-            <groupId>org.openwms</groupId>
-            <artifactId>org.openwms.common.shared</artifactId>
-        </dependency>
 
         <!-- 3rd party dependencies -->
+        <dependency>
+            <groupId>io.interface21</groupId>
+            <artifactId>ameba-lib</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -186,8 +170,9 @@
             <artifactId>logback-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
+            <!-- Required by eureka-client -->
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
 
         <!-- Spring Framework -->
@@ -217,47 +202,23 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-eureka</artifactId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
             <exclusions>
                 <exclusion>
-                    <!-- bites with spring-core -->
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
+                    <!-- Several versions of Guava used internally, exclude all -->
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-eureka-server</artifactId>
-            <!-- We use the server for tests -->
-            <scope>test</scope>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-feign</artifactId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-hystrix</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-ribbon</artifactId>
-        </dependency>
-        <!--dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-sleuth</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-zipkin</artifactId>
-        </dependency-->
 
         <!-- both for retry -->
         <dependency>
@@ -284,6 +245,12 @@
 
         <!-- Test dependencies -->
         <dependency>
+            <groupId>io.interface21</groupId>
+            <artifactId>ameba-lib</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.restdocs</groupId>
             <artifactId>spring-restdocs-mockmvc</artifactId>
             <scope>test</scope>
@@ -295,6 +262,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-eureka-server</artifactId>
+            <!-- We use the server for tests -->
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
             <exclusions>
@@ -303,6 +276,11 @@
                     <artifactId>asm</artifactId>
                 </exclusion>
             </exclusions>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

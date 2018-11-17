@@ -5,51 +5,6 @@
     <property name="MODULE_NAME" value="TMS" />
     <property name="SERVICE_NAME" value="TMS-Transportation" />
 
-    <appender name="SYSLOG" class="ch.qos.logback.classic.sift.SiftingAppender">
-        <discriminator>
-            <key>Tenant</key>
-            <defaultValue>BOOT</defaultValue>
-        </discriminator>
-        <sift>
-            <appender name="SYSLOG-${Tenant}" class="ch.qos.logback.classic.net.SyslogAppender">
-                <syslogHost>openwms.mooo.com</syslogHost>
-                <facility>SYSLOG</facility>
-                <port>10514</port>
-                <suffixPattern>${SERVICE_NAME} ${Tenant} ${MODULE_NAME} %d{YYYY-MM-dd HH:mm:ss.SSS} %X{X-RequestID} %-5level [${PID:- }/%tid] - [%-40.40logger{39}]${mdcPattern} : %msg%n</suffixPattern>
-            </appender>
-        </sift>
-    </appender>
-    <property name="LOG_FILE" value="${BUILD_FOLDER:-build}/${springAppName}"/>​
-    <appender name="LOGSTASH" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_FILE}.json</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_FILE}.json.%d{yyyy-MM-dd}.gz</fileNamePattern>
-            <maxHistory>7</maxHistory>
-        </rollingPolicy>
-        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
-            <providers>
-                <timestamp>
-                    <timeZone>UTC</timeZone>
-                </timestamp>
-                <pattern>
-                    <pattern>
-                        {
-                        "severity": "%level",
-                        "service": "${springAppName:-}",
-                        "trace": "%X{X-B3-TraceId:-}",
-                        "span": "%X{X-B3-SpanId:-}",
-                        "parent": "%X{X-B3-ParentSpanId:-}",
-                        "exportable": "%X{X-Span-Export:-}",
-                        "pid": "${PID:-}",
-                        "thread": "%thread",
-                        "class": "%logger{40}",
-                        "rest": "%message"
-                        }
-                    </pattern>
-                </pattern>
-            </providers>
-        </encoder>
-    </appender>
     <include resource="logback-appenders.xml" />
     <include resource="logback-loggers.xml" />
 
@@ -81,8 +36,6 @@
     <root level="INFO">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="LOGFILE"/>
-        <!--appender-ref ref="SYSLOG" /-->
-        <!--appender-ref ref="LOGSTASH" /-->
     </root>
 
 </configuration>

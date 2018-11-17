@@ -13,19 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.common;
+package org.openwms.tms;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
- * A Target represents a target of a TransportOrder.
+ * A SecurityConfiguration.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-public interface Target {
+@Configuration
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
-     * Returns the unique business key of the Target.
-     *
-     * @return Unique business key
+     * {@inheritDoc}
+     * <p>
+     * API is for non browser clients!
      */
-    String asString();
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
+    }
 }
