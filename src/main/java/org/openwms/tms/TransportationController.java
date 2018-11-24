@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms.api;
+package org.openwms.tms;
 
 import org.ameba.annotation.Measured;
 import org.ameba.exception.BehaviorAwareException;
 import org.ameba.exception.BusinessRuntimeException;
 import org.ameba.http.Response;
 import org.ameba.mapping.BeanMapper;
-import org.openwms.tms.PriorityLevel;
-import org.openwms.tms.TMSConstants;
-import org.openwms.tms.TransportOrder;
-import org.openwms.tms.TransportOrderState;
-import org.openwms.tms.TransportationService;
+import org.openwms.tms.api.CreateTransportOrderVO;
+import org.openwms.tms.api.UpdateTransportOrderVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
