@@ -20,6 +20,7 @@ import org.ameba.integration.jpa.BaseEntity;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
@@ -28,6 +29,7 @@ import java.io.Serializable;
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
 @Entity
+@Table(name = "TMS_PROBLEM_HISTORY")
 public class ProblemHistory extends BaseEntity implements Serializable {
 
     @ManyToOne
