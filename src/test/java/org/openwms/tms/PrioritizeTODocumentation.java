@@ -62,7 +62,7 @@ public class PrioritizeTODocumentation extends TransportationTestBase {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        given(commonGateway.getTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
+        given(commonGateway.findTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
 
         mockMvc.perform(
                 get(TMSConstants.ROOT_ENTITIES + "/" + vo.getpKey()))

@@ -116,7 +116,7 @@ public abstract class TransportationTestBase {
         Location errorLocation = new Location(ERR_LOC_STRING);
         TransportUnit tu = new TransportUnit(vo.getBarcode(), actualLocation, vo.getTarget());
 
-        given(commonGateway.getTransportUnit(vo.getBarcode())).willReturn(Optional.of(tu));
+        given(commonGateway.findTransportUnit(vo.getBarcode())).willReturn(Optional.of(tu));
         given(commonGateway.getLocation(vo.getTarget())).willReturn(Optional.of(errorLocation));
         given(commonGateway.getLocationGroup(vo.getTarget())).willReturn(Optional.empty());
         return vo;

@@ -82,9 +82,9 @@ class HttpCommonGateway implements CommonGateway {
     }
 
     @Override
-    public Optional<TransportUnit> getTransportUnit(String transportUnitBK) {
+    public Optional<TransportUnit> findTransportUnit(String transportUnitBK) {
         try {
-            TransportUnit tu = commonFeignClient.getTransportUnit(transportUnitBK);
+            TransportUnit tu = commonFeignClient.findTransportUnit(transportUnitBK);
             return Optional.of(tu);
         } catch (FeignException ex) {
             if (ex.status() == 404) {

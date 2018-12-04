@@ -54,7 +54,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setState(TransportOrderState.INITIALIZED.toString());
-        given(commonGateway.getTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
+        given(commonGateway.findTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
 
         // test ...
         mockMvc.perform(
@@ -80,7 +80,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo2 = createTO();
         postTOAndValidate(vo2, NOTLOGGED);
         vo2.setState(TransportOrderState.STARTED.toString());
-        given(commonGateway.getTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
+        given(commonGateway.findTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
 
         LOGGER.debug("Calling API with:" + vo2);
         // test ...
@@ -104,7 +104,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo2 = createTO();
         postTOAndValidate(vo2, NOTLOGGED);
         vo2.setState(TransportOrderState.CANCELED.toString());
-        given(commonGateway.getTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
+        given(commonGateway.findTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
 
         // test ...
         mockMvc.perform(
@@ -126,7 +126,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo2 = createTO();
         postTOAndValidate(vo2, NOTLOGGED);
         vo2.setState(TransportOrderState.ONFAILURE.toString());
-        given(commonGateway.getTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
+        given(commonGateway.findTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
 
         // test ...
         mockMvc.perform(
@@ -148,7 +148,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo2 = createTO();
         postTOAndValidate(vo2, NOTLOGGED);
         vo2.setState(TransportOrderState.FINISHED.toString());
-        given(commonGateway.getTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
+        given(commonGateway.findTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
 
         // test ...
         mockMvc.perform(
@@ -169,7 +169,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setState(TransportOrderState.STARTED.toString());
-        given(commonGateway.getTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
+        given(commonGateway.findTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
 
         // test ...
         mockMvc.perform(
@@ -189,7 +189,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setState(TransportOrderState.CANCELED.toString());
-        given(commonGateway.getTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
+        given(commonGateway.findTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
 
         // test ...
         mockMvc.perform(
@@ -209,7 +209,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setState(TransportOrderState.ONFAILURE.toString());
-        given(commonGateway.getTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
+        given(commonGateway.findTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
 
         // test ...
         mockMvc.perform(
@@ -229,7 +229,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setState(TransportOrderState.FINISHED.toString());
-        given(commonGateway.getTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
+        given(commonGateway.findTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
 
         // test ...
         mockMvc.perform(
@@ -249,7 +249,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        given(commonGateway.getTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
+        given(commonGateway.findTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
         vo.setState(TransportOrderState.FINISHED.toString());
         mockMvc.perform(
                 patch(TMSConstants.ROOT_ENTITIES)
@@ -278,7 +278,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        given(commonGateway.getTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
+        given(commonGateway.findTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
         vo.setState(TransportOrderState.ONFAILURE.toString());
         mockMvc.perform(
                 patch(TMSConstants.ROOT_ENTITIES)
@@ -307,7 +307,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        given(commonGateway.getTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
+        given(commonGateway.findTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
         vo.setState(TransportOrderState.CANCELED.toString());
         mockMvc.perform(
                 patch(TMSConstants.ROOT_ENTITIES)

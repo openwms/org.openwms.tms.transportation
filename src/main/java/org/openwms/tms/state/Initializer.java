@@ -67,7 +67,7 @@ class Initializer implements ApplicationListener<TransportServiceEvent> {
                 try {
                     transportOrder
                             .changeState(TransportOrderState.INITIALIZED)
-                            .setSourceLocation(commonGateway.getTransportUnit(transportOrder.getTransportUnitBK()).orElseThrow(NotFoundException::new).getActualLocation().toString());
+                            .setSourceLocation(commonGateway.findTransportUnit(transportOrder.getTransportUnitBK()).orElseThrow(NotFoundException::new).getActualLocation().toString());
                     transportOrder = repository.save(transportOrder);
                     LOGGER.debug("TransportOrder with PK [{}] INITIALIZED", transportOrder.getPk());
                 } catch (StateChangeException sce) {

@@ -42,7 +42,7 @@ public interface CommonFeignClient {
     LocationGroup getLocationGroup(@RequestParam("name") String name);
 
     @GetMapping(value = "/v1/transportunits", params = {"bk"})
-    TransportUnit getTransportUnit(@RequestParam("bk") String transportUnitBK);
+    TransportUnit findTransportUnit(@RequestParam("bk") String transportUnitBK);
 
     @GetMapping(value = "/v1/transportunits", params = {"actualLocation"})
     List<TransportUnit> getTransportUnitsOn(@RequestParam("actualLocation") String actualLocation);
