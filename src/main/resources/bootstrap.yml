@@ -32,7 +32,7 @@ eureka:
     non-secure-port-enabled: true
     metadata-map:
       # need to be overridden in the cloud environment props!
-      username: user
+      username: ${spring.security.user.name}
       password: ${spring.security.user.password}
       protocol: http
 

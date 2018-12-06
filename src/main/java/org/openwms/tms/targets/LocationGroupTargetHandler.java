@@ -15,7 +15,7 @@
  */
 package org.openwms.tms.targets;
 
-import org.openwms.common.LocationGroup;
+import org.openwms.common.location.api.LocationGroupVO;
 import org.openwms.tms.TargetHandler;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportOrderRepository;
@@ -29,7 +29,7 @@ import java.util.List;
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
 @Component
-class LocationGroupTargetHandler implements TargetHandler<LocationGroup> {
+class LocationGroupTargetHandler implements TargetHandler<LocationGroupVO> {
 
     private final TransportOrderRepository repository;
 
@@ -41,7 +41,7 @@ class LocationGroupTargetHandler implements TargetHandler<LocationGroup> {
      * {@inheritDoc}
      */
     @Override
-    public int getNoTOToTarget(LocationGroup target) {
+    public int getNoTOToTarget(LocationGroupVO target) {
         List<TransportOrder> result = repository.findByTargetLocation(target.asString());
         return result != null ? result.size() : 0;
     }

@@ -15,8 +15,8 @@
  */
 package org.openwms.tms.redirection;
 
-import org.openwms.common.CommonGateway;
-import org.openwms.common.LocationGroup;
+import org.openwms.common.location.api.LocationGroupApi;
+import org.openwms.common.location.api.LocationGroupVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
@@ -33,19 +33,23 @@ import java.util.Optional;
 @Lazy
 @Order(10)
 @Component
-class LocationGroupRedirector extends TargetRedirector<LocationGroup> {
+class LocationGroupRedirector extends TargetRedirector<LocationGroupVO> {
+
+    private final LocationGroupApi locationGroupApi;
 
     @Autowired
-    private CommonGateway commonGateway;
+    public LocationGroupRedirector(LocationGroupApi locationGroupApi) {
+        this.locationGroupApi = locationGroupApi;
+    }
 
     @Override
-    protected boolean isTargetAvailable(LocationGroup target) {
+    protected boolean isTargetAvailable(LocationGroupVO target) {
         return !target.isInfeedBlocked();
     }
 
     @Override
-    protected Optional<LocationGroup> resolveTarget(RedirectVote vote) {
-        return commonGateway.getLocationGroup(vote.getTarget());
+    protected Optional<LocationGroupVO> resolveTarget(RedirectVote vote) {
+        return Optional.ofNullable(locationGroupApi.findByName(vote.getTarget()));
     }
 
     @Override

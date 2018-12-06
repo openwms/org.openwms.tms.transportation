@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.common;
+package org.openwms.tms;
 
-import java.util.Optional;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
- * A CommonGateway.
+ * A TMSSecurityConfiguration.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-public interface CommonGateway {
+@Configuration
+public class TMSSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    Optional<LocationGroup> getLocationGroup(String target);
-
-    Optional<Location> getLocation(String target);
-
-    Optional<TransportUnit> findTransportUnit(String transportUnitBK);
-
-    void updateTransportUnit(TransportUnit savedTU);
+    /**
+     * {@inheritDoc}
+     * <p>
+     * API is for non browser clients!
+     */
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
+    }
 }

@@ -40,7 +40,6 @@ import org.springframework.web.util.UriTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,6 +99,7 @@ class TransportationController {
         return tos.get(0);
     }
 
+    @Measured
     @GetMapping(value = "/transportorders", params = {"state", "sourceLocationGroupName"})
     TransportOrder getNextOutfeed(@RequestParam("state") String state, @RequestParam("sourceLocationGroupName") String sourceLocationGroupName) {
         LOGGER.debug("Find TransportOrders for outfeed position {} in state {}", sourceLocationGroupName, state);
@@ -122,6 +122,7 @@ class TransportationController {
         resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
     }
 
+    @Measured
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     void createTO(@RequestBody CreateTransportOrderVO vo, HttpServletRequest req, HttpServletResponse resp) {
@@ -129,6 +130,7 @@ class TransportationController {
         resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
     }
 
+    @Measured
     @PatchMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void updateTO(@RequestBody UpdateTransportOrderVO vo) {
@@ -136,6 +138,7 @@ class TransportationController {
         service.update(m.map(vo, TransportOrder.class));
     }
 
+    @Measured
     @PostMapping(value = "/transportorders/{id}", params = {"state"})
     void finishTO(@PathVariable(value = "id") String pKey, @RequestParam(value = "state") String state) {
         service.changeState(TransportOrderState.valueOf(state), pKey);
@@ -143,17 +146,36 @@ class TransportationController {
 
 
     @ExceptionHandler(BusinessRuntimeException.class)
-    public ResponseEntity<Response<Serializable>> handleNotFound(HttpServletResponse res, BusinessRuntimeException ex) {
+    public ResponseEntity<Response> handleNotFound(HttpServletResponse res, BusinessRuntimeException ex) {
         if (ex instanceof BehaviorAwareException) {
             BehaviorAwareException bae = (BehaviorAwareException) ex;
-            return new ResponseEntity<>(new Response<>(ex.getMessage(), bae.getMsgKey(), bae.getStatus().toString(), bae.getData()), bae.getStatus());
+            return new ResponseEntity<>(
+                    Response.newBuilder()
+                            .withMessage(ex.getMessage())
+                            .withMessageKey(bae.getMessageKey())
+                            .withHttpStatus(bae.getStatus().toString())
+                            .withObj(bae.getData())
+                            .build(),
+                    bae.getStatus());
         }
-        return new ResponseEntity<>(new Response<>(ex.getMessage(), ex.getMsgKey(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), new String[]{ex.getMsgKey()}), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(
+                Response.newBuilder()
+                        .withMessage(ex.getMessage())
+                        .withMessageKey(ex.getMessageKey())
+                        .withHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+                        .withObj(new String[]{ex.getMessageKey()})
+                        .build(),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Response<Serializable>> handleBadRequests(HttpServletResponse res, IllegalArgumentException ex) {
-        return new ResponseEntity<>(new Response<>(ex.getMessage(), HttpStatus.BAD_REQUEST.toString()), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Response> handleBadRequests(HttpServletResponse res, IllegalArgumentException ex) {
+        return new ResponseEntity<>(
+                Response.newBuilder()
+                        .withMessage(ex.getMessage())
+                        .withHttpStatus(HttpStatus.BAD_REQUEST.toString())
+                        .build(),
+                HttpStatus.BAD_REQUEST);
     }
 
     private String getCreatedResourceURI(HttpServletRequest req, String objId) {

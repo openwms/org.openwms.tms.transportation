@@ -19,7 +19,7 @@ import org.ameba.test.categories.IntegrationTests;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.openwms.common.Location;
+import org.openwms.common.location.api.LocationVO;
 import org.openwms.core.test.IntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -40,6 +40,8 @@ public class LocationTargetHandlerIT {
     public final
     @Test
     void test() {
-        int no = lth.getNoTOToTarget(new Location("ERR_/0000/0000/0000/0000"));
+        LocationVO location = new LocationVO();
+        location.setLocationId("ERR_/0000/0000/0000/0000");
+        int no = lth.getNoTOToTarget(location);
     }
 }

@@ -15,8 +15,8 @@
  */
 package org.openwms.tms.service;
 
-import org.openwms.common.CommonGateway;
-import org.openwms.common.TransportUnit;
+import org.openwms.common.transport.api.TransportUnitApi;
+import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.UpdateFunction;
 import org.openwms.tms.ValidationGroups;
@@ -33,10 +33,14 @@ import javax.validation.Validator;
 @Component
 class ChangeTU implements UpdateFunction {
 
+    private final TransportUnitApi transportUnitApi;
+    private final Validator validator;
+
     @Autowired
-    private CommonGateway gateway;
-    @Autowired
-    private Validator validator;
+    public ChangeTU(Validator validator, TransportUnitApi transportUnitApi) {
+        this.validator = validator;
+        this.transportUnitApi = transportUnitApi;
+    }
 
     /**
      * {@inheritDoc}
@@ -49,15 +53,15 @@ class ChangeTU implements UpdateFunction {
         if (!saved.getTransportUnitBK().equalsIgnoreCase(toUpdate.getTransportUnitBK())) {
 
             // change the target of the TU to assign
-            TransportUnit savedTU = new TransportUnit();
+            TransportUnitVO savedTU = new TransportUnitVO();
             savedTU.setBarcode(toUpdate.getTransportUnitBK());
             savedTU.setTarget(toUpdate.getTargetLocationGroup());
-            gateway.updateTransportUnit(savedTU);
+            transportUnitApi.updateTU(savedTU.getBarcode(), savedTU);
 
             // clear target of an formerly assigned TU
             savedTU.setBarcode(saved.getTransportUnitBK());
-            savedTU.clearTarget();
-            gateway.updateTransportUnit(savedTU);
+            savedTU.setTarget("");
+            transportUnitApi.updateTU(savedTU.getBarcode(), savedTU);
 
             saved.setTransportUnitBK(toUpdate.getTransportUnitBK());
         }

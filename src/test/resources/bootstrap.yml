@@ -1,3 +1,9 @@
+spring:
+  security:
+    user:
+      # Override this in cloud environment!
+      password: sa
+
 owms:
   eureka:
     # Override this in cloud environment!

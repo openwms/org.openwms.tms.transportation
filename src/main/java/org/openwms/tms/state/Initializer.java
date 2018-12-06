@@ -16,7 +16,7 @@
 package org.openwms.tms.state;
 
 import org.ameba.exception.NotFoundException;
-import org.openwms.common.CommonGateway;
+import org.openwms.common.transport.api.TransportUnitApi;
 import org.openwms.tms.StateChangeException;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportOrderRepository;
@@ -43,12 +43,12 @@ class Initializer implements ApplicationListener<TransportServiceEvent> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Initializer.class);
     private final TransportOrderRepository repository;
-    private final CommonGateway commonGateway;
+    private final TransportUnitApi transportUnitApi;
     private final ApplicationContext ctx;
 
-    Initializer(TransportOrderRepository repository, CommonGateway commonGateway, ApplicationContext ctx) {
+    Initializer(TransportOrderRepository repository, TransportUnitApi transportUnitApi, ApplicationContext ctx) {
         this.repository = repository;
-        this.commonGateway = commonGateway;
+        this.transportUnitApi = transportUnitApi;
         this.ctx = ctx;
     }
 
@@ -67,7 +67,7 @@ class Initializer implements ApplicationListener<TransportServiceEvent> {
                 try {
                     transportOrder
                             .changeState(TransportOrderState.INITIALIZED)
-                            .setSourceLocation(commonGateway.findTransportUnit(transportOrder.getTransportUnitBK()).orElseThrow(NotFoundException::new).getActualLocation().toString());
+                            .setSourceLocation(transportUnitApi.findTransportUnit(transportOrder.getTransportUnitBK()).getActualLocation());
                     transportOrder = repository.save(transportOrder);
                     LOGGER.debug("TransportOrder with PK [{}] INITIALIZED", transportOrder.getPk());
                 } catch (StateChangeException sce) {

@@ -15,9 +15,10 @@
  */
 package org.openwms.tms.targets;
 
-import org.openwms.common.CommonGateway;
-import org.openwms.common.Location;
-import org.openwms.common.LocationGroup;
+import org.openwms.common.location.api.LocationApi;
+import org.openwms.common.location.api.LocationGroupApi;
+import org.openwms.common.location.api.LocationGroupVO;
+import org.openwms.common.location.api.LocationVO;
 import org.openwms.tms.TargetHandler;
 import org.openwms.tms.TargetResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,45 +34,59 @@ import java.util.Optional;
 class DefaultTargetResolvers {
 
     @Component
-    class LocationGroupTargetResolver implements TargetResolver<LocationGroup> {
+    class LocationGroupTargetResolver implements TargetResolver<LocationGroupVO> {
+
+        private final LocationGroupApi commonGateway;
+        private final TargetHandler<LocationGroupVO> handler;
 
         @Autowired
-        private CommonGateway commonGateway;
-        @Autowired
-        private TargetHandler<LocationGroup> handler;
+        public LocationGroupTargetResolver(LocationGroupApi commonGateway, TargetHandler<LocationGroupVO> handler) {
+            this.commonGateway = commonGateway;
+            this.handler = handler;
+        }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public Optional<LocationGroup> resolve(String target) {
-            return commonGateway.getLocationGroup(target);
+        public Optional<LocationGroupVO> resolve(String target) {
+            return Optional.ofNullable(commonGateway.findByName(target));
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
-        public TargetHandler<LocationGroup> getHandler() {
+        public TargetHandler<LocationGroupVO> getHandler() {
             return handler;
         }
     }
 
     @Component
-    class LocationTargetResolver implements TargetResolver<Location> {
+    class LocationTargetResolver implements TargetResolver<LocationVO> {
+
+        private final LocationApi commonGateway;
+        private final TargetHandler<LocationVO> handler;
 
         @Autowired
-        private CommonGateway commonGateway;
-        @Autowired
-        private TargetHandler<Location> handler;
+        public LocationTargetResolver(LocationApi commonGateway, TargetHandler<LocationVO> handler) {
+            this.commonGateway = commonGateway;
+            this.handler = handler;
+        }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public Optional<Location> resolve(String target) {
-            return commonGateway.getLocation(target);
+        public Optional<LocationVO> resolve(String target) {
+            return Optional.ofNullable(commonGateway.findLocationByCoordinate(target));
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
-        public TargetHandler<Location> getHandler() {
+        public TargetHandler<LocationVO> getHandler() {
             return handler;
         }
     }

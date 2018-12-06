@@ -19,10 +19,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
-import org.openwms.common.CommonGateway;
-import org.openwms.common.Location;
-import org.openwms.common.LocationGroup;
-import org.openwms.common.TransportUnit;
+import org.openwms.common.location.api.LocationApi;
+import org.openwms.common.location.api.LocationGroupApi;
+import org.openwms.common.location.api.LocationGroupVO;
+import org.openwms.common.location.api.LocationVO;
+import org.openwms.common.transport.api.TransportUnitApi;
+import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.PriorityLevel;
 import org.openwms.tms.TMSConstants;
 import org.openwms.tms.api.CreateTransportOrderVO;
@@ -41,8 +43,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
-
-import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -67,21 +67,25 @@ public abstract class TransportationTestBase {
     @Autowired
     protected WebApplicationContext context;
     @MockBean
-    protected CommonGateway commonGateway;
+    protected LocationApi locationApi;
+    @MockBean
+    protected LocationGroupApi locationGroupApi;
+    @MockBean
+    protected TransportUnitApi transportUnitApi;
     @Rule
     public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
     public static final String NOTLOGGED = "--";
     public static final String INIT_LOC_STRING = "INIT/0000/0000/0000/0000";
-    protected Location INIT_LOC;
+    protected LocationVO INIT_LOC;
 
     public static final String ERR_LOC_STRING = "ERR_/0000/0000/0000/0000";
-    protected Location ERR_LOC;
+    protected LocationVO ERR_LOC;
 
     public static final String INIT_LOCGB_STRING = "Picking";
-    protected LocationGroup INIT_LOCGRB;
+    protected LocationGroupVO INIT_LOCGRB;
 
     public static final String ERR_LOCGB_STRING = "Error handling";
-    protected LocationGroup ERR_LOCGRB;
+    protected LocationGroupVO ERR_LOCGRB;
 
     public static final String KNOWN = "KNOWN";
     public static final String UNKNOWN = "UNKNOWN";
@@ -94,10 +98,12 @@ public abstract class TransportationTestBase {
      */
     @Before
     public void setUp() throws Exception {
-        INIT_LOC = new Location(INIT_LOC_STRING);
-        ERR_LOC = new Location(ERR_LOC_STRING);
-        INIT_LOCGRB = new LocationGroup(INIT_LOCGB_STRING);
-        ERR_LOCGRB = new LocationGroup(ERR_LOCGB_STRING);
+        INIT_LOC = new LocationVO();
+        INIT_LOC.setLocationId(INIT_LOC_STRING);
+        ERR_LOC = new LocationVO();
+        ERR_LOC.setLocationId(ERR_LOC_STRING);
+        INIT_LOCGRB = new LocationGroupVO(INIT_LOCGB_STRING);
+        ERR_LOCGRB = new LocationGroupVO(ERR_LOCGB_STRING);
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation).uris()
@@ -112,13 +118,18 @@ public abstract class TransportationTestBase {
         vo.setBarcode(BC_4711);
         vo.setTarget(ERR_LOC_STRING);
 
-        Location actualLocation = new Location(INIT_LOC_STRING);
-        Location errorLocation = new Location(ERR_LOC_STRING);
-        TransportUnit tu = new TransportUnit(vo.getBarcode(), actualLocation, vo.getTarget());
+        LocationVO actualLocation = new LocationVO();
+        actualLocation.setLocationId(INIT_LOC_STRING);
+        LocationVO errorLocation = new LocationVO();
+        errorLocation.setLocationId(ERR_LOC_STRING);
+        TransportUnitVO tu = new TransportUnitVO();
+        tu.setBarcode(vo.getBarcode());
+        tu.setActualLocation(actualLocation.getLocationId());
+        tu.setTarget(vo.getTarget());
 
-        given(commonGateway.findTransportUnit(vo.getBarcode())).willReturn(Optional.of(tu));
-        given(commonGateway.getLocation(vo.getTarget())).willReturn(Optional.of(errorLocation));
-        given(commonGateway.getLocationGroup(vo.getTarget())).willReturn(Optional.empty());
+        given(transportUnitApi.findTransportUnit(vo.getBarcode())).willReturn(tu);
+        given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(errorLocation);
+        given(locationGroupApi.findByName(vo.getTarget())).willReturn(null);
         return vo;
     }
 

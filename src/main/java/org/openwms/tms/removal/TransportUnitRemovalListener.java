@@ -16,7 +16,7 @@
 package org.openwms.tms.removal;
 
 import org.ameba.annotation.TxService;
-import org.openwms.common.TransportUnit;
+import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.Message;
 import org.openwms.tms.StateChangeException;
 import org.openwms.tms.TransportOrder;
@@ -35,24 +35,28 @@ import java.util.List;
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
 @TxService
-class TransportUnitRemovalListener implements OnRemovalListener<TransportUnit> {
+class TransportUnitRemovalListener implements OnRemovalListener<TransportUnitVO> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportUnitRemovalListener.class);
+    private final TransportOrderRepository repository;
+
     @Autowired
-    private TransportOrderRepository repository;
+    public TransportUnitRemovalListener(TransportOrderRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * {@inheritDoc}
      * <p>
-     * The implementation verifies that no active {@link TransportOrder}s exist, before a {@link TransportUnit} is going to be removed. <ul>
-     * <li>In case where already 'started' {@link TransportOrder}s exist it is not allowed to remove the {@link TransportUnit} therefore an
+     * The implementation verifies that no active {@link TransportOrder}s exist, before a {@link TransportUnitVO} is going to be removed. <ul>
+     * <li>In case where already 'started' {@link TransportOrder}s exist it is not allowed to remove the {@link TransportUnitVO} therefore an
      * exception is thrown.</li> <li>If {@link TransportOrder}s in a state less than 'started' exist they will be canceled and removed. The
-     * removal of the {@link TransportUnit} is accepted.</li> </ul>
+     * removal of the {@link TransportUnitVO} is accepted.</li> </ul>
      *
-     * @throws RemovalNotAllowedException when active {@link TransportOrder}s exist for the {@link TransportUnit} entity.
+     * @throws RemovalNotAllowedException when active {@link TransportOrder}s exist for the {@link TransportUnitVO} entity.
      */
     @Override
-    public void preRemove(TransportUnit entity) throws RemovalNotAllowedException {
+    public void preRemove(TransportUnitVO entity) throws RemovalNotAllowedException {
         Assert.notNull(entity, "Not allowed to call preRemove with null argument");
         LOGGER.debug("Someone is trying to remove the TransportUnit [{}], check for existing TransportOrders", entity);
         try {
@@ -66,7 +70,7 @@ class TransportUnitRemovalListener implements OnRemovalListener<TransportUnit> {
         }
     }
 
-    protected void cancelInitializedOrders(TransportUnit transportUnit) {
+    protected void cancelInitializedOrders(TransportUnitVO transportUnit) {
         LOGGER.debug("Trying to cancel and remove already created but not started TransportOrders");
         List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(transportUnit.getBarcode(), TransportOrderState.CREATED,
                 TransportOrderState.INITIALIZED);
@@ -87,7 +91,7 @@ class TransportUnitRemovalListener implements OnRemovalListener<TransportUnit> {
         }
     }
 
-    protected void unlinkFinishedOrders(TransportUnit transportUnit) {
+    protected void unlinkFinishedOrders(TransportUnitVO transportUnit) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Trying to unlink finished and failed TransportOrders for TransportUnit: " + transportUnit);
         }
@@ -104,7 +108,7 @@ class TransportUnitRemovalListener implements OnRemovalListener<TransportUnit> {
         }
     }
 
-    protected void unlinkCanceledOrders(TransportUnit transportUnit) {
+    protected void unlinkCanceledOrders(TransportUnitVO transportUnit) {
         List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(transportUnit.getBarcode(), TransportOrderState.CANCELED);
         if (!transportOrders.isEmpty()) {
             for (TransportOrder transportOrder : transportOrders) {

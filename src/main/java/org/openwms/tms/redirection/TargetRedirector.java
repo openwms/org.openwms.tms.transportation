@@ -16,7 +16,7 @@
 package org.openwms.tms.redirection;
 
 import org.ameba.i18n.Translator;
-import org.openwms.common.Target;
+import org.openwms.common.location.api.Target;
 import org.openwms.tms.Message;
 import org.openwms.tms.TMSMessageCodes;
 import org.slf4j.Logger;

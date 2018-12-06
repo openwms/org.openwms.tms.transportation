@@ -15,8 +15,8 @@
  */
 package org.openwms.tms.redirection;
 
-import org.openwms.common.CommonGateway;
-import org.openwms.common.Location;
+import org.openwms.common.location.api.LocationApi;
+import org.openwms.common.location.api.LocationVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
@@ -32,19 +32,23 @@ import java.util.Optional;
 @Lazy
 @Order(5)
 @Component
-class LocationRedirector extends TargetRedirector<Location> {
+class LocationRedirector extends TargetRedirector<LocationVO> {
+
+    private final LocationApi locationApi;
 
     @Autowired
-    private CommonGateway commonGateway;
+    public LocationRedirector(LocationApi locationApi) {
+        this.locationApi = locationApi;
+    }
 
     @Override
-    protected boolean isTargetAvailable(Location target) {
+    protected boolean isTargetAvailable(LocationVO target) {
         return target.isIncomingActive();
     }
 
     @Override
-    protected Optional<Location> resolveTarget(RedirectVote vote) {
-        return commonGateway.getLocation(vote.getTarget());
+    protected Optional<LocationVO> resolveTarget(RedirectVote vote) {
+        return Optional.ofNullable(locationApi.findLocationByCoordinate(vote.getTarget()));
     }
 
     @Override

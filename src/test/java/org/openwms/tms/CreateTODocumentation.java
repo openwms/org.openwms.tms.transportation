@@ -15,17 +15,16 @@
  */
 package org.openwms.tms;
 
+import org.ameba.exception.NotFoundException;
 import org.junit.Test;
 import org.openwms.TransportationTestBase;
-import org.openwms.common.Location;
+import org.openwms.common.location.api.LocationVO;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
@@ -73,7 +72,7 @@ public class CreateTODocumentation extends TransportationTestBase {
     void testCreateTOUnknownTU() throws Exception {
         CreateTransportOrderVO vo = createTO();
         vo.setBarcode("UNKNOWN");
-        given(commonGateway.findTransportUnit(vo.getBarcode())).willReturn(Optional.empty());
+        given(transportUnitApi.findTransportUnit(vo.getBarcode())).willThrow(new NotFoundException());
 
         mockMvc.perform(post(TMSConstants.ROOT_ENTITIES)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -88,8 +87,8 @@ public class CreateTODocumentation extends TransportationTestBase {
     void testCreateTOUnknownTarget() throws Exception {
         CreateTransportOrderVO vo = createTO();
         vo.setTarget("UNKNOWN");
-        given(commonGateway.getLocation(vo.getTarget())).willReturn(Optional.empty());
-        given(commonGateway.getLocationGroup(vo.getTarget())).willReturn(Optional.empty());
+        given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(null);
+        given(locationGroupApi.findByName(vo.getTarget())).willReturn(null);
 
         mockMvc.perform(post(TMSConstants.ROOT_ENTITIES)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -104,9 +103,10 @@ public class CreateTODocumentation extends TransportationTestBase {
     void testCreateTOTargetNotAvailable() throws Exception {
         CreateTransportOrderVO vo = createTO();
         vo.setTarget(ERR_LOC_STRING);
-        Location loc = new Location(ERR_LOC_STRING);
+        LocationVO loc = new LocationVO();
+        loc.setLocationId(ERR_LOC_STRING);
         loc.setIncomingActive(false);
-        given(commonGateway.getLocation(vo.getTarget())).willReturn(Optional.of(loc));
+        given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(loc);
 
         MvcResult res = mockMvc.perform(post(TMSConstants.ROOT_ENTITIES)
                 .contentType(MediaType.APPLICATION_JSON)

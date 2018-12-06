@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms;
+package org.openwms.tms;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -29,8 +29,9 @@ import org.ameba.i18n.AbstractTranslator;
 import org.ameba.i18n.Translator;
 import org.ameba.mapping.BeanMapper;
 import org.ameba.mapping.DozerMapperImpl;
-import org.openwms.tms.SecurityConfiguration;
-import org.openwms.tms.TMSConstants;
+import org.openwms.common.location.api.LocationApi;
+import org.openwms.common.location.api.LocationGroupApi;
+import org.openwms.common.transport.api.TransportUnitApi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -56,10 +57,10 @@ import java.util.Locale;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@EnableFeignClients
+@EnableFeignClients(basePackageClasses = {TransportUnitApi.class, LocationApi.class, LocationGroupApi.class})
 @EnableEurekaClient
 @EnableCircuitBreaker
-@SpringBootApplication(scanBasePackageClasses = {TransportationStarter.class, SolutionApp.class, SecurityConfiguration.class})
+@SpringBootApplication(scanBasePackageClasses = {TransportationStarter.class, SolutionApp.class})
 @EnableSpringConfigured
 @EnableJpaAuditing
 @EnableJpaRepositories(basePackageClasses = TransportationStarter.class)

@@ -18,16 +18,14 @@ package org.openwms.tms;
 import org.ameba.exception.NotFoundException;
 import org.junit.Test;
 import org.openwms.TransportationTestBase;
-import org.openwms.common.TransportUnit;
+import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,7 +44,11 @@ public class ChangeTUDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setBarcode(KNOWN);
-        given(commonGateway.findTransportUnit(KNOWN)).willReturn(Optional.of(new TransportUnit(KNOWN, INIT_LOC, ERR_LOC_STRING)));
+        TransportUnitVO transportUnit = new TransportUnitVO();
+        transportUnit.setBarcode(KNOWN);
+        transportUnit.setActualLocation(INIT_LOC_STRING);
+        transportUnit.setTarget(ERR_LOC_STRING);
+        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
         mockMvc.perform(
@@ -66,7 +68,7 @@ public class ChangeTUDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setBarcode(UNKNOWN);
-        willThrow(new NotFoundException("", "COMMON.BARCODE_NOT_FOUND", UNKNOWN)).given(commonGateway).updateTransportUnit(new TransportUnit(UNKNOWN, null, ERR_LOC_STRING));
+        given(transportUnitApi.updateTU(any(), any())).willThrow(new NotFoundException("", "COMMON.BARCODE_NOT_FOUND", UNKNOWN));
 
         // test ...
         MvcResult res = mockMvc.perform(

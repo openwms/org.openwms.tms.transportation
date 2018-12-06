@@ -16,9 +16,10 @@
 package org.openwms.tms.state;
 
 import org.ameba.exception.NotFoundException;
-import org.openwms.common.CommonGateway;
-import org.openwms.common.Location;
-import org.openwms.common.LocationGroup;
+import org.openwms.common.location.api.LocationApi;
+import org.openwms.common.location.api.LocationGroupApi;
+import org.openwms.common.location.api.LocationGroupVO;
+import org.openwms.common.location.api.LocationVO;
 import org.openwms.tms.StateChangeException;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportOrderRepository;
@@ -43,11 +44,13 @@ class Starter implements ApplicationListener<TransportServiceEvent> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Starter.class);
     private final TransportOrderRepository repository;
-    private final CommonGateway commonGateway;
+    private final LocationApi locationApi;
+    private final LocationGroupApi locationGroupApi;
 
-    Starter(TransportOrderRepository repository, CommonGateway commonGateway) {
+    Starter(TransportOrderRepository repository, LocationApi locationApi, LocationGroupApi locationGroupApi) {
         this.repository = repository;
-        this.commonGateway = commonGateway;
+        this.locationApi = locationApi;
+        this.locationGroupApi = locationGroupApi;
     }
 
     /**
@@ -82,8 +85,8 @@ class Starter implements ApplicationListener<TransportServiceEvent> {
 
     private void start(TransportOrder to) {
         LOGGER.debug("> Request to start the TransportOrder with PKey [{}]", to.getPersistentKey());
-        Optional<LocationGroup> lg = commonGateway.getLocationGroup(to.getTargetLocationGroup());
-        Optional<Location> loc = to.getTargetLocation() == null ? Optional.empty() : commonGateway.getLocation(to.getTargetLocation());
+        Optional<LocationGroupVO> lg = Optional.ofNullable(locationGroupApi.findByName(to.getTargetLocationGroup()));
+        Optional<LocationVO> loc = to.getTargetLocation() == null ? Optional.empty() : Optional.ofNullable(locationApi.findLocationByCoordinate(to.getTargetLocation()));
         if (!lg.isPresent() && !loc.isPresent()) {
             // At least one target must be set
             throw new NotFoundException("Neither a valid target LocationGroup nor a Location are set, hence it is not possible to start the TransportOrder");

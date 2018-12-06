@@ -15,7 +15,7 @@
  */
 package org.openwms.tms;
 
-import org.openwms.common.Target;
+import org.openwms.common.location.api.Target;
 
 import java.util.Optional;
 

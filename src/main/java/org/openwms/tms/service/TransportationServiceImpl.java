@@ -19,10 +19,12 @@ import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
 import org.ameba.i18n.Translator;
-import org.openwms.common.CommonFeignClient;
-import org.openwms.common.Location;
-import org.openwms.common.Target;
-import org.openwms.common.TransportUnit;
+import org.openwms.common.location.api.LocationApi;
+import org.openwms.common.location.api.LocationVO;
+import org.openwms.common.location.api.StockLocationApi;
+import org.openwms.common.location.api.Target;
+import org.openwms.common.transport.api.TransportUnitApi;
+import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.Message;
 import org.openwms.tms.PriorityLevel;
 import org.openwms.tms.StateChangeException;
@@ -40,13 +42,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 /**
  * A TransportationServiceImpl is a Spring managed transactional service.
@@ -65,13 +69,17 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     @Autowired(required = false)
     private List<UpdateFunction> updateFunctions;
     private final Translator translator;
-    private final CommonFeignClient commonClient;
+    private final TransportUnitApi transportUnitApi;
+    private final StockLocationApi stockLocationApi;
+    private final LocationApi locationGroupApi;
 
-    TransportationServiceImpl(CommonFeignClient commonClient, Translator translator, TransportOrderRepository repository, ApplicationContext ctx) {
-        this.commonClient = commonClient;
+    TransportationServiceImpl(TransportUnitApi transportUnitApi, Translator translator, TransportOrderRepository repository, ApplicationContext ctx, StockLocationApi stockLocationApi, LocationApi locationGroupApi) {
+        this.transportUnitApi = transportUnitApi;
         this.translator = translator;
         this.repository = repository;
         this.ctx = ctx;
+        this.stockLocationApi = stockLocationApi;
+        this.locationGroupApi = locationGroupApi;
     }
 
     @Measured
@@ -169,16 +177,16 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     @Override
     @Measured
     public List<TransportOrder> findInfeed(TransportOrderState state, String sourceLocation, String... searchTargetLocationGroups) {
-        List<TransportUnit> tus = commonClient.getTransportUnitsOn(sourceLocation);
+        List<TransportUnitVO> tus = transportUnitApi.getTransportUnitsOn(sourceLocation);
         if (tus == null || tus.isEmpty()) {
             return Collections.emptyList();
         }
-        List<TransportOrder> tos = repository.findByTransportUnitBKIsInAndStateOrderByStartDate(tus.stream().map(TransportUnit::getBarcode).collect(Collectors.toList()), state);
+        List<TransportOrder> tos = repository.findByTransportUnitBKIsInAndStateOrderByStartDate(tus.stream().map(TransportUnitVO::getBarcode).collect(Collectors.toList()), state);
         if (searchTargetLocationGroups != null && searchTargetLocationGroups.length > 0) {
 
             // Required to search the final target first
             int noTo = (int) tos.stream().filter(t -> !t.hasTargetLocation()).count();
-            List<Location> targets = commonClient.findStockLocationSimple(Arrays.asList(searchTargetLocationGroups), noTo);
+            List<LocationVO> targets = stockLocationApi.findStockLocationSimple(asList(searchTargetLocationGroups), noTo);
             for (TransportOrder to : tos) {
                 if (!to.hasTargetLocation()) {
                     if (targets.iterator().hasNext()) {
@@ -198,14 +206,14 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     @Override
     @Measured
     public List<TransportOrder> findInAisle(TransportOrderState state, String sourceLocationGroupName, String targetLocationGroupName) {
-        List<String> sourceLocations = commonClient.getLocationsForLocationGroup(sourceLocationGroupName).stream().map(Location::getLocationId).collect(Collectors.toList());
+        List<String> sourceLocations = locationGroupApi.findLocationsForLocationGroups(singletonList(sourceLocationGroupName)).stream().map(LocationVO::getLocationId).collect(Collectors.toList());
         return repository.findByTargetLocationGroupAndStateAndSourceLocationIn(targetLocationGroupName, state, sourceLocations);
     }
 
     @Override
     @Measured
     public List<TransportOrder> findOutfeed(TransportOrderState state, String... sourceLocationGroupNames) {
-        List<String> sourceLocations = commonClient.getLocationsForLocationGroup(sourceLocationGroupNames).stream().map(Location::getLocationId).collect(Collectors.toList());
+        List<String> sourceLocations = locationGroupApi.findLocationsForLocationGroups(asList(sourceLocationGroupNames)).stream().map(LocationVO::getLocationId).collect(Collectors.toList());
         return repository.findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(state, sourceLocations);
     }
 
