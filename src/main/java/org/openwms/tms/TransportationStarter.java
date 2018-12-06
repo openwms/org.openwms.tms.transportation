@@ -15,57 +15,16 @@
  */
 package org.openwms.tms;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import org.ameba.IDGenerator;
-import org.ameba.JdkIDGenerator;
-import org.ameba.annotation.EnableAspects;
 import org.ameba.app.SolutionApp;
-import org.ameba.http.EnableMultiTenancy;
-import org.ameba.http.RequestIDFilter;
-import org.ameba.i18n.AbstractTranslator;
-import org.ameba.i18n.Translator;
-import org.ameba.mapping.BeanMapper;
-import org.ameba.mapping.DozerMapperImpl;
-import org.openwms.common.location.api.LocationApi;
-import org.openwms.common.location.api.LocationGroupApi;
-import org.openwms.common.transport.api.TransportUnitApi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.core.Ordered;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-
-import java.util.Locale;
 
 /**
  * A TransportationStarter is the Spring Boot starter class of the microservice component.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@EnableFeignClients(basePackageClasses = {TransportUnitApi.class, LocationApi.class, LocationGroupApi.class})
-@EnableEurekaClient
-@EnableCircuitBreaker
 @SpringBootApplication(scanBasePackageClasses = {TransportationStarter.class, SolutionApp.class})
-@EnableSpringConfigured
-@EnableJpaAuditing
-@EnableJpaRepositories(basePackageClasses = TransportationStarter.class)
-@EnableAspects(propagateRootCause = true)
-@EnableMultiTenancy
 public class TransportationStarter {
 
     /**
@@ -75,83 +34,5 @@ public class TransportationStarter {
      */
     public static void main(String[] args) {
         SpringApplication.run(TransportationStarter.class, args);
-    }
-
-    public
-    @Bean
-    BeanMapper beanMapper() {
-        return new DozerMapperImpl("META-INF/dozer/tms-bean-mappings.xml");
-    }
-
-    /*
-    public
-    @Bean
-    AlwaysSampler sampler() {
-        return new AlwaysSampler();
-    }
-    */
-
-    public
-    @Primary
-    @Bean(name = TMSConstants.BEAN_NAME_OBJECTMAPPER)
-    ObjectMapper jackson2ObjectMapper() {
-        ObjectMapper om = new ObjectMapper();
-        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        om.configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false);
-        om.configure(SerializationFeature.INDENT_OUTPUT, true);
-        om.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
-        om.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        return om;
-    }
-
-    /*~ ------------- i18n handling ----------- */
-    public
-    @Bean
-    LocaleResolver localeResolver() {
-        SessionLocaleResolver slr = new SessionLocaleResolver();
-        slr.setDefaultLocale(Locale.US);
-        return slr;
-    }
-
-    public
-    @Bean
-    LocaleChangeInterceptor localeChangeInterceptor() {
-        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-        lci.setParamName("lang");
-        return lci;
-    }
-
-    public
-    @Bean
-    Translator translator() {
-        return new AbstractTranslator() {
-            @Override
-            protected MessageSource getMessageSource() {
-                return messageSource();
-            }
-        };
-    }
-
-    public
-    @Bean
-    MessageSource messageSource() {
-        ResourceBundleMessageSource nrrbm = new ResourceBundleMessageSource();
-        nrrbm.setBasename("i18n");
-        return nrrbm;
-    }
-
-    /*~ ------------- Request ID handling ----------- */
-    public
-    @Bean
-    IDGenerator<String> uuidGenerator() {
-        return new JdkIDGenerator();
-    }
-
-    public
-    @Bean
-    FilterRegistrationBean requestIDFilter(IDGenerator<String> uuidGenerator) {
-        FilterRegistrationBean frb = new FilterRegistrationBean(new RequestIDFilter(uuidGenerator));
-        frb.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
-        return frb;
     }
 }
