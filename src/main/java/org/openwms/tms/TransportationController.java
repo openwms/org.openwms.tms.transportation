@@ -48,7 +48,7 @@ import java.util.List;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@RestController(TMSConstants.ROOT_ENTITIES)
+@RestController
 class TransportationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationController.class);
@@ -87,7 +87,7 @@ class TransportationController {
     }
 
     @Measured
-    @GetMapping(value = "/transportorders", params ={"sourceLocationGroupName", "targetLocationGroupName", "state"})
+    @GetMapping(value = TMSConstants.ROOT_ENTITIES, params ={"sourceLocationGroupName", "targetLocationGroupName", "state"})
     TransportOrder getNextInAisle(@RequestParam("sourceLocationGroupName") String sourceLocationGroupName, @RequestParam("targetLocationGroupName") String targetLocationGroupName, @RequestParam("state") String state) {
         LOGGER.debug("Find TransportOrders within one aisle with source {} and target {} in state {}", sourceLocationGroupName, targetLocationGroupName, state);
         List<TransportOrder> tos = service.findInAisle(TransportOrderState.valueOf(state), sourceLocationGroupName, targetLocationGroupName);
@@ -100,7 +100,7 @@ class TransportationController {
     }
 
     @Measured
-    @GetMapping(value = "/transportorders", params = {"state", "sourceLocationGroupName"})
+    @GetMapping(value = TMSConstants.ROOT_ENTITIES, params = {"state", "sourceLocationGroupName"})
     TransportOrder getNextOutfeed(@RequestParam("state") String state, @RequestParam("sourceLocationGroupName") String sourceLocationGroupName) {
         LOGGER.debug("Find TransportOrders for outfeed position {} in state {}", sourceLocationGroupName, state);
         List<TransportOrder> tos = service.findOutfeed(TransportOrderState.valueOf(state), sourceLocationGroupName);
@@ -115,7 +115,7 @@ class TransportationController {
 
 
     @Measured
-    @PostMapping(params = {"barcode", "target"})
+    @PostMapping(value = TMSConstants.ROOT_ENTITIES, params = {"barcode", "target"})
     @ResponseStatus(HttpStatus.CREATED)
     void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target, @RequestParam(value = "priority", required = false) String priority, HttpServletRequest req, HttpServletResponse resp) {
         TransportOrder to = service.create(barcode, target, priority);
@@ -123,7 +123,7 @@ class TransportationController {
     }
 
     @Measured
-    @PostMapping
+    @PostMapping(TMSConstants.ROOT_ENTITIES)
     @ResponseStatus(HttpStatus.CREATED)
     void createTO(@RequestBody CreateTransportOrderVO vo, HttpServletRequest req, HttpServletResponse resp) {
         TransportOrder to = service.create(vo.getBarcode(), vo.getTarget(), vo.getPriority());
@@ -131,7 +131,7 @@ class TransportationController {
     }
 
     @Measured
-    @PatchMapping
+    @PatchMapping(TMSConstants.ROOT_ENTITIES)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void updateTO(@RequestBody UpdateTransportOrderVO vo) {
         PriorityLevel.of(vo.getPriority());
@@ -139,7 +139,7 @@ class TransportationController {
     }
 
     @Measured
-    @PostMapping(value = "/transportorders/{id}", params = {"state"})
+    @PostMapping(value = TMSConstants.ROOT_ENTITIES, params = {"state"})
     void finishTO(@PathVariable(value = "id") String pKey, @RequestParam(value = "state") String state) {
         service.changeState(TransportOrderState.valueOf(state), pKey);
     }

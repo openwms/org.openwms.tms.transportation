@@ -207,7 +207,8 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     @Measured
     public List<TransportOrder> findInAisle(TransportOrderState state, String sourceLocationGroupName, String targetLocationGroupName) {
         List<String> sourceLocations = locationGroupApi.findLocationsForLocationGroups(singletonList(sourceLocationGroupName)).stream().map(LocationVO::getLocationId).collect(Collectors.toList());
-        return repository.findByTargetLocationGroupAndStateAndSourceLocationIn(targetLocationGroupName, state, sourceLocations);
+        List<String> targetLocations = locationGroupApi.findLocationsForLocationGroups(singletonList(targetLocationGroupName)).stream().map(LocationVO::getLocationId).collect(Collectors.toList());
+        return repository.findByTargetLocationInAndStateAndSourceLocationIn(targetLocations, state, sourceLocations);
     }
 
     @Override

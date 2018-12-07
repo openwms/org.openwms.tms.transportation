@@ -33,26 +33,26 @@ import java.util.List;
 @FeignClient(name = "tms-service", qualifier = "transportOrderApi", decode404 = true)
 public interface TransportOrderApi {
 
-    @PostMapping(value = "/transportorders")
+    @PostMapping(value = "/transport-orders")
     @ResponseStatus(HttpStatus.CREATED)
     void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target);
 
-    @PostMapping(value = "/transportorders")
+    @PostMapping(value = "/transport-orders")
     @ResponseStatus(HttpStatus.CREATED)
     void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target, @RequestParam(value = "priority", required = false) String priority);
 
-    @PostMapping(value = "/transportorders/{id}", params = {"state"})
+    @PostMapping(value = "/transport-orders/{id}", params = {"state"})
     void changeState(@PathVariable(value = "id") String id, @RequestParam(value = "state") String state);
 
-    @GetMapping(value = "/transportorders", params = {"barcode", "state"})
+    @GetMapping(value = "/transport-orders", params = {"barcode", "state"})
     List<TransportOrder> findBy(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "state") String state);
 
-    @GetMapping(value = "/transportorders", params ={"sourceLocation", "state", "searchTargetLocationGroupNames"})
+    @GetMapping(value = "/transport-orders", params ={"sourceLocation", "state", "searchTargetLocationGroupNames"})
     TransportOrder getNextInfeed(@RequestParam("sourceLocation") String sourceLocation, @RequestParam("state") String state, @RequestParam("searchTargetLocationGroupNames") String searchTargetLocationGroups);
 
-    @GetMapping(value = "/transportorders", params ={"sourceLocationGroupName", "targetLocationGroupName", "state"})
+    @GetMapping(value = "/transport-orders", params ={"sourceLocationGroupName", "targetLocationGroupName", "state"})
     TransportOrder getNextInAisle(@RequestParam("sourceLocationGroupName") String sourceLocationGroupName, @RequestParam("targetLocationGroupName") String targetLocationGroupName, @RequestParam("state") String state);
 
-    @GetMapping(value = "/transportorders", params ={"state", "sourceLocationGroupName"})
+    @GetMapping(value = "/transport-orders", params ={"state", "sourceLocationGroupName"})
     TransportOrder getNextOutfeed(@RequestParam("state") String state, @RequestParam("sourceLocationGroupName") String sourceLocationGroupName);
 }
