@@ -21,6 +21,8 @@ import org.openwms.tms.api.CreateTransportOrderVO;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultMatcher;
 
+import java.util.Optional;
+
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -40,8 +42,8 @@ public class RedirectTODocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setTarget(UNKNOWN);
-        given(locationGroupApi.findByName(UNKNOWN)).willReturn(null);
-        given(locationApi.findLocationByCoordinate(UNKNOWN)).willReturn(INIT_LOC);
+        given(locationGroupApi.findByName(UNKNOWN)).willReturn(Optional.empty());
+        given(locationApi.findLocationByCoordinate(UNKNOWN)).willReturn(Optional.of(INIT_LOC));
 
         // test ...
         sendPatch(vo, status().isNoContent(), "to-patch-target-unknown-loc");
@@ -54,8 +56,8 @@ public class RedirectTODocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setTarget(UNKNOWN);
-        given(locationGroupApi.findByName(UNKNOWN)).willReturn(ERR_LOCGRB);
-        given(locationApi.findLocationByCoordinate(UNKNOWN)).willReturn(null);
+        given(locationGroupApi.findByName(UNKNOWN)).willReturn(Optional.of(ERR_LOCGRB));
+        given(locationApi.findLocationByCoordinate(UNKNOWN)).willReturn(Optional.empty());
 
         // test ...
         sendPatch(vo, status().isNoContent(), "to-patch-target-unknown-locgb");
@@ -68,8 +70,8 @@ public class RedirectTODocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setTarget(UNKNOWN);
-        given(locationGroupApi.findByName(UNKNOWN)).willReturn(null);
-        given(locationApi.findLocationByCoordinate(UNKNOWN)).willReturn(null);
+        given(locationGroupApi.findByName(UNKNOWN)).willReturn(Optional.empty());
+        given(locationApi.findLocationByCoordinate(UNKNOWN)).willReturn(Optional.empty());
 
         // test ...
         sendPatch(vo, status().isConflict(), "to-patch-target-unknown");
@@ -82,9 +84,9 @@ public class RedirectTODocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setTarget(INIT_LOC_STRING);
-        given(locationGroupApi.findByName(INIT_LOC_STRING)).willReturn(null);
+        given(locationGroupApi.findByName(INIT_LOC_STRING)).willReturn(Optional.empty());
         INIT_LOC.setIncomingActive(false);
-        given(locationApi.findLocationByCoordinate(INIT_LOC_STRING)).willReturn(INIT_LOC);
+        given(locationApi.findLocationByCoordinate(INIT_LOC_STRING)).willReturn(Optional.of(INIT_LOC));
 
         // test ...
         sendPatch(vo, status().isConflict(), "to-patch-target-blocked-loc");
@@ -98,8 +100,8 @@ public class RedirectTODocumentation extends TransportationTestBase {
         postTOAndValidate(vo, NOTLOGGED);
         vo.setTarget(INIT_LOCGB_STRING);
         INIT_LOCGRB.setIncomingActive(false);
-        given(locationGroupApi.findByName(INIT_LOCGB_STRING)).willReturn(INIT_LOCGRB);
-        given(locationApi.findLocationByCoordinate(INIT_LOCGB_STRING)).willReturn(null);
+        given(locationGroupApi.findByName(INIT_LOCGB_STRING)).willReturn(Optional.of(INIT_LOCGRB));
+        given(locationApi.findLocationByCoordinate(INIT_LOCGB_STRING)).willReturn(Optional.empty());
 
         // test ...
         sendPatch(vo, status().isConflict(), "to-patch-target-blocked-locgrp");

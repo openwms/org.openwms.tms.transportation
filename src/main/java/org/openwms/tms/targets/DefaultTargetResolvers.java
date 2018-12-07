@@ -36,12 +36,12 @@ class DefaultTargetResolvers {
     @Component
     class LocationGroupTargetResolver implements TargetResolver<LocationGroupVO> {
 
-        private final LocationGroupApi commonGateway;
+        private final LocationGroupApi locationGroupApi;
         private final TargetHandler<LocationGroupVO> handler;
 
         @Autowired
-        public LocationGroupTargetResolver(LocationGroupApi commonGateway, TargetHandler<LocationGroupVO> handler) {
-            this.commonGateway = commonGateway;
+        public LocationGroupTargetResolver(LocationGroupApi locationGroupApi, TargetHandler<LocationGroupVO> handler) {
+            this.locationGroupApi = locationGroupApi;
             this.handler = handler;
         }
 
@@ -50,7 +50,7 @@ class DefaultTargetResolvers {
          */
         @Override
         public Optional<LocationGroupVO> resolve(String target) {
-            return Optional.ofNullable(commonGateway.findByName(target));
+            return locationGroupApi.findByName(target);
         }
 
         /**
@@ -65,12 +65,12 @@ class DefaultTargetResolvers {
     @Component
     class LocationTargetResolver implements TargetResolver<LocationVO> {
 
-        private final LocationApi commonGateway;
+        private final LocationApi locationApi;
         private final TargetHandler<LocationVO> handler;
 
         @Autowired
-        public LocationTargetResolver(LocationApi commonGateway, TargetHandler<LocationVO> handler) {
-            this.commonGateway = commonGateway;
+        public LocationTargetResolver(LocationApi locationApi, TargetHandler<LocationVO> handler) {
+            this.locationApi = locationApi;
             this.handler = handler;
         }
 
@@ -79,7 +79,7 @@ class DefaultTargetResolvers {
          */
         @Override
         public Optional<LocationVO> resolve(String target) {
-            return Optional.ofNullable(commonGateway.findLocationByCoordinate(target));
+            return locationApi.findLocationByCoordinate(target);
         }
 
         /**

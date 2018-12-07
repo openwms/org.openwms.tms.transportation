@@ -44,6 +44,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.util.Optional;
+
 import static org.mockito.BDDMockito.given;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -128,8 +130,8 @@ public abstract class TransportationTestBase {
         tu.setTarget(vo.getTarget());
 
         given(transportUnitApi.findTransportUnit(vo.getBarcode())).willReturn(tu);
-        given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(errorLocation);
-        given(locationGroupApi.findByName(vo.getTarget())).willReturn(null);
+        given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(Optional.of(errorLocation));
+        given(locationGroupApi.findByName(vo.getTarget())).willReturn(Optional.empty());
         return vo;
     }
 

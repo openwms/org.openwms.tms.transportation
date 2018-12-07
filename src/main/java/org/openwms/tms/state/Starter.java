@@ -85,8 +85,8 @@ class Starter implements ApplicationListener<TransportServiceEvent> {
 
     private void start(TransportOrder to) {
         LOGGER.debug("> Request to start the TransportOrder with PKey [{}]", to.getPersistentKey());
-        Optional<LocationGroupVO> lg = Optional.ofNullable(locationGroupApi.findByName(to.getTargetLocationGroup()));
-        Optional<LocationVO> loc = to.getTargetLocation() == null ? Optional.empty() : Optional.ofNullable(locationApi.findLocationByCoordinate(to.getTargetLocation()));
+        Optional<LocationGroupVO> lg = locationGroupApi.findByName(to.getTargetLocationGroup());
+        Optional<LocationVO> loc = to.getTargetLocation() == null ? Optional.empty() : locationApi.findLocationByCoordinate(to.getTargetLocation());
         if (!lg.isPresent() && !loc.isPresent()) {
             // At least one target must be set
             throw new NotFoundException("Neither a valid target LocationGroup nor a Location are set, hence it is not possible to start the TransportOrder");

@@ -48,7 +48,7 @@ class LocationRedirector extends TargetRedirector<LocationVO> {
 
     @Override
     protected Optional<LocationVO> resolveTarget(RedirectVote vote) {
-        return Optional.ofNullable(locationApi.findLocationByCoordinate(vote.getTarget()));
+        return locationApi.findLocationByCoordinate(vote.getTarget());
     }
 
     @Override

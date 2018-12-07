@@ -26,6 +26,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
@@ -87,8 +89,8 @@ public class CreateTODocumentation extends TransportationTestBase {
     void testCreateTOUnknownTarget() throws Exception {
         CreateTransportOrderVO vo = createTO();
         vo.setTarget("UNKNOWN");
-        given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(null);
-        given(locationGroupApi.findByName(vo.getTarget())).willReturn(null);
+        given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(Optional.empty());
+        given(locationGroupApi.findByName(vo.getTarget())).willReturn(Optional.empty());
 
         mockMvc.perform(post(TMSConstants.ROOT_ENTITIES)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -106,7 +108,7 @@ public class CreateTODocumentation extends TransportationTestBase {
         LocationVO loc = new LocationVO();
         loc.setLocationId(ERR_LOC_STRING);
         loc.setIncomingActive(false);
-        given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(loc);
+        given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(Optional.of(loc));
 
         MvcResult res = mockMvc.perform(post(TMSConstants.ROOT_ENTITIES)
                 .contentType(MediaType.APPLICATION_JSON)

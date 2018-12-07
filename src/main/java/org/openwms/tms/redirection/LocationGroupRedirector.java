@@ -49,7 +49,7 @@ class LocationGroupRedirector extends TargetRedirector<LocationGroupVO> {
 
     @Override
     protected Optional<LocationGroupVO> resolveTarget(RedirectVote vote) {
-        return Optional.ofNullable(locationGroupApi.findByName(vote.getTarget()));
+        return locationGroupApi.findByName(vote.getTarget());
     }
 
     @Override

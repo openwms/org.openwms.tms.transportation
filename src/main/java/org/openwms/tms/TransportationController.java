@@ -82,7 +82,7 @@ class TransportationController {
             LOGGER.debug("> No TransportOrder for infeed exists");
             return null;
         }
-        LOGGER.debug("> TransportOrder with id {} exists for infeed", tos.get(0).getPk());
+        LOGGER.debug("> TransportOrder with pk [{}] exists for infeed", tos.get(0).getPk());
         return tos.get(0);
     }
 
@@ -92,10 +92,10 @@ class TransportationController {
         LOGGER.debug("Find TransportOrders within one aisle with source {} and target {} in state {}", sourceLocationGroupName, targetLocationGroupName, state);
         List<TransportOrder> tos = service.findInAisle(TransportOrderState.valueOf(state), sourceLocationGroupName, targetLocationGroupName);
         if (tos.isEmpty()) {
-            LOGGER.debug("> No TransportOrders exist");
+            LOGGER.debug("> No in-aisle TransportOrders exist");
             return null;
         }
-        LOGGER.debug("> {} TransportOrders exist", tos.size());
+        LOGGER.debug("> [{}] in-aisle TransportOrders exists, returning the first one with pk [{}]", tos.size(), tos.get(0).getPk());
         return tos.get(0);
     }
 
@@ -109,7 +109,7 @@ class TransportationController {
             return null;
         }
         TransportOrder to = tos.get(0);
-        LOGGER.debug("> TransportOrder with id {} exists for outfeed", to.getPk());
+        LOGGER.debug("> TransportOrder with pk [{}] exists for outfeed", to.getPk());
         return to;
     }
 
@@ -139,8 +139,8 @@ class TransportationController {
     }
 
     @Measured
-    @PostMapping(value = TMSConstants.ROOT_ENTITIES, params = {"state"})
-    void finishTO(@PathVariable(value = "id") String pKey, @RequestParam(value = "state") String state) {
+    @PostMapping(value = TMSConstants.ROOT_ENTITIES + "/{id}", params = {"state"})
+    void changeState(@PathVariable(value = "id") String pKey, @RequestParam(value = "state") String state) {
         service.changeState(TransportOrderState.valueOf(state), pKey);
     }
 
