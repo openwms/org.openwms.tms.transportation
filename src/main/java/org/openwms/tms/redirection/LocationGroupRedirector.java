@@ -44,7 +44,7 @@ class LocationGroupRedirector extends TargetRedirector<LocationGroupVO> {
 
     @Override
     protected boolean isTargetAvailable(LocationGroupVO target) {
-        return !target.isInfeedBlocked();
+        return target.isIncomingActive();
     }
 
     @Override
