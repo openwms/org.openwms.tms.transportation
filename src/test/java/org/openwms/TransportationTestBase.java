@@ -21,6 +21,7 @@ import org.junit.Rule;
 import org.junit.runner.RunWith;
 import org.openwms.common.location.api.LocationApi;
 import org.openwms.common.location.api.LocationGroupApi;
+import org.openwms.common.location.api.LocationGroupState;
 import org.openwms.common.location.api.LocationGroupVO;
 import org.openwms.common.location.api.LocationVO;
 import org.openwms.common.transport.api.TransportUnitApi;
@@ -104,8 +105,8 @@ public abstract class TransportationTestBase {
         INIT_LOC.setLocationId(INIT_LOC_STRING);
         ERR_LOC = new LocationVO();
         ERR_LOC.setLocationId(ERR_LOC_STRING);
-        INIT_LOCGRB = new LocationGroupVO(INIT_LOCGB_STRING);
-        ERR_LOCGRB = new LocationGroupVO(ERR_LOCGB_STRING);
+        INIT_LOCGRB = new LocationGroupVO(INIT_LOCGB_STRING, LocationGroupState.AVAILABLE, LocationGroupState.AVAILABLE);
+        ERR_LOCGRB = new LocationGroupVO(ERR_LOCGB_STRING, LocationGroupState.AVAILABLE, LocationGroupState.AVAILABLE);
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation).uris()
