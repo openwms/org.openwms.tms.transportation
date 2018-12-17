@@ -20,6 +20,7 @@ import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
 import org.ameba.i18n.Translator;
 import org.openwms.common.location.api.LocationApi;
+import org.openwms.common.location.api.LocationGroupState;
 import org.openwms.common.location.api.LocationVO;
 import org.openwms.common.location.api.StockLocationApi;
 import org.openwms.common.location.api.Target;
@@ -186,7 +187,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
 
             // Required to search the final target first
             int noTo = (int) tos.stream().filter(t -> !t.hasTargetLocation()).count();
-            List<LocationVO> targets = stockLocationApi.findStockLocationSimple(asList(searchTargetLocationGroups), noTo);
+            List<LocationVO> targets = stockLocationApi.findAvailableStockLocations(asList(searchTargetLocationGroups), LocationGroupState.AVAILABLE, null, noTo);
             for (TransportOrder to : tos) {
                 if (!to.hasTargetLocation()) {
                     if (targets.iterator().hasNext()) {
