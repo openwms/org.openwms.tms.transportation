@@ -18,7 +18,8 @@ package org.openwms.tms.redirection;
 import org.openwms.tms.TransportOrder;
 
 /**
- * A RedirectVote. Encapsulates a targetLocationGroup and a targetLocation to vote for as targets.
+ * A RedirectVote. Encapsulates a targetLocationGroup and a targetLocation to vote for as
+ * targets.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
@@ -31,7 +32,7 @@ public class RedirectVote extends Vote {
      * Create a new RedirectVote.
      *
      * @param target The target destination to verify
-     * @param transportOrder
+     * @param transportOrder The TransportOrder to vote for
      */
     public RedirectVote(String target, TransportOrder transportOrder) {
         this.target = target;

@@ -16,28 +16,27 @@
 package org.openwms.tms.targets;
 
 import org.ameba.test.categories.IntegrationTests;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
 import org.openwms.common.location.api.LocationVO;
-import org.openwms.core.test.IntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.context.SpringBootTest;
 
 /**
  * A LocationTargetHandlerIT.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@RunWith(SpringRunner.class)
+@SpringBootTest
 @Category(IntegrationTests.class)
-@IntegrationTest
 public class LocationTargetHandlerIT {
 
     @Autowired
     private LocationTargetHandler lth;
 
     public final
+    @Ignore
     @Test
     void test() {
         LocationVO location = new LocationVO();

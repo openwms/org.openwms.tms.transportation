@@ -83,6 +83,9 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
         this.locationGroupApi = locationGroupApi;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Measured
     @Override
     public List<TransportOrder> findBy(String barcode, String... states) {
@@ -175,6 +178,9 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
         return findBy(pKey);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Measured
     public List<TransportOrder> findInfeed(TransportOrderState state, String sourceLocation, String... searchTargetLocationGroups) {
@@ -212,13 +218,19 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
         return repository.findByTargetLocationInAndStateAndSourceLocationIn(targetLocations, state, sourceLocations);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Measured
     public List<TransportOrder> findOutfeed(TransportOrderState state, String... sourceLocationGroupNames) {
         List<String> sourceLocations = locationGroupApi.findLocationsForLocationGroups(asList(sourceLocationGroupNames)).stream().map(LocationVO::getLocationId).collect(Collectors.toList());
-        return repository.findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(state, sourceLocations);
+        return repository.findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(sourceLocations, state, sourceLocations);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Measured
     public void changeState(TransportOrderState state, String pKey) {

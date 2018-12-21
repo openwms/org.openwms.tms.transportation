@@ -31,7 +31,7 @@ public interface TargetResolver<T extends Target> {
      *
      * @param target The target to resolve
      * @return The target instance
-     * @throws org.ameba.exception.NotFoundException
+     * @throws org.ameba.exception.NotFoundException If Target has not ben found
      */
     Optional<T> resolve(String target);
 

@@ -196,6 +196,7 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
      * Change the state of the {@code TransportOrder} regarding some rules.
      *
      * @param newState The new state of the order
+     * @return The modified instance
      * @throws StateChangeException in case <ul> <li>the newState is {@literal null} or</li> <li>the newState is less than the old state
      * or</li> <li>the {@code TransportOrder} is in state {@link TransportOrderState#CREATED} and shall be manually turned into something
      * else then {@link TransportOrderState#INITIALIZED} or {@link TransportOrderState#CANCELED}</li> <li>the {@code TransportOrder} is
