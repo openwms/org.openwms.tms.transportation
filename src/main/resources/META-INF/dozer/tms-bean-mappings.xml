@@ -33,6 +33,39 @@
     </mapping>
 
 	<mapping>
+		<class-a>org.openwms.tms.api.TransportOrderVO</class-a>
+		<class-b>org.openwms.tms.TransportOrder</class-b>
+		<field>
+			<a is-accessible="true">id</a>
+			<b is-accessible="true">pKey</b>
+		</field>
+		<field>
+			<a is-accessible="true">transportUnitId</a>
+			<b is-accessible="true">transportUnitBK</b>
+		</field>
+		<field>
+			<a is-accessible="true">priority</a>
+			<b is-accessible="true">priority</b>
+		</field>
+		<field>
+			<a is-accessible="true">state</a>
+			<b is-accessible="true">state</b>
+		</field>
+		<field>
+			<a is-accessible="true">sourceLocation</a>
+			<b is-accessible="true">sourceLocation</b>
+		</field>
+		<field>
+			<a is-accessible="true">targetLocation</a>
+			<b is-accessible="true">targetLocation</b>
+		</field>
+		<field>
+			<a is-accessible="true">targetLocationGroup</a>
+			<b is-accessible="true">targetLocationGroup</b>
+		</field>
+	</mapping>
+
+	<mapping>
 		<class-a>org.openwms.tms.api.CreateTransportOrderVO</class-a>
 		<class-b>org.openwms.tms.TransportOrder</class-b>
 		<field>

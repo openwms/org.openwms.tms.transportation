@@ -42,17 +42,17 @@ public interface TransportOrderApi {
     void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target, @RequestParam(value = "priority", required = false) String priority);
 
     @PostMapping(value = "/transport-orders/{id}", params = {"state"})
-    void changeState(@PathVariable(value = "id") String id, @RequestParam(value = "state") String state);
+    void changeState(@PathVariable(value = "id") String pKey, @RequestParam(value = "state") String state);
 
     @GetMapping(value = "/transport-orders", params = {"barcode", "state"})
-    List<TransportOrder> findBy(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "state") String state);
+    List<TransportOrderVO> findBy(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "state") String state);
 
     @GetMapping(value = "/transport-orders", params ={"sourceLocation", "state", "searchTargetLocationGroupNames"})
-    TransportOrder getNextInfeed(@RequestParam("sourceLocation") String sourceLocation, @RequestParam("state") String state, @RequestParam("searchTargetLocationGroupNames") String searchTargetLocationGroups);
+    TransportOrderVO getNextInfeed(@RequestParam("sourceLocation") String sourceLocation, @RequestParam("state") String state, @RequestParam("searchTargetLocationGroupNames") String searchTargetLocationGroups);
 
     @GetMapping(value = "/transport-orders", params ={"sourceLocationGroupName", "targetLocationGroupName", "state"})
-    TransportOrder getNextInAisle(@RequestParam("sourceLocationGroupName") String sourceLocationGroupName, @RequestParam("targetLocationGroupName") String targetLocationGroupName, @RequestParam("state") String state);
+    TransportOrderVO getNextInAisle(@RequestParam("sourceLocationGroupName") String sourceLocationGroupName, @RequestParam("targetLocationGroupName") String targetLocationGroupName, @RequestParam("state") String state);
 
     @GetMapping(value = "/transport-orders", params ={"state", "sourceLocationGroupName"})
-    TransportOrder getNextOutfeed(@RequestParam("state") String state, @RequestParam("sourceLocationGroupName") String sourceLocationGroupName);
+    TransportOrderVO getNextOutfeed(@RequestParam("state") String state, @RequestParam("sourceLocationGroupName") String sourceLocationGroupName);
 }

@@ -23,19 +23,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A TransportOrder.
+ * A TransportOrderVO.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
 // ajc has a problem here with lombok
-public class TransportOrder implements Serializable {
+public class TransportOrderVO implements Serializable {
 
     @JsonProperty("persistentKey")
     private String id;
     @JsonProperty("transportUnitBK")
     private String transportUnitId;
     @JsonProperty
-    private String routeId;
+    private String state;
+    @JsonProperty
+    private String priority;
     @JsonProperty
     private String sourceLocation;
     @JsonProperty
@@ -44,7 +46,7 @@ public class TransportOrder implements Serializable {
     private String targetLocationGroup;
 
     @JsonCreator
-    public TransportOrder() {
+    public TransportOrderVO() {
     }
 
     public String getId() {
@@ -55,8 +57,12 @@ public class TransportOrder implements Serializable {
         return transportUnitId;
     }
 
-    public String getRouteId() {
-        return routeId;
+    public String getState() {
+        return state;
+    }
+
+    public String getPriority() {
+        return priority;
     }
 
     public String getSourceLocation() {

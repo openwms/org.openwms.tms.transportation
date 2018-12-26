@@ -2,7 +2,8 @@ spring:
   security:
     user:
       password: sa
-
+  profiles:
+    active: SYNCHRONOUS
 owms:
   eureka:
     # Override this in cloud environment!
