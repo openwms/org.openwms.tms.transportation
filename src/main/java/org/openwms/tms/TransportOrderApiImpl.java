@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms.api;
+package org.openwms.tms;
 
 import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
-import org.openwms.tms.TransportationFacade;
+import org.openwms.tms.api.TransportOrderApi;
+import org.openwms.tms.api.TransportOrderVO;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 

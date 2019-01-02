@@ -50,7 +50,7 @@ import java.util.List;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Profile(SpringProfiles.SYNCHRONOUS_PROFILE)
+@Profile("!INMEM")
 @RestController
 class TransportationController {
 
