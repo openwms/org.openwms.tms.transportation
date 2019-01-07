@@ -20,7 +20,6 @@ import org.ameba.exception.BehaviorAwareException;
 import org.ameba.exception.BusinessRuntimeException;
 import org.ameba.http.Response;
 import org.ameba.mapping.BeanMapper;
-import org.openwms.core.SpringProfiles;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.openwms.tms.api.TransportOrderVO;
 import org.openwms.tms.api.UpdateTransportOrderVO;
@@ -50,7 +49,7 @@ import java.util.List;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Profile(SpringProfiles.SYNCHRONOUS_PROFILE)
+@Profile("!INMEM")
 @RestController
 class TransportationController {
 

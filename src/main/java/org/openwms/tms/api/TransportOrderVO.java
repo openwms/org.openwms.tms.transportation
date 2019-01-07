@@ -86,4 +86,9 @@ public class TransportOrderVO implements Serializable {
         result.put("to-targetLocationGroup", targetLocationGroup);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "TransportOrderVO{" + "id='" + id + '\'' + ", transportUnitId='" + transportUnitId + '\'' + ", state='" + state + '\'' + ", priority='" + priority + '\'' + ", sourceLocation='" + sourceLocation + '\'' + ", targetLocation='" + targetLocation + '\'' + ", targetLocationGroup='" + targetLocationGroup + '\'' + '}';
+    }
 }
