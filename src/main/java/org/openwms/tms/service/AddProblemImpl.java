@@ -35,8 +35,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 class AddProblemImpl implements UpdateFunction, AddProblem {
 
+    private final ProblemHistoryRepository repository;
+
     @Autowired
-    private ProblemHistoryRepository repository;
+    public AddProblemImpl(ProblemHistoryRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * {@inheritDoc}

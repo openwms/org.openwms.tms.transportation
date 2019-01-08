@@ -52,7 +52,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import java.util.Locale;
 
 /**
- * A ModuleConfiguration.
+ * A TransportationModuleConfiguration.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
@@ -66,21 +66,13 @@ import java.util.Locale;
 @EnableJpaRepositories(basePackageClasses = TransportationStarter.class)
 @EnableAspects(propagateRootCause = true)
 @EnableMultiTenancy
-public class ModuleConfiguration {
+public class TransportationModuleConfiguration {
 
     public
     @Bean
     BeanMapper beanMapper() {
         return new DozerMapperImpl("META-INF/dozer/tms-bean-mappings.xml");
     }
-
-    /*
-    public
-    @Bean
-    AlwaysSampler sampler() {
-        return new AlwaysSampler();
-    }
-    */
 
     public
     @Primary

@@ -114,17 +114,22 @@ class TransportationController {
     }
 
     @Measured
-    @PatchMapping(TMSConstants.ROOT_ENTITIES)
+    @PatchMapping(TMSConstants.ROOT_ENTITIES + "/{pKey}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void updateTO(@RequestBody UpdateTransportOrderVO vo) {
-        PriorityLevel.of(vo.getPriority());
+    void updateTO(@PathVariable(value = "pKey") String pKey, @RequestBody UpdateTransportOrderVO vo) {
+        if (vo.getPriority() != null && !vo.getPriority().isEmpty()) {
+            PriorityLevel.of(vo.getPriority());
+        }
+        if (vo.getpKey() == null || !pKey.equals(vo.getpKey())) {
+            vo.setpKey(pKey);
+        }
         service.update(mapper.map(vo, TransportOrder.class));
     }
 
     @Measured
-    @PostMapping(value = TMSConstants.ROOT_ENTITIES + "/{id}", params = {"state"})
-    void changeState(@PathVariable(value = "id") String id, @RequestParam(value = "state") String state) {
-        transportationFacade.changeState(id, state);
+    @PostMapping(value = TMSConstants.ROOT_ENTITIES + "/{pKey}", params = {"state"})
+    void changeState(@PathVariable(value = "pKey") String pKey, @RequestParam(value = "state") String state) {
+        transportationFacade.changeState(pKey, state);
     }
 
     @ExceptionHandler(BusinessRuntimeException.class)

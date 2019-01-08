@@ -22,6 +22,8 @@ import org.openwms.tms.UpdateFunction;
 import org.openwms.tms.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Validator;
 
@@ -30,6 +32,7 @@ import javax.validation.Validator;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
+@Transactional(propagation = Propagation.MANDATORY)
 @Component
 class ChangeTU implements UpdateFunction {
 
@@ -50,10 +53,10 @@ class ChangeTU implements UpdateFunction {
     @Override
     public void update(TransportOrder saved, TransportOrder toUpdate) {
         validateAttributes(toUpdate);
-        if (!saved.getTransportUnitBK().equalsIgnoreCase(toUpdate.getTransportUnitBK())) {
+        if (toUpdate.getTransportUnitBK() != null && !saved.getTransportUnitBK().equals(toUpdate.getTransportUnitBK())) {
 
-            // change the target of the TU to assign
             TransportUnitVO savedTU = new TransportUnitVO();
+            // change the target of the TU to assign
             savedTU.setBarcode(toUpdate.getTransportUnitBK());
             savedTU.setTarget(toUpdate.getTargetLocationGroup());
             transportUnitApi.updateTU(savedTU.getBarcode(), savedTU);

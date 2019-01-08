@@ -95,6 +95,69 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     /**
      * {@inheritDoc}
      */
+    @Override
+    @Measured
+    public TransportOrder findByPKey(String pKey) {
+        return findBy(pKey);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Measured
+    public List<TransportOrder> findInfeed(TransportOrderState state, String sourceLocation, String... searchTargetLocationGroups) {
+        List<TransportUnitVO> tus = transportUnitApi.getTransportUnitsOn(sourceLocation);
+        if (tus == null || tus.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<TransportOrder> tos = repository.findByTransportUnitBKIsInAndStateOrderByStartDate(tus.stream().map(TransportUnitVO::getBarcode).collect(Collectors.toList()), state);
+        if (searchTargetLocationGroups != null && searchTargetLocationGroups.length > 0) {
+
+            // Required to search the final target first
+            int noTo = (int) tos.stream().filter(t -> !t.hasTargetLocation()).count();
+            List<LocationVO> targets = stockLocationApi.findAvailableStockLocations(asList(searchTargetLocationGroups), LocationGroupState.AVAILABLE, null, noTo);
+            for (TransportOrder to : tos) {
+                if (!to.hasTargetLocation()) {
+                    if (targets.iterator().hasNext()) {
+                        to.setTargetLocation(targets.iterator().next().getLocationId());
+                    } else {
+                        LOGGER.warn("Not enough free Locations to allocate all open TransportOrders");
+                    }
+                }
+            };
+        }
+        return tos;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Measured
+    public List<TransportOrder> findInAisle(TransportOrderState state, String sourceLocationGroupName, String targetLocationGroupName) {
+        List<String> sourceLocations = locationGroupApi.findLocationsForLocationGroups(singletonList(sourceLocationGroupName)).stream().map(LocationVO::getLocationId).collect(Collectors.toList());
+        List<String> targetLocations = locationGroupApi.findLocationsForLocationGroups(singletonList(targetLocationGroupName)).stream().map(LocationVO::getLocationId).collect(Collectors.toList());
+        return repository.findByTargetLocationInAndStateAndSourceLocationIn(targetLocations, state, sourceLocations);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Measured
+    public List<TransportOrder> findOutfeed(TransportOrderState state, String... sourceLocationGroupNames) {
+        List<String> sourceLocations = locationGroupApi.findLocationsForLocationGroups(asList(sourceLocationGroupNames)).stream().map(LocationVO::getLocationId).collect(Collectors.toList());
+        return repository.findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(sourceLocations, state, sourceLocations);
+    }
+
+    private TransportOrder findBy(String pKey) {
+        return repository.findByPKey(pKey).orElseThrow(() -> new NotFoundException(translator, TMSMessageCodes.TO_WITH_PKEY_NOT_FOUND, new String[]{pKey}, pKey));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Measured
     @Override
     public int getNoTransportOrdersToTarget(String target, String... states) {
@@ -158,7 +221,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
             try {
                 LOGGER.debug("Trying to turn TransportOrder [{}] into state [{}]", transportOrder.getPk(), state);
                 transportOrder.changeState(state);
-                ctx.publishEvent(new TransportServiceEvent(transportOrder.getPk(), TransportOrderUtil.convertToEventType(state)));
+                ctx.publishEvent(new TransportServiceEvent(transportOrder.getPk(), TransportServiceEvent.TYPE.of(state)));
             } catch (StateChangeException sce) {
                 LOGGER.error("Could not turn TransportOrder: [{}] into [{}], because of [{}]", transportOrder.getPk(), state, sce.getMessage());
                 Message problem = new Message.Builder().withMessage(sce.getMessage()).build();
@@ -167,79 +230,5 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
             }
         }
         return failure;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Measured
-    public TransportOrder findByPKey(String pKey) {
-        return findBy(pKey);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Measured
-    public List<TransportOrder> findInfeed(TransportOrderState state, String sourceLocation, String... searchTargetLocationGroups) {
-        List<TransportUnitVO> tus = transportUnitApi.getTransportUnitsOn(sourceLocation);
-        if (tus == null || tus.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<TransportOrder> tos = repository.findByTransportUnitBKIsInAndStateOrderByStartDate(tus.stream().map(TransportUnitVO::getBarcode).collect(Collectors.toList()), state);
-        if (searchTargetLocationGroups != null && searchTargetLocationGroups.length > 0) {
-
-            // Required to search the final target first
-            int noTo = (int) tos.stream().filter(t -> !t.hasTargetLocation()).count();
-            List<LocationVO> targets = stockLocationApi.findAvailableStockLocations(asList(searchTargetLocationGroups), LocationGroupState.AVAILABLE, null, noTo);
-            for (TransportOrder to : tos) {
-                if (!to.hasTargetLocation()) {
-                    if (targets.iterator().hasNext()) {
-                        to.setTargetLocation(targets.iterator().next().getLocationId());
-                    } else {
-                        LOGGER.warn("Not enough free Locations to allocate all open TransportOrders");
-                    }
-                }
-            };
-        }
-        return tos;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Measured
-    public List<TransportOrder> findInAisle(TransportOrderState state, String sourceLocationGroupName, String targetLocationGroupName) {
-        List<String> sourceLocations = locationGroupApi.findLocationsForLocationGroups(singletonList(sourceLocationGroupName)).stream().map(LocationVO::getLocationId).collect(Collectors.toList());
-        List<String> targetLocations = locationGroupApi.findLocationsForLocationGroups(singletonList(targetLocationGroupName)).stream().map(LocationVO::getLocationId).collect(Collectors.toList());
-        return repository.findByTargetLocationInAndStateAndSourceLocationIn(targetLocations, state, sourceLocations);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Measured
-    public List<TransportOrder> findOutfeed(TransportOrderState state, String... sourceLocationGroupNames) {
-        List<String> sourceLocations = locationGroupApi.findLocationsForLocationGroups(asList(sourceLocationGroupNames)).stream().map(LocationVO::getLocationId).collect(Collectors.toList());
-        return repository.findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(sourceLocations, state, sourceLocations);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Measured
-    public void changeState(TransportOrderState state, String pKey) {
-        TransportOrder to = repository.findByPKey(pKey).orElseThrow(NotFoundException::new);
-        to.changeState(state);
-        ctx.publishEvent(new TransportServiceEvent(to.getPk(), TransportServiceEvent.TYPE.of(state)));
-    }
-
-    private TransportOrder findBy(String pKey) {
-        return repository.findByPKey(pKey).orElseThrow(() -> new NotFoundException(translator, TMSMessageCodes.TO_WITH_PKEY_NOT_FOUND, new String[]{pKey}, pKey));
     }
 }

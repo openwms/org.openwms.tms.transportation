@@ -122,4 +122,17 @@
 			<b is-accessible="true">targetLocationGroup</b>
 		</field>
 	</mapping>
+
+	<mapping>
+		<class-a>org.openwms.common.transport.api.TransportUnitVO</class-a>
+		<class-b>org.openwms.common.transport.TransportUnitMO</class-b>
+		<field>
+			<a is-accessible="true">barcode</a>
+			<b is-accessible="true">barcode</b>
+		</field>
+		<field>
+			<a is-accessible="true">target</a>
+			<b is-accessible="true">targetLocation</b>
+		</field>
+	</mapping>
 </mappings>

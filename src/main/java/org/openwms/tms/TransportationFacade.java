@@ -19,6 +19,7 @@ import org.ameba.annotation.TxService;
 import org.ameba.mapping.BeanMapper;
 import org.openwms.tms.api.TransportOrderApi;
 import org.openwms.tms.api.TransportOrderVO;
+import org.openwms.tms.api.UpdateTransportOrderVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,15 +54,20 @@ public class TransportationFacade implements TransportOrderApi {
     }
 
     @Override
-    public void changeState(String id, String state) {
-        LOGGER.debug("Change the state of the TransportOrder with persistent key [{}] to [{}]", id, state);
-        service.changeState(TransportOrderState.valueOf(state), id);
+    public void changeState(String pKey, String state) {
+        // FIXME [openwms]: 08.01.19 
+    }
+
+    @Override
+    public void updateTO(String pKey, UpdateTransportOrderVO vo) {
+        // FIXME [openwms]: 08.01.19 
     }
 
     @Override
     public List<TransportOrderVO> findBy(String barcode, String state) {
-        LOGGER.debug("Find TransportOrder with barcode [{}] in state [{}]", barcode, state);
-        return mapper.map(service.findBy(barcode, state), TransportOrderVO.class);
+        List<TransportOrderVO> orders = mapper.map(service.findBy(barcode, state), TransportOrderVO.class);
+        LOGGER.debug("Found [{}] TransportOrders with barcode [{}] in state [{}]", orders.size(), barcode, state);
+        return orders;
     }
 
     @Override

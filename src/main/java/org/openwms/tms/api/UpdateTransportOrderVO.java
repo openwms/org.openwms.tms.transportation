@@ -33,6 +33,22 @@ public class UpdateTransportOrderVO implements Serializable {
     private String state;
     private String target;
 
+    UpdateTransportOrderVO() {
+    }
+
+    private UpdateTransportOrderVO(Builder builder) {
+        setpKey(builder.pKey);
+        setBarcode(builder.barcode);
+        setPriority(builder.priority);
+        setProblem(builder.problem);
+        setState(builder.state);
+        setTarget(builder.target);
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public String getpKey() {
         return pKey;
     }
@@ -91,5 +107,51 @@ public class UpdateTransportOrderVO implements Serializable {
                 ", state='" + state + '\'' +
                 ", target='" + target + '\'' +
                 '}';
+    }
+
+    public static final class Builder {
+        private String pKey;
+        private String barcode;
+        private String priority;
+        private Message problem;
+        private String state;
+        private String target;
+
+        private Builder() {
+        }
+
+        public Builder withPKey(String val) {
+            pKey = val;
+            return this;
+        }
+
+        public Builder withBarcode(String val) {
+            barcode = val;
+            return this;
+        }
+
+        public Builder withPriority(String val) {
+            priority = val;
+            return this;
+        }
+
+        public Builder withProblem(Message val) {
+            problem = val;
+            return this;
+        }
+
+        public Builder withState(String val) {
+            state = val;
+            return this;
+        }
+
+        public Builder withTarget(String val) {
+            target = val;
+            return this;
+        }
+
+        public UpdateTransportOrderVO build() {
+            return new UpdateTransportOrderVO(this);
+        }
     }
 }

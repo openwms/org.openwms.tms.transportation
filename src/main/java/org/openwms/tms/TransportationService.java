@@ -37,6 +37,47 @@ public interface TransportationService<T extends TransportOrder> {
     List<T> findBy(String barcode, String... states);
 
     /**
+     * Find and return the {@link TransportOrder} identified by the persisted key {@code pKey}.
+     *
+     * @param pKey The persisted key
+     * @return An {@link TransportOrder} instance
+     * @throws org.ameba.exception.NotFoundException if no entity was found
+     */
+    T findByPKey(String pKey);
+
+    /**
+     * Find and return all {@link TransportOrder}s with the given {@code state} and the
+     * {@code sourceLocation} to the {@code targetLocationGroupNames} as target.
+     *
+     * @param state The state
+     * @param sourceLocation Name of the sourceLocation, probably the infeed position
+     * @param targetLocationGroupNames Name of the targetLocationGroups
+     * @return All TransportOrders or an empty collection, never {@literal null}
+     */
+    List<TransportOrder> findInfeed(TransportOrderState state, String sourceLocation, String... targetLocationGroupNames);
+
+    /**
+     * Find and return all {@link TransportOrder}s with the given {@code state} and the
+     * {@code sourceLocationGroupName} and {@code targetLocationGroupName}.
+     *
+     * @param state The state
+     * @param sourceLocationGroupName Name of the source LocationGroup
+     * @param targetLocationGroupName Name of the target LocationGroup
+     * @return All TransportOrders or an empty collection, never {@literal null}
+     */
+    List<T> findInAisle(TransportOrderState state, String sourceLocationGroupName, String targetLocationGroupName);
+
+    /**
+     * Find and return all {@link TransportOrder}s with the given {@code state} and the
+     * {@code sourceLocationGroupNames} as source.
+     *
+     * @param state The state
+     * @param sourceLocationGroupNames Name of the source LocationGroups
+     * @return All TransportOrders or an empty collection, never {@literal null}
+     */
+    List<T> findOutfeed(TransportOrderState state, String... sourceLocationGroupNames);
+
+    /**
      * Returns the number of {@link TransportOrder}s that have the {@code target} as target and are in one of the {@code states}.
      *
      * @param target The target place to search TransportOrders for
@@ -73,53 +114,4 @@ public interface TransportationService<T extends TransportOrder> {
      */
     @Deprecated
     Collection<String> change(TransportOrderState state, Collection<String> pKeys);
-
-    /**
-     * Find and return the {@link TransportOrder} identified by the persisted key {@code pKey}.
-     *
-     * @param pKey The persisted key
-     * @return An {@link TransportOrder} instance
-     * @throws org.ameba.exception.NotFoundException if no entity was found
-     */
-    T findByPKey(String pKey);
-
-    /**
-     * Find and return all {@link TransportOrder}s with the given {@code state} and the
-     * {@code sourceLocation} to the {@code targetLocationGroupNames} as target.
-     * 
-     * @param state The state
-     * @param sourceLocation Name of the sourceLocation, probably the infeed position
-     * @param targetLocationGroupNames Name of the targetLocationGroups
-     * @return All TransportOrders or an empty collection, never {@literal null}
-     */
-    List<TransportOrder> findInfeed(TransportOrderState state, String sourceLocation, String... targetLocationGroupNames);
-
-    /**
-     * Find and return all {@link TransportOrder}s with the given {@code state} and the
-     * {@code sourceLocationGroupName} and {@code targetLocationGroupName}.
-     *
-     * @param state The state
-     * @param sourceLocationGroupName Name of the source LocationGroup
-     * @param targetLocationGroupName Name of the target LocationGroup
-     * @return All TransportOrders or an empty collection, never {@literal null}
-     */
-    List<T> findInAisle(TransportOrderState state, String sourceLocationGroupName, String targetLocationGroupName);
-
-    /**
-     * Find and return all {@link TransportOrder}s with the given {@code state} and the
-     * {@code sourceLocationGroupNames} as source.
-     * 
-     * @param state The state
-     * @param sourceLocationGroupNames Name of the source LocationGroups
-     * @return All TransportOrders or an empty collection, never {@literal null}
-     */
-    List<T> findOutfeed(TransportOrderState state, String... sourceLocationGroupNames);
-
-    /**
-     * Change the state of a {@link TransportOrder}.
-     *
-     * @param state The new state
-     * @param pKey The persistent key of the TransportOrder
-     */
-    void changeState(TransportOrderState state, String pKey);
 }

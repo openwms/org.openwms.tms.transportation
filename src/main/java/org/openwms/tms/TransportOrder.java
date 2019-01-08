@@ -241,6 +241,10 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
         return targetLocationGroup;
     }
 
+    public boolean hasTargetLocationGroup() {
+        return this.targetLocationGroup != null && !this.targetLocationGroup.isEmpty();
+    }
+
     /**
      * Set the targetLocationGroup.
      *

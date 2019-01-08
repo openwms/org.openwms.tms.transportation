@@ -15,20 +15,34 @@
  */
 package org.openwms.tms.state;
 
+import org.openwms.tms.Message;
+import org.openwms.tms.StateChangeException;
 import org.openwms.tms.TransportOrder;
+import org.openwms.tms.TransportServiceEvent;
 import org.openwms.tms.UpdateFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * A ChangeState.
+ * A ChangeState is an {@link UpdateFunction} to change the state of an {@link TransportOrder}.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
+ * @see org.openwms.tms.UpdateFunction
  */
 @Transactional(propagation = Propagation.MANDATORY)
 @Component
 class ChangeState implements UpdateFunction {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChangeState.class);
+    private final ApplicationContext ctx;
+
+    ChangeState(ApplicationContext ctx) {
+        this.ctx = ctx;
+    }
 
     /**
      * {@inheritDoc}
@@ -36,9 +50,15 @@ class ChangeState implements UpdateFunction {
     @Override
     public void update(TransportOrder saved, TransportOrder toUpdate) {
         if (saved.getState() != toUpdate.getState() && toUpdate.getState() != null) {
-
-            // Request to change TO's state...
-            saved.changeState(toUpdate.getState());
+            try {
+                LOGGER.debug("Trying to turn TransportOrder [{}] into state [{}]", saved.getPk(), toUpdate.getState());
+                saved.changeState(toUpdate.getState());
+                ctx.publishEvent(new TransportServiceEvent(saved.getPk(), TransportServiceEvent.TYPE.of(toUpdate.getState())));
+            } catch (StateChangeException sce) {
+                LOGGER.error("Could not turn TransportOrder: [{}] into [{}], because of [{}]", saved.getPk(), toUpdate.getState(), sce.getMessage());
+                Message problem = new Message.Builder().withMessage(sce.getMessage()).build();
+                saved.setProblem(problem);
+            }
         }
     }
 }
