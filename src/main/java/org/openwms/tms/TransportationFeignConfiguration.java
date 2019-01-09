@@ -27,8 +27,8 @@ import org.springframework.context.annotation.Profile;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Configuration
 @Profile("!INMEM")
+@Configuration
 @EnableFeignClients(basePackageClasses = {TransportUnitApi.class, LocationApi.class, LocationGroupApi.class})
-public class TransportationFeignConfiguration {
+class TransportationFeignConfiguration {
 }

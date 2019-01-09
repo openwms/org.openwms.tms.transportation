@@ -3,9 +3,6 @@ spring:
     user:
       password: sa
       name: user
-  profiles:
-    active: SYNCHRONOUS
 owms:
   eureka:
-    # Override this in cloud environment!
     url: http://user:sa@localhost:8761
