@@ -15,13 +15,20 @@
  */
 package org.openwms.tms;
 
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+
 /**
- * A TMSConstants holds general constants of this microservice module.
+ * A TransportationStandaloneConfiguration is activated when the service is deployed as a
+ * microservice, not packaged within an application. Then Service Discovery is activated.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-public final class TMSConstants {
-
-    /** API root to hit TransportOrders (plural). */
-    public static final String ROOT_ENTITIES = "/transport-orders";
+@Profile("!INMEM")
+@Configuration
+@EnableDiscoveryClient
+@EnableCircuitBreaker
+public class TransportationStandaloneConfiguration {
 }

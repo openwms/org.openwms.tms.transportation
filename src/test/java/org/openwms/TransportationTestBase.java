@@ -64,7 +64,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public abstract class TransportationTestBase {
 
     @Autowired
-    @Qualifier(TMSConstants.BEAN_NAME_OBJECTMAPPER)
+    @Qualifier("jacksonOM")
     protected ObjectMapper objectMapper;
     protected MockMvc mockMvc;
     @Autowired

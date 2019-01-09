@@ -30,8 +30,6 @@ import org.ameba.mapping.BeanMapper;
 import org.ameba.mapping.DozerMapperImpl;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,8 +52,6 @@ import java.util.Locale;
  */
 @Configuration
 @EnableCaching
-@EnableEurekaClient
-@EnableCircuitBreaker
 @EnableSpringConfigured
 @EnableJpaAuditing
 @EnableJpaRepositories(basePackageClasses = TransportationModuleConfiguration.class)
@@ -71,7 +67,7 @@ public class TransportationModuleConfiguration {
 
     public
     @Primary
-    @Bean(name = TMSConstants.BEAN_NAME_OBJECTMAPPER)
+    @Bean(name = "jacksonOM")
     ObjectMapper jackson2ObjectMapper() {
         ObjectMapper om = new ObjectMapper();
         om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
