@@ -20,12 +20,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
- * A TMSSecurityConfiguration.
+ * A TransportationSecurityConfiguration.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
 @Configuration
-public class TMSSecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class TransportationSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
      * {@inheritDoc}
