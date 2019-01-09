@@ -57,15 +57,22 @@ class TransportOrderApiImpl implements TransportOrderApi {
         facade.changeState(id, state);
     }
 
+    @Measured
     @Override
     public void updateTO(String pKey, UpdateTransportOrderVO vo) {
-        // FIXME [openwms]: 08.01.19 
+        facade.updateTO(pKey, vo);
     }
 
     @Measured
     @Override
     public List<TransportOrderVO> findBy(String barcode, String state) {
         return facade.findBy(barcode, state);
+    }
+
+    @Measured
+    @Override
+    public TransportOrderVO findByPKey(String pKey) {
+        return facade.findByPKey(pKey);
     }
 
     @Measured

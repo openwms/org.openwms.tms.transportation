@@ -110,8 +110,6 @@ public interface TransportationService<T extends TransportOrder> {
      * @param state The state to change all orders to
      * @param pKeys The persisted keys of {@link TransportOrder}s
      * @return A list of persisted keys of {@link TransportOrder}s that have not been changed
-     * @deprecated Use update instead
      */
-    @Deprecated
     Collection<String> change(TransportOrderState state, Collection<String> pKeys);
 }

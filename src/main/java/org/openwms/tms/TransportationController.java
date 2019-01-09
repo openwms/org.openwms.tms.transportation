@@ -19,7 +19,6 @@ import org.ameba.annotation.Measured;
 import org.ameba.exception.BehaviorAwareException;
 import org.ameba.exception.BusinessRuntimeException;
 import org.ameba.http.Response;
-import org.ameba.mapping.BeanMapper;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.openwms.tms.api.TransportOrderVO;
 import org.openwms.tms.api.UpdateTransportOrderVO;
@@ -54,12 +53,10 @@ import java.util.List;
 class TransportationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationController.class);
-    private final BeanMapper mapper;
     private final TransportationService<TransportOrder> service;
     private final TransportationFacade transportationFacade;
 
-    TransportationController(BeanMapper mapper, TransportationService<TransportOrder> service, TransportationFacade transportationFacade) {
-        this.mapper = mapper;
+    TransportationController(TransportationService<TransportOrder> service, TransportationFacade transportationFacade) {
         this.service = service;
         this.transportationFacade = transportationFacade;
     }
@@ -72,9 +69,8 @@ class TransportationController {
 
     @Measured
     @GetMapping(TMSConstants.ROOT_ENTITIES + "/{pKey}")
-    TransportOrderVO findByPKey(@PathVariable String pKey) {
-        LOGGER.debug("Find TransportOrder with persistent key [{}]", pKey);
-        return mapper.map(service.findByPKey(pKey), TransportOrderVO.class);
+    TransportOrderVO findByPKey(@PathVariable(value = "pKey") String pKey) {
+        return transportationFacade.findByPKey(pKey);
     }
 
     @Measured
@@ -99,7 +95,9 @@ class TransportationController {
     @PostMapping(value = TMSConstants.ROOT_ENTITIES, params = {"barcode", "target"})
     @ResponseStatus(HttpStatus.CREATED)
     void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target, @RequestParam(value = "priority", required = false) String priority, HttpServletRequest req, HttpServletResponse resp) {
-        LOGGER.debug("Create TransportOrder with barcode [{}] to target [{}] and priority [{}]", barcode, target, priority);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Create TransportOrder with Barcode [{}] and Target [{}] and Priority [{}]", barcode, target, priority);
+        }
         TransportOrder to = service.create(barcode, target, priority);
         resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
     }
@@ -108,7 +106,9 @@ class TransportationController {
     @PostMapping(TMSConstants.ROOT_ENTITIES)
     @ResponseStatus(HttpStatus.CREATED)
     void createTO(@RequestBody CreateTransportOrderVO vo, HttpServletRequest req, HttpServletResponse resp) {
-        LOGGER.debug("Create TransportOrder [{}]", vo.toString());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Create TransportOrder [{}]", vo.toString());
+        }
         TransportOrder to = service.create(vo.getBarcode(), vo.getTarget(), vo.getPriority());
         resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
     }
@@ -117,13 +117,7 @@ class TransportationController {
     @PatchMapping(TMSConstants.ROOT_ENTITIES + "/{pKey}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void updateTO(@PathVariable(value = "pKey") String pKey, @RequestBody UpdateTransportOrderVO vo) {
-        if (vo.getPriority() != null && !vo.getPriority().isEmpty()) {
-            PriorityLevel.of(vo.getPriority());
-        }
-        if (vo.getpKey() == null || !pKey.equals(vo.getpKey())) {
-            vo.setpKey(pKey);
-        }
-        service.update(mapper.map(vo, TransportOrder.class));
+        transportationFacade.updateTO(pKey, vo);
     }
 
     @Measured
@@ -133,36 +127,17 @@ class TransportationController {
     }
 
     @ExceptionHandler(BusinessRuntimeException.class)
-    public ResponseEntity<Response> handleNotFound(HttpServletResponse res, BusinessRuntimeException ex) {
+    public ResponseEntity<Response> handleNotFound(BusinessRuntimeException ex) {
         if (ex instanceof BehaviorAwareException) {
             BehaviorAwareException bae = (BehaviorAwareException) ex;
-            return new ResponseEntity<>(
-                    Response.newBuilder()
-                            .withMessage(ex.getMessage())
-                            .withMessageKey(bae.getMessageKey())
-                            .withHttpStatus(bae.getStatus().toString())
-                            .withObj(bae.getData())
-                            .build(),
-                    bae.getStatus());
+            return new ResponseEntity<>(Response.newBuilder().withMessage(ex.getMessage()).withMessageKey(bae.getMessageKey()).withHttpStatus(bae.getStatus().toString()).withObj(bae.getData()).build(), bae.getStatus());
         }
-        return new ResponseEntity<>(
-                Response.newBuilder()
-                        .withMessage(ex.getMessage())
-                        .withMessageKey(ex.getMessageKey())
-                        .withHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR.toString())
-                        .withObj(new String[]{ex.getMessageKey()})
-                        .build(),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(Response.newBuilder().withMessage(ex.getMessage()).withMessageKey(ex.getMessageKey()).withHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR.toString()).withObj(new String[]{ex.getMessageKey()}).build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Response> handleBadRequests(HttpServletResponse res, IllegalArgumentException ex) {
-        return new ResponseEntity<>(
-                Response.newBuilder()
-                        .withMessage(ex.getMessage())
-                        .withHttpStatus(HttpStatus.BAD_REQUEST.toString())
-                        .build(),
-                HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Response> handleBadRequests(IllegalArgumentException ex) {
+        return new ResponseEntity<>(Response.newBuilder().withMessage(ex.getMessage()).withHttpStatus(HttpStatus.BAD_REQUEST.toString()).build(), HttpStatus.BAD_REQUEST);
     }
 
     private String getCreatedResourceURI(HttpServletRequest req, String objId) {

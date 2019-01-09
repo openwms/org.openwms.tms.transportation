@@ -11,8 +11,8 @@ spring:
         max-attempts: 120
   security:
     user:
-      # Override this in cloud environment!
       password: sa
+      name: user
 
 owms:
   eureka:

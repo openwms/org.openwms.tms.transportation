@@ -38,6 +38,9 @@ public interface TransportOrderApi {
     @GetMapping(value = "/transport-orders", params = {"barcode", "state"})
     List<TransportOrderVO> findBy(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "state") String state);
 
+    @GetMapping(value = "/transport-orders/{pKey}")
+    TransportOrderVO findByPKey(@PathVariable(value = "pKey") String pKey);
+
     @GetMapping(value = "/transport-orders", params ={"sourceLocation", "state", "searchTargetLocationGroupNames"})
     TransportOrderVO getNextInfeed(@RequestParam("sourceLocation") String sourceLocation, @RequestParam("state") String state, @RequestParam("searchTargetLocationGroupNames") String searchTargetLocationGroups);
 
