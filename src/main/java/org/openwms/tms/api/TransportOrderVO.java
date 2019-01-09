@@ -16,6 +16,7 @@
 package org.openwms.tms.api;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
@@ -77,6 +78,7 @@ public class TransportOrderVO implements Serializable {
         return targetLocationGroup;
     }
 
+    @JsonIgnore
     public Map<String, Object> getAll() {
         Map<String, Object> result = new HashMap<>(6);
         result.put("toId", id);
