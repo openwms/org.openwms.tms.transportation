@@ -54,7 +54,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
         // test ...
         vo.setProblem(null);
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -77,7 +77,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -103,7 +103,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-            patch(TMSConstants.ROOT_ENTITIES)
+            patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(vo))
             )
@@ -124,7 +124,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
 
     private void addProblem(CreateTransportOrderVO vo) throws Exception {
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )

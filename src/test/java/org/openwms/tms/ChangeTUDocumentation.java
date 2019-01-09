@@ -52,7 +52,7 @@ public class ChangeTUDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
                 )
@@ -72,7 +72,7 @@ public class ChangeTUDocumentation extends TransportationTestBase {
 
         // test ...
         MvcResult res = mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
                 )
@@ -93,7 +93,7 @@ public class ChangeTUDocumentation extends TransportationTestBase {
 // TODO [openwms]: 10/08/16
         // test ...
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )

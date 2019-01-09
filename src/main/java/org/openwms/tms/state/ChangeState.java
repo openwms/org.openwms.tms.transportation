@@ -15,8 +15,6 @@
  */
 package org.openwms.tms.state;
 
-import org.openwms.tms.Message;
-import org.openwms.tms.StateChangeException;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportServiceEvent;
 import org.openwms.tms.UpdateFunction;
@@ -50,15 +48,11 @@ class ChangeState implements UpdateFunction {
     @Override
     public void update(TransportOrder saved, TransportOrder toUpdate) {
         if (saved.getState() != toUpdate.getState() && toUpdate.getState() != null) {
-            try {
+            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Trying to turn TransportOrder [{}] into state [{}]", saved.getPk(), toUpdate.getState());
-                saved.changeState(toUpdate.getState());
-                ctx.publishEvent(new TransportServiceEvent(saved.getPk(), TransportServiceEvent.TYPE.of(toUpdate.getState())));
-            } catch (StateChangeException sce) {
-                LOGGER.error("Could not turn TransportOrder: [{}] into [{}], because of [{}]", saved.getPk(), toUpdate.getState(), sce.getMessage());
-                Message problem = new Message.Builder().withMessage(sce.getMessage()).build();
-                saved.setProblem(problem);
             }
+            saved.changeState(toUpdate.getState());
+            ctx.publishEvent(new TransportServiceEvent(saved.getPk(), TransportServiceEvent.TYPE.of(toUpdate.getState())));
         }
     }
 }

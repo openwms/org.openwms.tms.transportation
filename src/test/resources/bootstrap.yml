@@ -2,6 +2,7 @@ spring:
   security:
     user:
       password: sa
+      name: user
   profiles:
     active: SYNCHRONOUS
 owms:

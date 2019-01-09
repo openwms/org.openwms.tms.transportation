@@ -45,12 +45,18 @@ public class PrioritizeTODocumentation extends TransportationTestBase {
 
         vo.setPriority(null);
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
                 )
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNoContent())
                 .andDo(document("to-patch-priority-with-null"))
+        ;
+
+        mockMvc.perform(
+                get(TMSConstants.ROOT_ENTITIES + "/" + vo.getpKey()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("priority", is("NORMAL")))
         ;
     }
 
@@ -75,7 +81,7 @@ public class PrioritizeTODocumentation extends TransportationTestBase {
         // test ...
         vo.setPriority(PriorityLevel.NORMAL.toString());
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )

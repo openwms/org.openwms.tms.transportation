@@ -110,7 +110,7 @@ public class RedirectTODocumentation extends TransportationTestBase {
     private void sendPatch(CreateTransportOrderVO vo, ResultMatcher rm, String output) throws Exception {
         // test ...
         mockMvc.perform(
-            patch(TMSConstants.ROOT_ENTITIES)
+            patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(vo))
             )

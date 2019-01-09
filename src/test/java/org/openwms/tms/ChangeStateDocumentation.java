@@ -22,10 +22,7 @@ import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-
-import javax.persistence.EntityManager;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
@@ -43,9 +40,6 @@ public class ChangeStateDocumentation extends TransportationTestBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChangeStateDocumentation.class);
 
-    @Autowired
-    private EntityManager em;
-
     public
     @Test
     void turnBackState() throws Exception {
@@ -61,7 +55,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -92,7 +86,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         LOGGER.debug("Calling API with:" + vo2);
         // test ...
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo2))
         )
@@ -119,7 +113,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo2))
         )
@@ -146,7 +140,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo2))
         )
@@ -172,7 +166,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo2.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo2))
         )
@@ -197,7 +191,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -221,7 +215,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -245,7 +239,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -269,7 +263,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -292,7 +286,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
         vo.setState(TransportOrderState.FINISHED.toString());
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -302,7 +296,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         // test ...
         vo.setState(TransportOrderState.CANCELED.toString());
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -325,7 +319,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
         vo.setState(TransportOrderState.ONFAILURE.toString());
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -335,7 +329,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         // test ...
         vo.setState(TransportOrderState.CANCELED.toString());
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -358,7 +352,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
         vo.setState(TransportOrderState.CANCELED.toString());
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -368,7 +362,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         // test ...
         vo.setState(TransportOrderState.ONFAILURE.toString());
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES)
+                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )

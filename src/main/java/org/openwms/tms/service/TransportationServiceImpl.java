@@ -186,15 +186,23 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
         if (barcode == null) {
             throw new NotFoundException("Barcode cannot be null when creating a TransportOrder");
         }
-        LOGGER.debug("Trying to create TransportOrder with Barcode [{}], to Target [{}], with Priority [{}]", barcode, target, priority);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Trying to create TransportOrder with Barcode [{}], to Target [{}], with Priority [{}]", barcode, target, priority);
+        }
         TransportOrder transportOrder = new TransportOrder(barcode).setTargetLocation(target).setTargetLocationGroup(target);
         if (priority != null && !priority.isEmpty()) {
             transportOrder.setPriority(PriorityLevel.of(priority));
+        } else {
+            transportOrder.setPriority(PriorityLevel.NORMAL);
         }
         transportOrder = repository.save(transportOrder);
-        LOGGER.debug("TransportOrder for Barcode [{}] created. PKey is [{}], PK is [{}]", barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("TransportOrder for Barcode [{}] created. PKey is [{}], PK is [{}]", barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
+        }
         ctx.publishEvent(new TransportServiceEvent(transportOrder.getPk(), TransportServiceEvent.TYPE.TRANSPORT_CREATED));
-        LOGGER.debug("TransportOrder for Barcode [{}] persisted. PKey is [{}], PK is [{}]", barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("TransportOrder for Barcode [{}] persisted. PKey is [{}], PK is [{}]", barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
+        }
         return transportOrder;
     }
 
@@ -219,7 +227,9 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
         List<TransportOrder> transportOrders = repository.findByPKey(new ArrayList<>(pKeys));
         for (TransportOrder transportOrder : transportOrders) {
             try {
-                LOGGER.debug("Trying to turn TransportOrder [{}] into state [{}]", transportOrder.getPk(), state);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Trying to turn TransportOrder [{}] into state [{}]", transportOrder.getPk(), state);
+                }
                 transportOrder.changeState(state);
                 ctx.publishEvent(new TransportServiceEvent(transportOrder.getPk(), TransportServiceEvent.TYPE.of(state)));
             } catch (StateChangeException sce) {
