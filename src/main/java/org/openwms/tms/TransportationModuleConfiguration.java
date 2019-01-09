@@ -58,7 +58,7 @@ import java.util.Locale;
 @EnableCircuitBreaker
 @EnableSpringConfigured
 @EnableJpaAuditing
-@EnableJpaRepositories(basePackageClasses = TransportationStarter.class)
+@EnableJpaRepositories(basePackageClasses = TransportationModuleConfiguration.class)
 @EnableAspects(propagateRootCause = true)
 @EnableMultiTenancy
 public class TransportationModuleConfiguration {

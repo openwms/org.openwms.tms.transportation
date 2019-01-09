@@ -19,6 +19,7 @@ import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.openwms.tms.api.TransportOrderApi;
 import org.openwms.tms.api.TransportOrderVO;
+import org.openwms.tms.api.UpdateTransportOrderVO;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 

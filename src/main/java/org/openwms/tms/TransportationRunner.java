@@ -20,12 +20,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * A TransportationStarter is the Spring Boot starter class of the microservice component.
+ * A TransportationRunner is the Spring Boot starter class of the microservice component.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@SpringBootApplication(scanBasePackageClasses = {TransportationStarter.class, SolutionApp.class})
-public class TransportationStarter {
+@SpringBootApplication(scanBasePackageClasses = {TransportationRunner.class, SolutionApp.class})
+public class TransportationRunner {
 
     /**
      * Boot up!
@@ -33,6 +33,6 @@ public class TransportationStarter {
      * @param args Some args
      */
     public static void main(String[] args) {
-        SpringApplication.run(TransportationStarter.class, args);
+        SpringApplication.run(TransportationRunner.class, args);
     }
 }
