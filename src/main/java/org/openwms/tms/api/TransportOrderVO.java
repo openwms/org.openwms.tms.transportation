@@ -93,4 +93,32 @@ public class TransportOrderVO implements Serializable {
     public String toString() {
         return "TransportOrderVO{" + "id='" + id + '\'' + ", transportUnitId='" + transportUnitId + '\'' + ", state='" + state + '\'' + ", priority='" + priority + '\'' + ", sourceLocation='" + sourceLocation + '\'' + ", targetLocation='" + targetLocation + '\'' + ", targetLocationGroup='" + targetLocationGroup + '\'' + '}';
     }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setTransportUnitId(String transportUnitId) {
+        this.transportUnitId = transportUnitId;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public void setSourceLocation(String sourceLocation) {
+        this.sourceLocation = sourceLocation;
+    }
+
+    public void setTargetLocation(String targetLocation) {
+        this.targetLocation = targetLocation;
+    }
+
+    public void setTargetLocationGroup(String targetLocationGroup) {
+        this.targetLocationGroup = targetLocationGroup;
+    }
 }

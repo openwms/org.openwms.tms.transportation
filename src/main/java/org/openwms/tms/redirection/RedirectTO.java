@@ -34,10 +34,13 @@ import java.util.List;
 class RedirectTO implements UpdateFunction {
 
     /** 0..* voters, can be overridden and extended with XML configuration. So far we define only one (default) voter directly. */
-    @Autowired(required = false)
-    private List<DecisionVoter<RedirectVote>> redirectVoters;
-    @Autowired
-    private AddProblem addProblem;
+    private final List<DecisionVoter<RedirectVote>> redirectVoters;
+    private final AddProblem addProblem;
+
+    public RedirectTO(@Autowired(required = false) List<DecisionVoter<RedirectVote>> redirectVoters, AddProblem addProblem) {
+        this.redirectVoters = redirectVoters;
+        this.addProblem = addProblem;
+    }
 
     /**
      * {@inheritDoc}
@@ -47,7 +50,7 @@ class RedirectTO implements UpdateFunction {
 
         if (null != redirectVoters) {
             RedirectVote rv = new RedirectVote(toUpdate.getTargetLocationGroup(), saved);
-            // TODO [openwms]: 13/07/16 the concept of a voter is misused in that a voter changes the state of a TO
+            // CHECK [openwms]: 13/07/16 the concept of a voter is misused in that a voter changes the state of a TO
             for (DecisionVoter<RedirectVote> voter : redirectVoters) {
                 voter.voteFor(rv);
             }
