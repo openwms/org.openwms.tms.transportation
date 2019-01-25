@@ -4,6 +4,12 @@ eureka:
       enabled: true
 
 owms:
+  commands:
+    tms:
+      to:
+        routing-key: to.*
+        exchange-name: tms.commands
+        queue-name: tms.to.commands
   events:
     common:
       tu:

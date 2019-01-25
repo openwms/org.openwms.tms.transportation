@@ -15,6 +15,7 @@
  */
 package org.openwms.common.transport;
 
+import org.ameba.exception.ServiceLayerException;
 import org.ameba.mapping.BeanMapper;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +47,7 @@ public class TransportUnitEventPropagator {
                 amqpTemplate.convertAndSend(exchangeName, "tu.event.change.target", mapper.map(event.getSource(), TransportUnitMO.class));
                 break;
             default:
-                throw new UnsupportedOperationException(format("Eventtype [%s] currently not supported", event.getType()));
+                throw new ServiceLayerException(format("Eventtype [%s] currently not supported", event.getType()));
         }
     }
 }

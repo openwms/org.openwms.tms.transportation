@@ -32,6 +32,7 @@ public class UpdateTransportOrderVO implements Serializable {
     private Message problem;
     private String state;
     private String target;
+    private String actualLocation;
 
     UpdateTransportOrderVO() {
     }
@@ -43,6 +44,7 @@ public class UpdateTransportOrderVO implements Serializable {
         setProblem(builder.problem);
         setState(builder.state);
         setTarget(builder.target);
+        setActualLocation(builder.actualLocation);
     }
 
     public static Builder newBuilder() {
@@ -97,16 +99,17 @@ public class UpdateTransportOrderVO implements Serializable {
         this.target = target;
     }
 
+    public String getActualLocation() {
+        return actualLocation;
+    }
+
+    public void setActualLocation(String actualLocation) {
+        this.actualLocation = actualLocation;
+    }
+
     @Override
     public String toString() {
-        return "UpdateTransportOrderVO{" +
-                "pKey='" + pKey + '\'' +
-                ", barcode='" + barcode + '\'' +
-                ", priority='" + priority + '\'' +
-                ", problem=" + problem +
-                ", state='" + state + '\'' +
-                ", target='" + target + '\'' +
-                '}';
+        return "UpdateTransportOrderVO{" + "pKey='" + pKey + '\'' + ", barcode='" + barcode + '\'' + ", priority='" + priority + '\'' + ", problem=" + problem + ", state='" + state + '\'' + ", target='" + target + '\'' + ", actualLocation='" + actualLocation + '\'' + '}';
     }
 
     public static final class Builder {
@@ -116,6 +119,7 @@ public class UpdateTransportOrderVO implements Serializable {
         private Message problem;
         private String state;
         private String target;
+        private String actualLocation;
 
         private Builder() {
         }
@@ -147,6 +151,11 @@ public class UpdateTransportOrderVO implements Serializable {
 
         public Builder withTarget(String val) {
             target = val;
+            return this;
+        }
+
+        public Builder withActualLocation(String val) {
+            actualLocation = val;
             return this;
         }
 

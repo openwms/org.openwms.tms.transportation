@@ -19,6 +19,10 @@ import org.ameba.mapping.BeanMapper;
 import org.openwms.common.transport.TransportUnitEventPropagator;
 import org.openwms.core.SpringProfiles;
 import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -64,4 +68,22 @@ class TransportationAsyncConfiguration {
     TransportUnitEventPropagator transportUnitEventPropagator(AmqpTemplate amqpTemplate, @Value("${owms.events.common.tu.exchange-name}") String exchangeName, BeanMapper beanMapper) {
         return new TransportUnitEventPropagator(amqpTemplate, exchangeName, beanMapper);
     }
+
+    @Bean
+    TopicExchange tmsExchange(@Value("${owms.commands.tms.to.exchange-name}") String exchangeName) {
+        return new TopicExchange(exchangeName);
+    }
+
+    @Bean
+    Queue commandQueue(@Value("${owms.commands.tms.to.queue-name}") String queueName) {
+        return new Queue(queueName);
+    }
+
+    @Bean
+    Binding binding(TopicExchange tmsExchange, Queue commandQueue, @Value("${owms.commands.tms.to.routing-key}") String routingKey) {
+        return BindingBuilder.bind(commandQueue)
+                .to(tmsExchange)
+                .with(routingKey);
+    }
+
 }
