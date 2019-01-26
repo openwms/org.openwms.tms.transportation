@@ -25,6 +25,15 @@ owms:
 server:
   port: ${PORT:8131}
 
+feign:
+  httpclient:
+    connection-timeout: 30000
+    connection-timer-repeat: 30000
+
+ribbon:
+  connectTimeout: 30000
+  ReadTimeout: 30000
+
 eureka:
   client:
     instance-info-replication-interval-seconds: 10 # default is 30
