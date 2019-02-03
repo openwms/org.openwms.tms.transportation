@@ -19,8 +19,10 @@ import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.ameba.exception.ServiceLayerException;
 import org.ameba.mapping.BeanMapper;
+import org.openwms.core.SpringProfiles;
 import org.openwms.tms.api.TOCommand;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.handler.annotation.Payload;
 
 import javax.validation.Validator;
@@ -32,6 +34,7 @@ import static java.lang.String.format;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
+@Profile(SpringProfiles.ASYNCHRONOUS_PROFILE)
 @TxService
 class TransportOrderCommandHandler {
 
