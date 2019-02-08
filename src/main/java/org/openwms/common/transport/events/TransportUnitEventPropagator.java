@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.common.transport;
+package org.openwms.common.transport.events;
 
 import org.ameba.exception.ServiceLayerException;
 import org.ameba.mapping.BeanMapper;
