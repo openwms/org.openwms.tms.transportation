@@ -65,6 +65,7 @@ public class CreateTODocumentation extends TransportationTestBase {
                 .andExpect(jsonPath("state", is(TransportOrderState.STARTED.toString())))
                 .andExpect(jsonPath("sourceLocation", is(INIT_LOC_STRING)))
                 .andExpect(jsonPath("targetLocation", is(ERR_LOC_STRING)))
+                .andExpect(jsonPath("transportUnitBK", is(BC_4711)))
                 .andDo(document("to-create-and-get"))
         ;
     }
@@ -122,6 +123,7 @@ public class CreateTODocumentation extends TransportationTestBase {
                 .andExpect(jsonPath("state", is(TransportOrderState.INITIALIZED.toString())))
                 .andExpect(jsonPath("sourceLocation", is(INIT_LOC_STRING)))
                 .andExpect(jsonPath("targetLocation", is(ERR_LOC_STRING)))
+                .andExpect(jsonPath("transportUnitBK", is(BC_4711)))
                 .andDo(document("to-create-and-get-target-na"))
         ;
     }

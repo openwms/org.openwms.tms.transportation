@@ -70,20 +70,36 @@ class TransportationAsyncConfiguration {
     }
 
     @Bean
-    TopicExchange tmsExchange(@Value("${owms.commands.tms.to.exchange-name}") String exchangeName) {
+    TopicExchange commonCommandsExchange(@Value("${owms.commands.common.tu.exchange-name}") String exchangeName) {
         return new TopicExchange(exchangeName);
     }
 
     @Bean
-    Queue commandQueue(@Value("${owms.commands.tms.to.queue-name}") String queueName) {
+    Queue commonCommandsQueue(@Value("${owms.commands.common.tu.queue-name}") String queueName) {
         return new Queue(queueName);
     }
 
     @Bean
-    Binding binding(TopicExchange tmsExchange, Queue commandQueue, @Value("${owms.commands.tms.to.routing-key}") String routingKey) {
-        return BindingBuilder.bind(commandQueue)
-                .to(tmsExchange)
+    Binding commonCommandsBinding(TopicExchange commonCommandsExchange, Queue commonCommandsQueue, @Value("${owms.commands.common.tu.routing-key}") String routingKey) {
+        return BindingBuilder.bind(commonCommandsQueue)
+                .to(commonCommandsExchange)
                 .with(routingKey);
     }
 
+    @Bean
+    TopicExchange tmsCommandsExchange(@Value("${owms.commands.tms.to.exchange-name}") String exchangeName) {
+        return new TopicExchange(exchangeName);
+    }
+
+    @Bean
+    Queue tmsCommandsQueue(@Value("${owms.commands.tms.to.queue-name}") String queueName) {
+        return new Queue(queueName);
+    }
+
+    @Bean
+    Binding tmsCommandsBinding(TopicExchange tmsCommandsExchange, Queue tmsCommandsQueue, @Value("${owms.commands.tms.to.routing-key}") String routingKey) {
+        return BindingBuilder.bind(tmsCommandsQueue)
+                .to(tmsCommandsExchange)
+                .with(routingKey);
+    }
 }

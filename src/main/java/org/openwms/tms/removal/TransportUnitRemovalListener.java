@@ -15,109 +15,68 @@
  */
 package org.openwms.tms.removal;
 
+import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
-import org.openwms.common.transport.api.TransportUnitVO;
-import org.openwms.tms.Message;
-import org.openwms.tms.StateChangeException;
-import org.openwms.tms.TransportOrder;
-import org.openwms.tms.TransportOrderRepository;
-import org.openwms.tms.TransportOrderState;
+import org.openwms.common.transport.api.commands.TUCommand;
+import org.openwms.core.SpringProfiles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.util.Assert;
 
-import java.util.List;
-
 /**
- * A TransportUnitRemovalListener is asked to allow or disallow the removal of a TransportUnit in a distributed system.
+ * A TransportUnitRemovalListener is an AMQP listener that listens on commands when a
+ * TransportUnit is going to be deleted.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
+@Profile(SpringProfiles.ASYNCHRONOUS_PROFILE)
 @TxService
-class TransportUnitRemovalListener implements OnRemovalListener<TransportUnitVO> {
+class TransportUnitRemovalListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportUnitRemovalListener.class);
-    private final TransportOrderRepository repository;
+    private final TransportUnitRemovalHandler handler;
+    private final AmqpTemplate amqpTemplate;
+    private final String exchangeName;
 
-    @Autowired
-    public TransportUnitRemovalListener(TransportOrderRepository repository) {
-        this.repository = repository;
+    TransportUnitRemovalListener(TransportUnitRemovalHandler handler, AmqpTemplate amqpTemplate, @Value("${owms.commands.common.tu.exchange-name}") String exchangeName) {
+        this.handler = handler;
+        this.amqpTemplate = amqpTemplate;
+        this.exchangeName = exchangeName;
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>
-     * The implementation verifies that no active {@link TransportOrder}s exist, before a {@link TransportUnitVO} is going to be removed. <ul>
-     * <li>In case where already 'started' {@link TransportOrder}s exist it is not allowed to remove the {@link TransportUnitVO} therefore an
-     * exception is thrown.</li> <li>If {@link TransportOrder}s in a state less than 'started' exist they will be canceled and removed. The
-     * removal of the {@link TransportUnitVO} is accepted.</li> </ul>
-     *
-     * @throws RemovalNotAllowedException when active {@link TransportOrder}s exist for the {@link TransportUnitVO} entity.
-     */
-    @Override
-    public void preRemove(TransportUnitVO entity) throws RemovalNotAllowedException {
-        Assert.notNull(entity, "Not allowed to call preRemove with null argument");
-        LOGGER.debug("Someone is trying to remove the TransportUnit [{}], check for existing TransportOrders", entity);
-        try {
-            cancelInitializedOrders(entity);
-            unlinkFinishedOrders(entity);
-            unlinkCanceledOrders(entity);
-        } catch (IllegalStateException ise) {
-            LOGGER.warn("For one or more created TransportOrders it is not allowed to cancel them");
-            throw new RemovalNotAllowedException(
-                    "For one or more created TransportOrders it is not allowed to cancel them");
-        }
-    }
-
-    protected void cancelInitializedOrders(TransportUnitVO transportUnit) {
-        LOGGER.debug("Trying to cancel and remove already created but not started TransportOrders");
-        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(transportUnit.getBarcode(), TransportOrderState.CREATED,
-                TransportOrderState.INITIALIZED);
-        if (!transportOrders.isEmpty()) {
-            for (TransportOrder transportOrder : transportOrders) {
-                try {
-                    transportOrder.changeState(TransportOrderState.CANCELED);
-                    transportOrder.setProblem(new Message.Builder().withMessage("TransportUnit " + transportUnit
-                            + " was removed, order was canceled").build());
-                    transportOrder.setTransportUnitBK(null);
-                    LOGGER.debug("Successfully unlinked and canceled TransportOrder [{}]", transportOrder.getPk());
-                } catch (StateChangeException sce) {
-                    transportOrder.setProblem(new Message.Builder().withMessage(sce.getMessage()).build());
-                } finally {
-                    repository.save(transportOrder);
+    @TransactionalEventListener(fallbackExecution = true)
+    public void onEvent(TUCommand command) {
+        switch (command.getType()) {
+            case REMOVE:
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Sending command to finally REMOVE the TransportUnit [{}]", command.getId());
                 }
-            }
+                amqpTemplate.convertAndSend(exchangeName, "common.tu.command.remove", command);
+                break;
+            default:
         }
     }
 
-    protected void unlinkFinishedOrders(TransportUnitVO transportUnit) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Trying to unlink finished and failed TransportOrders for TransportUnit: " + transportUnit);
-        }
-        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(transportUnit.getBarcode(), TransportOrderState.FINISHED,
-                TransportOrderState.ONFAILURE);
-        if (!transportOrders.isEmpty()) {
-            for (TransportOrder transportOrder : transportOrders) {
-                transportOrder.setProblem(new Message.Builder().withMessage("TransportUnit " + transportUnit
-                        + " was removed, order was unlinked").build());
-                transportOrder.setTransportUnitBK(null);
-                repository.save(transportOrder);
-                LOGGER.debug("Successfully unlinked TransportOrder [{}]", transportOrder.getPk());
+    @Measured
+    @RabbitListener(queues = "${owms.commands.common.tu.queue-name}")
+    public void handle(@Payload TUCommand command) {
+        Assert.notNull(command, "Command is null");
+        try {
+            switch(command.getType()) {
+                case REMOVING:
+                    handler.preRemove(command);
+                    break;
+                default:
             }
-        }
-    }
-
-    protected void unlinkCanceledOrders(TransportUnitVO transportUnit) {
-        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(transportUnit.getBarcode(), TransportOrderState.CANCELED);
-        if (!transportOrders.isEmpty()) {
-            for (TransportOrder transportOrder : transportOrders) {
-                transportOrder.setProblem(new Message.Builder().withMessage("TransportUnit " + transportUnit
-                        + " was removed, order was unlinked").build());
-                transportOrder.setTransportUnitBK(null);
-                repository.save(transportOrder);
-                LOGGER.debug("Successfully unlinked canceled TransportOrder [{}]", transportOrder.getPk());
-            }
+        } catch (Exception e) {
+            throw new AmqpRejectAndDontRequeueException(e.getMessage(), e);
         }
     }
 }

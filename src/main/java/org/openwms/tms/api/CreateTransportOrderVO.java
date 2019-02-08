@@ -17,6 +17,7 @@ package org.openwms.tms.api;
 
 import org.openwms.tms.Message;
 
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 /**
@@ -26,11 +27,14 @@ import java.io.Serializable;
  */
 public class CreateTransportOrderVO implements Serializable {
 
+    @NotEmpty
     private String pKey;
+    @NotEmpty
     private String barcode;
     private String priority;
     private Message problem;
     private String state;
+    @NotEmpty
     private String target;
 
     public String getpKey() {

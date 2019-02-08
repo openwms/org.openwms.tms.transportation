@@ -16,7 +16,8 @@
 package org.openwms.common.transport;
 
 /**
- * A TransportPackage.
+ * A TransportPackage is a class used kinda marker annotation to have a shortcut to this
+ * Java package especially for Spring component scan.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */

@@ -82,10 +82,10 @@ public class TransportOrderVO implements Serializable {
     public Map<String, Object> getAll() {
         Map<String, Object> result = new HashMap<>(6);
         result.put("toId", id);
-        result.put("to-barcode", transportUnitId);
-        result.put("to-sourceLocation", sourceLocation);
-        result.put("to-targetLocation", targetLocation);
-        result.put("to-targetLocationGroup", targetLocationGroup);
+        result.put("toBarcode", transportUnitId);
+        result.put("toSourceLocation", sourceLocation);
+        result.put("toTargetLocation", targetLocation);
+        result.put("toTargetLocationGroup", targetLocationGroup);
         return result;
     }
 

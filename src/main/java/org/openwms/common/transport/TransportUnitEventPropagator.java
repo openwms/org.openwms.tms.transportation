@@ -17,8 +17,11 @@ package org.openwms.common.transport;
 
 import org.ameba.exception.ServiceLayerException;
 import org.ameba.mapping.BeanMapper;
+import org.openwms.common.transport.api.messages.TransportUnitMO;
+import org.openwms.core.SpringProfiles;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import static java.lang.String.format;
@@ -28,6 +31,7 @@ import static java.lang.String.format;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
+@Profile(SpringProfiles.ASYNCHRONOUS_PROFILE)
 public class TransportUnitEventPropagator {
 
     private final AmqpTemplate amqpTemplate;
