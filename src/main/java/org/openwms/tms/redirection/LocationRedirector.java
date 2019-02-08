@@ -17,8 +17,8 @@ package org.openwms.tms.redirection;
 
 import org.openwms.common.location.api.LocationApi;
 import org.openwms.common.location.api.LocationVO;
-import org.openwms.common.transport.TransportUnitEvent;
 import org.openwms.common.transport.api.TransportUnitVO;
+import org.openwms.common.transport.events.TransportUnitEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;

@@ -16,7 +16,7 @@
 package org.openwms.tms;
 
 import org.ameba.mapping.BeanMapper;
-import org.openwms.common.transport.TransportUnitEventPropagator;
+import org.openwms.common.transport.events.TransportUnitEventPropagator;
 import org.openwms.core.SpringProfiles;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Binding;
