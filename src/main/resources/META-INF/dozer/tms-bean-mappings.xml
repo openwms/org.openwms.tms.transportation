@@ -118,7 +118,11 @@
 			<b is-accessible="true">state</b>
 		</field>
 		<field>
-			<a is-accessible="true">target</a>
+			<a is-accessible="true">targetLocation</a>
+			<b is-accessible="true">targetLocation</b>
+		</field>
+		<field>
+			<a is-accessible="true">targetLocationGroup</a>
 			<b is-accessible="true">targetLocationGroup</b>
 		</field>
 	</mapping>
