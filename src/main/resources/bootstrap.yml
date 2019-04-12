@@ -13,6 +13,8 @@ spring:
     user:
       password: sa
       name: user
+  rabbitmq:
+    virtual-host: openwms
 
 owms:
   eureka:
