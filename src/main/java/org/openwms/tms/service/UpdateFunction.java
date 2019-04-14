@@ -16,25 +16,19 @@
 package org.openwms.tms.service;
 
 import org.openwms.tms.TransportOrder;
-import org.springframework.stereotype.Component;
 
 /**
- * A PrioritizeTO is responsible to change the priority of a {@link TransportOrder}.
+ * A UpdateFunction.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Component
-class PrioritizeTO implements UpdateFunction {
+public interface UpdateFunction {
 
     /**
-     * {@inheritDoc}
+     * Validate and change the requested values of the {code saved} instance.
+     *
+     * @param saved The currently persisted TransportOrder
+     * @param toUpdate The TransportOrder holding the new values to save
      */
-    @Override
-    public void update(TransportOrder saved, TransportOrder toUpdate) {
-        if (saved.getPriority() != toUpdate.getPriority() && toUpdate.getPriority() != null) {
-
-            // Request to change priority
-            saved.setPriority(toUpdate.getPriority());
-        }
-    }
+    void update(TransportOrder saved, TransportOrder toUpdate);
 }

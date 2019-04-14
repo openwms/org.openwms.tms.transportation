@@ -13,28 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms.service;
+package org.openwms.tms.service.removal;
 
-import org.openwms.tms.TransportOrder;
-import org.springframework.stereotype.Component;
+import org.ameba.exception.ServiceLayerException;
 
 /**
- * A PrioritizeTO is responsible to change the priority of a {@link TransportOrder}.
- *
- * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
+ * A RemovalNotAllowedException is thrown when the caller is not allowed to remove an entity.
+ * 
+ * @author <a href="mailto:russelltina@users.sourceforge.net">Tina Russell</a>
  */
-@Component
-class PrioritizeTO implements UpdateFunction {
+class RemovalNotAllowedException extends ServiceLayerException {
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void update(TransportOrder saved, TransportOrder toUpdate) {
-        if (saved.getPriority() != toUpdate.getPriority() && toUpdate.getPriority() != null) {
+    public RemovalNotAllowedException(String message) {
+        super(message);
+    }
 
-            // Request to change priority
-            saved.setPriority(toUpdate.getPriority());
-        }
+    /**
+     * {@inheritDoc}
+     */
+    public RemovalNotAllowedException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

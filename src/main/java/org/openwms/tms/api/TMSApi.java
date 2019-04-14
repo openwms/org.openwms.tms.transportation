@@ -13,28 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms.service;
-
-import org.openwms.tms.TransportOrder;
-import org.springframework.stereotype.Component;
+package org.openwms.tms.api;
 
 /**
- * A PrioritizeTO is responsible to change the priority of a {@link TransportOrder}.
+ * A TMS_API defines the root API entry URL of the service.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Component
-class PrioritizeTO implements UpdateFunction {
+public final class TMSApi {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void update(TransportOrder saved, TransportOrder toUpdate) {
-        if (saved.getPriority() != toUpdate.getPriority() && toUpdate.getPriority() != null) {
+    /** API version. */
+    public static final String API_VERSION = "v1";
 
-            // Request to change priority
-            saved.setPriority(toUpdate.getPriority());
-        }
+    /** API root to hit TransportOrders (plural). */
+    public static final String TRANSPORT_ORDERS = "/" + API_VERSION + "/transport-orders";
+
+    private TMSApi() {
     }
 }

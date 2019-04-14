@@ -15,26 +15,21 @@
  */
 package org.openwms.tms.service;
 
+import org.openwms.tms.Message;
 import org.openwms.tms.TransportOrder;
-import org.springframework.stereotype.Component;
 
 /**
- * A PrioritizeTO is responsible to change the priority of a {@link TransportOrder}.
+ * A AddProblem implementation is able to add a problem (as {@code Message} to a {@code TransportOrder}.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Component
-class PrioritizeTO implements UpdateFunction {
+public interface AddProblem {
 
     /**
-     * {@inheritDoc}
+     * Add a {@code problem} to the {@code transportOrder}.
+     *
+     * @param problem The problem to add
+     * @param transportOrder The TransportOrder to assign the problem to
      */
-    @Override
-    public void update(TransportOrder saved, TransportOrder toUpdate) {
-        if (saved.getPriority() != toUpdate.getPriority() && toUpdate.getPriority() != null) {
-
-            // Request to change priority
-            saved.setPriority(toUpdate.getPriority());
-        }
-    }
+    void add(Message problem, TransportOrder transportOrder);
 }

@@ -18,7 +18,7 @@ package org.openwms.tms;
 import org.junit.Test;
 import org.openwms.TransportationTestBase;
 import org.openwms.tms.api.CreateTransportOrderVO;
-import org.openwms.tms.api.TMS_API;
+import org.openwms.tms.api.TMSApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
@@ -55,7 +55,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
         // test ...
         vo.setProblem(null);
         mockMvc.perform(
-                patch(TMS_API.TRANSPORT_ORDERS +"/"+vo.getpKey())
+                patch(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -78,7 +78,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-                patch(TMS_API.TRANSPORT_ORDERS +"/"+vo.getpKey())
+                patch(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -104,7 +104,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-            patch(TMS_API.TRANSPORT_ORDERS +"/"+vo.getpKey())
+            patch(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(vo))
             )
@@ -125,7 +125,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
 
     private void addProblem(CreateTransportOrderVO vo) throws Exception {
         mockMvc.perform(
-                patch(TMS_API.TRANSPORT_ORDERS +"/"+vo.getpKey())
+                patch(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )

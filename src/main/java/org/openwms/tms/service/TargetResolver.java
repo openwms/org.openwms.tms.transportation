@@ -15,26 +15,25 @@
  */
 package org.openwms.tms.service;
 
-import org.openwms.tms.TransportOrder;
-import org.springframework.stereotype.Component;
+import org.openwms.common.location.api.Target;
+
+import java.util.Optional;
 
 /**
- * A PrioritizeTO is responsible to change the priority of a {@link TransportOrder}.
+ * A TargetResolver is responsible to resolve a {@link Target}.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Component
-class PrioritizeTO implements UpdateFunction {
+public interface TargetResolver<T extends Target> {
 
     /**
-     * {@inheritDoc}
+     * Resolves a {@link Target} for a given {@code target}.
+     *
+     * @param target The target to resolve
+     * @return The target instance
+     * @throws org.ameba.exception.NotFoundException If Target has not ben found
      */
-    @Override
-    public void update(TransportOrder saved, TransportOrder toUpdate) {
-        if (saved.getPriority() != toUpdate.getPriority() && toUpdate.getPriority() != null) {
+    Optional<T> resolve(String target);
 
-            // Request to change priority
-            saved.setPriority(toUpdate.getPriority());
-        }
-    }
+    TargetHandler<T> getHandler();
 }

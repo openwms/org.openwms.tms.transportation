@@ -13,28 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms.service;
-
-import org.openwms.tms.TransportOrder;
-import org.springframework.stereotype.Component;
+package org.openwms.tms.service.redirection;
 
 /**
- * A PrioritizeTO is responsible to change the priority of a {@link TransportOrder}.
+ * A DecisionVoter is asked to vote for a business action.
  *
+ * @param <T> Any type of Vote
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Component
-class PrioritizeTO implements UpdateFunction {
+interface DecisionVoter<T extends Vote> {
 
     /**
-     * {@inheritDoc}
+     * The implementation has to vote for a certain vote on particular rules that are implemented by the voter.
+     *
+     * @param vote The vote to vote for
+     * @throws DeniedException is thrown when the voter cannot vote for the action
      */
-    @Override
-    public void update(TransportOrder saved, TransportOrder toUpdate) {
-        if (saved.getPriority() != toUpdate.getPriority() && toUpdate.getPriority() != null) {
-
-            // Request to change priority
-            saved.setPriority(toUpdate.getPriority());
-        }
-    }
+    void voteFor(T vote) throws DeniedException;
 }

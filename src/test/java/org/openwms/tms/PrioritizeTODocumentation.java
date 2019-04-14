@@ -20,7 +20,7 @@ import org.openwms.TransportationTestBase;
 import org.openwms.common.location.api.LocationVO;
 import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.api.CreateTransportOrderVO;
-import org.openwms.tms.api.TMS_API;
+import org.openwms.tms.api.TMSApi;
 import org.springframework.http.MediaType;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -47,7 +47,7 @@ public class PrioritizeTODocumentation extends TransportationTestBase {
 
         vo.setPriority(null);
         mockMvc.perform(
-                patch(TMS_API.TRANSPORT_ORDERS +"/"+vo.getpKey())
+                patch(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
                 )
@@ -57,7 +57,7 @@ public class PrioritizeTODocumentation extends TransportationTestBase {
 
         // We do not expect a change of the priority
         mockMvc.perform(
-                get(TMS_API.TRANSPORT_ORDERS + "/" + vo.getpKey()))
+                get(TMSApi.TRANSPORT_ORDERS + "/" + vo.getpKey()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("priority", is("HIGHEST")))
         ;
@@ -78,7 +78,7 @@ public class PrioritizeTODocumentation extends TransportationTestBase {
         given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
 
         mockMvc.perform(
-                get(TMS_API.TRANSPORT_ORDERS + "/" + vo.getpKey()))
+                get(TMSApi.TRANSPORT_ORDERS + "/" + vo.getpKey()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("priority", is("HIGHEST")))
         ;
@@ -86,7 +86,7 @@ public class PrioritizeTODocumentation extends TransportationTestBase {
         // test ...
         vo.setPriority(PriorityLevel.NORMAL.toString());
         mockMvc.perform(
-                patch(TMS_API.TRANSPORT_ORDERS +"/"+vo.getpKey())
+                patch(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )
@@ -95,7 +95,7 @@ public class PrioritizeTODocumentation extends TransportationTestBase {
         ;
 
         mockMvc.perform(
-                get(TMS_API.TRANSPORT_ORDERS + "/" + vo.getpKey()))
+                get(TMSApi.TRANSPORT_ORDERS + "/" + vo.getpKey()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("priority", is("NORMAL")))
         ;

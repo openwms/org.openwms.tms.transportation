@@ -15,26 +15,17 @@
  */
 package org.openwms.tms.service;
 
-import org.openwms.tms.TransportOrder;
-import org.springframework.stereotype.Component;
+import org.openwms.tms.ProblemHistory;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * A PrioritizeTO is responsible to change the priority of a {@link TransportOrder}.
+ * A ProblemHistoryRepository.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Component
-class PrioritizeTO implements UpdateFunction {
+@Transactional(propagation = Propagation.MANDATORY)
+public interface ProblemHistoryRepository extends JpaRepository<ProblemHistory, Long> {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void update(TransportOrder saved, TransportOrder toUpdate) {
-        if (saved.getPriority() != toUpdate.getPriority() && toUpdate.getPriority() != null) {
-
-            // Request to change priority
-            saved.setPriority(toUpdate.getPriority());
-        }
-    }
 }

@@ -28,7 +28,7 @@ import org.openwms.common.transport.api.TransportUnitApi;
 import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.PriorityLevel;
 import org.openwms.tms.api.CreateTransportOrderVO;
-import org.openwms.tms.api.TMS_API;
+import org.openwms.tms.api.TMSApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -143,13 +143,13 @@ public abstract class TransportationTestBase {
     protected MvcResult postTOAndValidate(CreateTransportOrderVO vo, String outputFile) throws Exception {
         MvcResult res;
         if (NOTLOGGED.equals(outputFile)) {
-            res = mockMvc.perform(post(TMS_API.TRANSPORT_ORDERS)
+            res = mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(vo)))
                     .andExpect(status().isCreated())
                     .andReturn();
         } else {
-            res = mockMvc.perform(post(TMS_API.TRANSPORT_ORDERS)
+            res = mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(vo)))
                     .andExpect(status().isCreated())

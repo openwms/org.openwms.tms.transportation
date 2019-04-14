@@ -43,7 +43,7 @@ public interface TransportOrderApi {
      * @param state The TransportOrder state
      * @return A List implementation of the result instances, never {@literal null}
      */
-    @GetMapping(value = TMS_API.TRANSPORT_ORDERS, params = {"barcode", "state"})
+    @GetMapping(value = TMSApi.TRANSPORT_ORDERS, params = {"barcode", "state"})
     List<TransportOrderVO> findBy(
             @RequestParam(value = "barcode") String barcode,
             @RequestParam(value = "state") String state
@@ -56,7 +56,7 @@ public interface TransportOrderApi {
      * @return The instance
      * @throws org.ameba.exception.NotFoundException if no TransportOrder with that id exists
      */
-    @GetMapping(TMS_API.TRANSPORT_ORDERS + "/{pKey}")
+    @GetMapping(TMSApi.TRANSPORT_ORDERS + "/{pKey}")
     TransportOrderVO findByPKey(
             @PathVariable(value = "pKey") String pKey
     );
@@ -68,7 +68,7 @@ public interface TransportOrderApi {
      * @param barcode The business identifier of the TransportUnit
      * @param target Either a Location of a LocationGroup
      */
-    @PostMapping(TMS_API.TRANSPORT_ORDERS)
+    @PostMapping(TMSApi.TRANSPORT_ORDERS)
     @ResponseStatus(HttpStatus.CREATED)
     void createTO(
             @RequestParam(value = "barcode") String barcode,
@@ -83,7 +83,7 @@ public interface TransportOrderApi {
      * @param target Either a Location of a LocationGroup
      * @param priority The priority of the TransportOrder
      */
-    @PostMapping(TMS_API.TRANSPORT_ORDERS)
+    @PostMapping(TMSApi.TRANSPORT_ORDERS)
     @ResponseStatus(HttpStatus.CREATED)
     void createTO(
             @RequestParam(value = "barcode") String barcode,
@@ -97,7 +97,7 @@ public interface TransportOrderApi {
      * @param pKey The persistent key of the TransportOrder (not the primary key)
      * @param state The requested TransportOrder state
      */
-    @PostMapping(value = TMS_API.TRANSPORT_ORDERS + "/{pKey}", params = {"state"})
+    @PostMapping(value = TMSApi.TRANSPORT_ORDERS + "/{pKey}", params = {"state"})
     void changeState(
             @PathVariable(value = "pKey") String pKey,
             @RequestParam(value = "state") String state
@@ -109,7 +109,7 @@ public interface TransportOrderApi {
      * @param pKey The persistent key of the TransportOrder (not the primary key)
      * @param transportOrder The minimal necessary structure of the change set
      */
-    @PatchMapping(TMS_API.TRANSPORT_ORDERS + "/{pKey}")
+    @PatchMapping(TMSApi.TRANSPORT_ORDERS + "/{pKey}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void updateTO(
             @PathVariable(value = "pKey") String pKey,

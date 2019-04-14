@@ -13,28 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms.service;
+package org.openwms.tms.service.targets;
 
+import org.openwms.common.location.api.LocationVO;
 import org.openwms.tms.TransportOrder;
+import org.openwms.tms.service.TargetHandler;
+import org.openwms.tms.service.TransportOrderRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
- * A PrioritizeTO is responsible to change the priority of a {@link TransportOrder}.
+ * A LocationTargetHandler.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
 @Component
-class PrioritizeTO implements UpdateFunction {
+class LocationTargetHandler implements TargetHandler<LocationVO> {
+
+    private final TransportOrderRepository repository;
+
+    public LocationTargetHandler(TransportOrderRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void update(TransportOrder saved, TransportOrder toUpdate) {
-        if (saved.getPriority() != toUpdate.getPriority() && toUpdate.getPriority() != null) {
-
-            // Request to change priority
-            saved.setPriority(toUpdate.getPriority());
-        }
+    public int getNoTOToTarget(LocationVO target) {
+        List<TransportOrder> result = repository.findByTargetLocation(target.asString());
+        return result != null ? result.size() : 0;
     }
 }

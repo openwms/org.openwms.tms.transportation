@@ -18,7 +18,6 @@ package org.openwms.tms.service;
 import org.openwms.common.transport.api.TransportUnitApi;
 import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.TransportOrder;
-import org.openwms.tms.UpdateFunction;
 import org.openwms.tms.api.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

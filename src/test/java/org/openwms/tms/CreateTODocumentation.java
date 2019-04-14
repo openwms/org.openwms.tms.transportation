@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.openwms.TransportationTestBase;
 import org.openwms.common.location.api.LocationVO;
 import org.openwms.tms.api.CreateTransportOrderVO;
-import org.openwms.tms.api.TMS_API;
+import org.openwms.tms.api.TMSApi;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
@@ -78,7 +78,7 @@ public class CreateTODocumentation extends TransportationTestBase {
         vo.setBarcode("UNKNOWN");
         given(transportUnitApi.findTransportUnit(vo.getBarcode(), Boolean.FALSE)).willThrow(new NotFoundException());
 
-        mockMvc.perform(post(TMS_API.TRANSPORT_ORDERS)
+        mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(vo)))
                 .andExpect(status().isNotFound())
@@ -94,7 +94,7 @@ public class CreateTODocumentation extends TransportationTestBase {
         given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(Optional.empty());
         given(locationGroupApi.findByName(vo.getTarget())).willReturn(Optional.empty());
 
-        mockMvc.perform(post(TMS_API.TRANSPORT_ORDERS)
+        mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(vo)))
                 .andExpect(status().isNotFound())
@@ -112,7 +112,7 @@ public class CreateTODocumentation extends TransportationTestBase {
         loc.setIncomingActive(false);
         given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(Optional.of(loc));
 
-        MvcResult res = mockMvc.perform(post(TMS_API.TRANSPORT_ORDERS)
+        MvcResult res = mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(vo)))
                 .andExpect(status().isCreated())
@@ -135,7 +135,7 @@ public class CreateTODocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo = createTO();
         vo.setPriority("UNKNOWN");
 
-        mockMvc.perform(post(TMS_API.TRANSPORT_ORDERS)
+        mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(vo)))
                 .andExpect(status().isBadRequest())

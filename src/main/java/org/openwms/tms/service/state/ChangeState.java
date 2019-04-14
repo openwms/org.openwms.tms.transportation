@@ -13,30 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms.service;
+package org.openwms.tms.service.state;
 
-import org.openwms.tms.Message;
-import org.openwms.tms.ProblemHistory;
 import org.openwms.tms.TransportOrder;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.openwms.tms.TransportServiceEvent;
+import org.openwms.tms.service.UpdateFunction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * A AddProblemImpl.
+ * A ChangeState is an {@link UpdateFunction} to change the state of an {@link TransportOrder}.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
+ * @see UpdateFunction
  */
 @Transactional(propagation = Propagation.MANDATORY)
 @Component
-class AddProblemImpl implements UpdateFunction, AddProblem {
+class ChangeState implements UpdateFunction {
 
-    private final ProblemHistoryRepository repository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChangeState.class);
+    private final ApplicationContext ctx;
 
-    @Autowired
-    public AddProblemImpl(ProblemHistoryRepository repository) {
-        this.repository = repository;
+    ChangeState(ApplicationContext ctx) {
+        this.ctx = ctx;
     }
 
     /**
@@ -44,22 +47,12 @@ class AddProblemImpl implements UpdateFunction, AddProblem {
      */
     @Override
     public void update(TransportOrder saved, TransportOrder toUpdate) {
-        if (saved.hasProblem() && toUpdate.hasProblem() && !saved.getProblem().equals(toUpdate.getProblem()) ||
-                !saved.hasProblem() && toUpdate.hasProblem()) {
-
-            // A Problem occurred and must be added to the TO ...
-            add(toUpdate.getProblem(), saved);
+        if (saved.getState() != toUpdate.getState() && toUpdate.getState() != null) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Trying to turn TransportOrder [{}] into state [{}]", saved.getPk(), toUpdate.getState());
+            }
+            saved.changeState(toUpdate.getState());
+            ctx.publishEvent(new TransportServiceEvent(saved, TransportServiceEvent.TYPE.of(toUpdate.getState())));
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void add(Message problem, TransportOrder transportOrder) {
-        if (transportOrder.hasProblem()) {
-            repository.save(new ProblemHistory(transportOrder, transportOrder.getProblem()));
-        }
-        transportOrder.setProblem(problem);
     }
 }
