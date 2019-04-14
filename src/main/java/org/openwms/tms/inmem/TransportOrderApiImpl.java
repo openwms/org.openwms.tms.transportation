@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms;
+package org.openwms.tms.inmem;
 
 import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
+import org.openwms.tms.TransportationFacade;
 import org.openwms.tms.api.TransportOrderApi;
 import org.openwms.tms.api.TransportOrderVO;
 import org.openwms.tms.api.UpdateTransportOrderVO;

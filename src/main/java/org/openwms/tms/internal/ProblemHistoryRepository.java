@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms.api;
+package org.openwms.tms.internal;
+
+import org.openwms.tms.ProblemHistory;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * A TMS_API defines the root API entry URL of the service.
+ * A ProblemHistoryRepository.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-public final class TMS_API {
+@Transactional(propagation = Propagation.MANDATORY)
+public interface ProblemHistoryRepository extends JpaRepository<ProblemHistory, Long> {
 
-    /** API version. */
-    public static final String API_VERSION = "v1";
-
-    /** API root to hit TransportOrders (plural). */
-    public static final String TRANSPORT_ORDERS = "/" + API_VERSION + "/transport-orders";
-
-    private TMS_API() {
-    }
 }

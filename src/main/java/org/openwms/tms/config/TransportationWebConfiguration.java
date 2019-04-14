@@ -13,18 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms;
+package org.openwms.tms.config;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * A ProblemHistoryRepository.
+ * A TransportationWebConfiguration customizes the Spring MVC configuration.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Transactional(propagation = Propagation.MANDATORY)
-public interface ProblemHistoryRepository extends JpaRepository<ProblemHistory, Long> {
+@Configuration
+//@EnableWebMvc
+public class TransportationWebConfiguration implements WebMvcConfigurer {
 
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**");
+    }
 }

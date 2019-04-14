@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms;
+package org.openwms.tms.commands;
 
 import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.ameba.exception.ServiceLayerException;
 import org.ameba.mapping.BeanMapper;
 import org.openwms.core.SpringProfiles;
+import org.openwms.tms.TransportOrder;
+import org.openwms.tms.TransportOrderState;
+import org.openwms.tms.TransportationService;
 import org.openwms.tms.api.TOCommand;
 import org.openwms.tms.api.UpdateTransportOrderVO;
 import org.openwms.tms.api.ValidationGroups;

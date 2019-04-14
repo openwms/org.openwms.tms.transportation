@@ -15,7 +15,6 @@
  */
 package org.openwms.tms.service;
 
-import org.openwms.tms.PriorityLevel;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.UpdateFunction;
 import org.springframework.stereotype.Component;
@@ -36,7 +35,7 @@ class PrioritizeTO implements UpdateFunction {
         if (saved.getPriority() != toUpdate.getPriority() && toUpdate.getPriority() != null) {
 
             // Request to change priority
-            saved.setPriority(toUpdate.getPriority() == null ? PriorityLevel.NORMAL : toUpdate.getPriority());
+            saved.setPriority(toUpdate.getPriority());
         }
     }
 }

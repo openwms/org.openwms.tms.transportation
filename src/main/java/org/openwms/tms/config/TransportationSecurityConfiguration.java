@@ -13,22 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms;
+package org.openwms.tms.config;
 
-import org.openwms.common.location.api.LocationApi;
-import org.openwms.common.location.api.LocationGroupApi;
-import org.openwms.common.transport.api.TransportUnitApi;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
- * A TransportationFeignConfiguration.
+ * A TransportationSecurityConfiguration.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Profile("!INMEM")
 @Configuration
-@EnableFeignClients(basePackageClasses = {TransportUnitApi.class, LocationApi.class, LocationGroupApi.class})
-class TransportationFeignConfiguration {
+public class TransportationSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * API is for non browser clients!
+     */
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+            .authorizeRequests().anyRequest().permitAll()
+            .and()
+            .csrf().disable();
+    }
 }

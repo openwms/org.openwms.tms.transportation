@@ -55,10 +55,11 @@ public class PrioritizeTODocumentation extends TransportationTestBase {
                 .andDo(document("to-patch-priority-with-null"))
         ;
 
+        // We do not expect a change of the priority
         mockMvc.perform(
                 get(TMS_API.TRANSPORT_ORDERS + "/" + vo.getpKey()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("priority", is("NORMAL")))
+                .andExpect(jsonPath("priority", is("HIGHEST")))
         ;
     }
 

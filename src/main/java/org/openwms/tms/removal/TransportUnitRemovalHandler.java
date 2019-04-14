@@ -20,7 +20,7 @@ import org.openwms.common.transport.api.commands.TUCommand;
 import org.openwms.tms.Message;
 import org.openwms.tms.StateChangeException;
 import org.openwms.tms.TransportOrder;
-import org.openwms.tms.TransportOrderRepository;
+import org.openwms.tms.internal.TransportOrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

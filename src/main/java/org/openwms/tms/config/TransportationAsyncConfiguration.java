@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms;
+package org.openwms.tms.config;
 
 import org.ameba.mapping.BeanMapper;
 import org.openwms.common.transport.TransportUnitEventPropagator;

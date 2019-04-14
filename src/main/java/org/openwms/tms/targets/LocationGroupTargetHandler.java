@@ -18,7 +18,7 @@ package org.openwms.tms.targets;
 import org.openwms.common.location.api.LocationGroupVO;
 import org.openwms.tms.TargetHandler;
 import org.openwms.tms.TransportOrder;
-import org.openwms.tms.TransportOrderRepository;
+import org.openwms.tms.internal.TransportOrderRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

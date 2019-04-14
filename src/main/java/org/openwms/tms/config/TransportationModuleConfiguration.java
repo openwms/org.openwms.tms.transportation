@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms;
+package org.openwms.tms.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -28,6 +28,7 @@ import org.ameba.i18n.AbstractTranslator;
 import org.ameba.i18n.Translator;
 import org.ameba.mapping.BeanMapper;
 import org.ameba.mapping.DozerMapperImpl;
+import org.openwms.tms.internal.TransportOrderRepository;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.MessageSource;
@@ -54,7 +55,7 @@ import java.util.Locale;
 @EnableCaching
 @EnableSpringConfigured
 @EnableJpaAuditing
-@EnableJpaRepositories(basePackageClasses = TransportationModuleConfiguration.class)
+@EnableJpaRepositories(basePackageClasses = TransportOrderRepository.class)
 @EnableAspects(propagateRootCause = true)
 @EnableMultiTenancy
 public class TransportationModuleConfiguration {
