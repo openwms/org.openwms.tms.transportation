@@ -42,38 +42,38 @@ class TransportOrderApiImpl implements TransportOrderApi {
         this.facade = facade;
     }
 
-    @Measured
     @Override
+    @Measured
     public void createTO(String barcode, String target) {
         facade.createTO(barcode, target, null);
     }
 
-    @Measured
     @Override
+    @Measured
     public void createTO(String barcode, String target, String priority) {
         facade.createTO(barcode, target, priority);
     }
 
-    @Measured
     @Override
+    @Measured
     public void changeState(String id, String state) {
         facade.changeState(id, state);
     }
 
-    @Measured
     @Override
+    @Measured
     public void updateTO(String pKey, UpdateTransportOrderVO vo) {
         facade.updateTO(pKey, vo);
     }
 
-    @Measured
     @Override
+    @Measured
     public List<TransportOrderVO> findBy(String barcode, String state) {
         return facade.findBy(barcode, state);
     }
 
-    @Measured
     @Override
+    @Measured
     public TransportOrderVO findByPKey(String pKey) {
         return facade.findByPKey(pKey);
     }

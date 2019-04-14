@@ -29,6 +29,10 @@ import org.springframework.context.annotation.Profile;
  */
 @Profile("!INMEM")
 @Configuration
-@EnableFeignClients(basePackageClasses = {TransportUnitApi.class, LocationApi.class, LocationGroupApi.class})
+@EnableFeignClients(basePackageClasses = {
+        TransportUnitApi.class,
+        LocationApi.class,
+        LocationGroupApi.class
+})
 class TransportationFeignConfiguration {
 }

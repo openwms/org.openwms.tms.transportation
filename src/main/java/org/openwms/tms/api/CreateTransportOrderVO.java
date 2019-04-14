@@ -16,7 +16,6 @@
 package org.openwms.tms.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.openwms.tms.Message;
 
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
@@ -33,7 +32,7 @@ public class CreateTransportOrderVO implements Serializable {
     @NotEmpty
     private String barcode;
     private String priority;
-    private Message problem;
+    private MessageVO problem;
     private String state;
     @NotEmpty
     @JsonProperty("targetLocation")
@@ -83,11 +82,11 @@ public class CreateTransportOrderVO implements Serializable {
         this.priority = priority;
     }
 
-    public Message getProblem() {
+    public MessageVO getProblem() {
         return problem;
     }
 
-    public void setProblem(Message problem) {
+    public void setProblem(MessageVO problem) {
         this.problem = problem;
     }
 
@@ -124,7 +123,7 @@ public class CreateTransportOrderVO implements Serializable {
         private @NotEmpty String pKey;
         private @NotEmpty String barcode;
         private String priority;
-        private Message problem;
+        private MessageVO problem;
         private String state;
         private @NotEmpty String target;
 
@@ -146,7 +145,7 @@ public class CreateTransportOrderVO implements Serializable {
             return this;
         }
 
-        public Builder withProblem(Message val) {
+        public Builder withProblem(MessageVO val) {
             problem = val;
             return this;
         }

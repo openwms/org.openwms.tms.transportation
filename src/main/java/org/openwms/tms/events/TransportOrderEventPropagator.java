@@ -46,14 +46,10 @@ class TransportOrderEventPropagator {
 
     @TransactionalEventListener(fallbackExecution = true)
     public void onEvent(TransportServiceEvent event) {
-        switch (event.getType()) {
-            case STARTED:
-                TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);
-                mo.setEventType(TransportOrderMO.EventType.STARTED);
-                amqpTemplate.convertAndSend(exchangeName, "to.event.started", mo);
-                break;
-            default:
-                //throw new UnsupportedOperationException(format("Eventtype [%s] currently not supported", event.getType()));
+        if (event.getType() == TransportServiceEvent.TYPE.STARTED) {
+            TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);
+            mo.setEventType(TransportOrderMO.EventType.STARTED);
+            amqpTemplate.convertAndSend(exchangeName, "to.event.started", mo);
         }
     }
 }

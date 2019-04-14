@@ -17,8 +17,6 @@ package org.openwms.tms;
 
 import org.ameba.integration.jpa.ApplicationEntity;
 import org.openwms.tms.api.ValidationGroups;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -43,8 +41,6 @@ import java.util.Date;
 @Entity
 @Table(name = "TMS_TRANSPORT_ORDER")
 public class TransportOrder extends ApplicationEntity implements Serializable {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TransportOrder.class);
 
     /**
      * The bk of the {@code TransportUnit} to be moved by this {@code TransportOrder}. Allowed to be {@literal null} to keep {@code
@@ -110,7 +106,7 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
 
     @Transient
     @Autowired
-    private StateManager stateManager;
+    private transient StateManager stateManager;
 
     /* ----------------------------- constructors ------------------- */
 
@@ -203,7 +199,7 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
      * else then {@link TransportOrderState#INITIALIZED} or {@link TransportOrderState#CANCELED}</li> <li>the {@code TransportOrder} is
      * {@link TransportOrderState#CREATED} and shall be {@link TransportOrderState#INITIALIZED} but it is incomplete</li> </ul>
      */
-    public TransportOrder changeState(TransportOrderState newState) throws StateChangeException {
+    public TransportOrder changeState(TransportOrderState newState) {
         stateManager.validate(newState, this);
         state = newState;
         return this;

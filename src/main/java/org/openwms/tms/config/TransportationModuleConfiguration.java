@@ -58,7 +58,7 @@ import java.util.Locale;
 @EnableJpaRepositories(basePackageClasses = TransportOrderRepository.class)
 @EnableAspects(propagateRootCause = true)
 @EnableMultiTenancy
-public class TransportationModuleConfiguration {
+class TransportationModuleConfiguration {
 
     public
     @Bean

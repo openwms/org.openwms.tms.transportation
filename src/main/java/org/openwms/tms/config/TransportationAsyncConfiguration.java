@@ -18,6 +18,8 @@ package org.openwms.tms.config;
 import org.ameba.mapping.BeanMapper;
 import org.openwms.common.transport.TransportUnitEventPropagator;
 import org.openwms.core.SpringProfiles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -28,12 +30,16 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.amqp.support.converter.SerializerMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.retry.support.RetryTemplate;
+
+import static org.ameba.LoggingCategories.BOOT;
 
 /**
  * A TransportationAsyncConfiguration.
@@ -45,13 +51,26 @@ import org.springframework.retry.support.RetryTemplate;
 @EnableRabbit
 class TransportationAsyncConfiguration {
 
+    private static final Logger BOOT_LOGGER = LoggerFactory.getLogger(BOOT);
+
+    @ConditionalOnExpression("'${owms.transportation.serialization}'=='json'")
     @Bean
-    MessageConverter jsonConverter() {
-        return new Jackson2JsonMessageConverter();
+    MessageConverter messageConverter() {
+        Jackson2JsonMessageConverter messageConverter = new Jackson2JsonMessageConverter();
+        BOOT_LOGGER.info("Using JSON serialization over AMQP");
+        return messageConverter;
+    }
+
+    @ConditionalOnExpression("'${owms.transportation.serialization}'=='barray'")
+    @Bean
+    MessageConverter serializerMessageConverter() {
+        SerializerMessageConverter messageConverter = new SerializerMessageConverter();
+        BOOT_LOGGER.info("Using byte array serialization over AMQP");
+        return messageConverter;
     }
 
     @Bean
-    RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+    RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();
         backOffPolicy.setMultiplier(2);
@@ -60,7 +79,7 @@ class TransportationAsyncConfiguration {
         RetryTemplate retryTemplate = new RetryTemplate();
         retryTemplate.setBackOffPolicy(backOffPolicy);
         rabbitTemplate.setRetryTemplate(retryTemplate);
-        rabbitTemplate.setMessageConverter(jsonConverter());
+        rabbitTemplate.setMessageConverter(messageConverter);
         return rabbitTemplate;
     }
 

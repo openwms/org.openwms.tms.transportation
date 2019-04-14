@@ -29,7 +29,6 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.Transient;
 import java.util.Date;
-import java.util.List;
 
 import static org.openwms.tms.TransportOrderState.CANCELED;
 import static org.openwms.tms.TransportOrderState.INITIALIZED;
@@ -81,10 +80,10 @@ class StateManagerImpl implements StateManager {
                 if (newState != STARTED && newState != CANCELED && newState != ONFAILURE) {
                     throw new StateChangeException(translator.translate(TMSMessageCodes.STATE_CHANGE_ERROR_FOR_INITIALIZED_TO, transportOrder.getPersistentKey()), TMSMessageCodes.STATE_CHANGE_ERROR_FOR_INITIALIZED_TO, transportOrder.getPersistentKey());
                 }
-                if (newState == STARTED && repo.findByTransportUnitBKAndStates(transportOrder.getTransportUnitBK(), STARTED).size() > 0) {
+                if (newState == STARTED && !repo.findByTransportUnitBKAndStates(transportOrder.getTransportUnitBK(), STARTED).isEmpty()) {
                     throw new StateChangeException(translator.translate(TMSMessageCodes.START_TO_NOT_ALLOWED_ALREADY_STARTED_ONE, transportOrder.getTransportUnitBK(), transportOrder.getPersistentKey()), TMSMessageCodes.START_TO_NOT_ALLOWED_ALREADY_STARTED_ONE, transportOrder.getTransportUnitBK(), transportOrder.getPersistentKey());
                 }
-                List<TransportOrder> orders = repo.findByTransportUnitBKAndStates(transportOrder.getTransportUnitBK(), STARTED);
+                repo.findByTransportUnitBKAndStates(transportOrder.getTransportUnitBK(), STARTED);
                 LOGGER.debug("Current State is [{}], new state is [{}], # of started is [{}]", state, newState, repo.numberOfTransportOrders(transportOrder.getTransportUnitBK(), STARTED));
                 break;
             case STARTED:

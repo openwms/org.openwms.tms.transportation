@@ -30,5 +30,5 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 @EnableDiscoveryClient
 @EnableCircuitBreaker
-public class TransportationStandaloneConfiguration {
+class TransportationStandaloneConfiguration {
 }

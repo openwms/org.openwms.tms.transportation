@@ -15,8 +15,6 @@
  */
 package org.openwms.tms.api;
 
-import org.openwms.tms.Message;
-
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
@@ -31,7 +29,7 @@ public class UpdateTransportOrderVO implements Serializable {
     private String pKey;
     private String barcode;
     private String priority;
-    private Message problem;
+    private MessageVO problem;
     private String state;
     private String targetLocation;
     private String targetLocationGroup;
@@ -79,11 +77,11 @@ public class UpdateTransportOrderVO implements Serializable {
         this.priority = priority;
     }
 
-    public Message getProblem() {
+    public MessageVO getProblem() {
         return problem;
     }
 
-    public void setProblem(Message problem) {
+    public void setProblem(MessageVO problem) {
         this.problem = problem;
     }
 
@@ -128,7 +126,7 @@ public class UpdateTransportOrderVO implements Serializable {
         private String pKey;
         private String barcode;
         private String priority;
-        private Message problem;
+        private MessageVO problem;
         private String state;
         private String targetLocation;
         private String targetLocationGroup;
@@ -152,7 +150,7 @@ public class UpdateTransportOrderVO implements Serializable {
             return this;
         }
 
-        public Builder withProblem(Message val) {
+        public Builder withProblem(MessageVO val) {
             problem = val;
             return this;
         }

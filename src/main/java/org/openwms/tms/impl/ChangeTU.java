@@ -76,6 +76,6 @@ class ChangeTU implements UpdateFunction {
         Set<ConstraintViolation<TransportOrder>> violations = validator.validate(to, ValidationGroups.class);
         if (!violations.isEmpty()) {
             throw new ValidationException(violations.iterator().next().getMessage());
-        };
+        }
     }
 }

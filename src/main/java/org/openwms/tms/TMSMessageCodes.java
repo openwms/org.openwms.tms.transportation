@@ -22,6 +22,9 @@ package org.openwms.tms;
  */
 public final class TMSMessageCodes {
 
+    private TMSMessageCodes() {
+    }
+
     /*~ Messagetext Codes */
 
 

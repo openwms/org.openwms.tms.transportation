@@ -18,6 +18,7 @@ package org.openwms.tms;
 import org.junit.Test;
 import org.openwms.TransportationTestBase;
 import org.openwms.tms.api.CreateTransportOrderVO;
+import org.openwms.tms.api.MessageVO;
 import org.openwms.tms.api.TMSApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -47,7 +48,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         MvcResult res = postTOAndValidate(vo, NOTLOGGED);
-        Message msg = new Message.Builder().withMessage("text").withMessageNo("77").build();
+        MessageVO msg = MessageVO.newBuilder().message("text").messageNo("77").build();
         vo.setProblem(msg);
         addProblem(vo);
         assertThat(readTransportOrder(vo.getpKey()).getProblem()).isEqualTo(msg);
@@ -73,7 +74,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        Message msg = new Message.Builder().withMessage("text").withMessageNo("77").build();
+        MessageVO msg = MessageVO.newBuilder().message("text").messageNo("77").build();
         vo.setProblem(msg);
 
         // test ...
@@ -95,11 +96,11 @@ public class AddProblemDocumentation extends TransportationTestBase {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        Message msg = new Message.Builder().withMessage("text").withMessageNo("77").build();
+        MessageVO msg = MessageVO.newBuilder().message("text").messageNo("77").build();
         vo.setProblem(msg);
 
         addProblem(vo);
-        Message msg2 = new Message.Builder().withMessage("text2").withMessageNo("78").build();
+        MessageVO msg2 = MessageVO.newBuilder().message("text2").messageNo("78").build();
         vo.setProblem(msg2);
 
         // test ...

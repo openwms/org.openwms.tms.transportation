@@ -90,7 +90,7 @@ class TransportationController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createTO(@RequestBody CreateTransportOrderVO vo, HttpServletRequest req, HttpServletResponse resp) {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Create TransportOrder [{}]", vo.toString());
+            LOGGER.debug("Create TransportOrder [{}]", vo);
         }
         TransportOrder to = service.create(vo.getBarcode(), vo.getTarget(), vo.getPriority());
         resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
@@ -113,14 +113,36 @@ class TransportationController {
     public ResponseEntity<Response> handleNotFound(BusinessRuntimeException ex) {
         if (ex instanceof BehaviorAwareException) {
             BehaviorAwareException bae = (BehaviorAwareException) ex;
-            return new ResponseEntity<>(Response.newBuilder().withMessage(ex.getMessage()).withMessageKey(bae.getMessageKey()).withHttpStatus(bae.getStatus().toString()).withObj(bae.getData()).build(), bae.getStatus());
+            return new ResponseEntity<>(
+                    Response.newBuilder()
+                            .withMessage(ex.getMessage())
+                            .withMessageKey(bae.getMessageKey())
+                            .withHttpStatus(bae.getStatus().toString())
+                            .withObj(bae.getData())
+                            .build(),
+                    bae.getStatus()
+            );
         }
-        return new ResponseEntity<>(Response.newBuilder().withMessage(ex.getMessage()).withMessageKey(ex.getMessageKey()).withHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR.toString()).withObj(new String[]{ex.getMessageKey()}).build(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(
+                Response.newBuilder()
+                        .withMessage(ex.getMessage())
+                        .withMessageKey(ex.getMessageKey())
+                        .withHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+                        .withObj(new String[]{ex.getMessageKey()})
+                        .build(),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Response> handleBadRequests(IllegalArgumentException ex) {
-        return new ResponseEntity<>(Response.newBuilder().withMessage(ex.getMessage()).withHttpStatus(HttpStatus.BAD_REQUEST.toString()).build(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(
+                Response.newBuilder()
+                        .withMessage(ex.getMessage())
+                        .withHttpStatus(HttpStatus.BAD_REQUEST.toString())
+                        .build(),
+                HttpStatus.BAD_REQUEST
+        );
     }
 
     private String getCreatedResourceURI(HttpServletRequest req, String objId) {

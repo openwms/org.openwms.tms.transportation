@@ -17,7 +17,7 @@
 
     <mapping>
 		<class-a>org.openwms.tms.Message</class-a>
-		<class-b>org.openwms.tms.Message</class-b>
+		<class-b>org.openwms.tms.api.MessageVO</class-b>
         <field>
             <a is-accessible="true">occurred</a>
             <b is-accessible="true">occurred</b>

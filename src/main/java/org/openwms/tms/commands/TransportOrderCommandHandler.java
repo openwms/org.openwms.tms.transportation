@@ -20,6 +20,7 @@ import org.ameba.annotation.TxService;
 import org.ameba.exception.ServiceLayerException;
 import org.ameba.mapping.BeanMapper;
 import org.openwms.core.SpringProfiles;
+import org.openwms.tms.Message;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.TransportationService;
@@ -76,8 +77,9 @@ class TransportOrderCommandHandler {
                     break;
                 case CANCEL_ALL:
                     UpdateTransportOrderVO vo = command.getUpdateTransportOrder();
-                    service.change(vo.getBarcode(), TransportOrderState.INITIALIZED, TransportOrderState.CANCELED, vo.getProblem());
-                    service.change(vo.getBarcode(), TransportOrderState.STARTED, TransportOrderState.CANCELED, vo.getProblem());
+                    Message msg = mapper.map(vo.getProblem(), Message.class);
+                    service.change(vo.getBarcode(), TransportOrderState.INITIALIZED, TransportOrderState.CANCELED, msg);
+                    service.change(vo.getBarcode(), TransportOrderState.STARTED, TransportOrderState.CANCELED, msg);
                     break;
                 default:
                     throw new ServiceLayerException(format("Operation [%s] of TOCommand not supported", command.getType()));
@@ -92,6 +94,6 @@ class TransportOrderCommandHandler {
         if (!violations.isEmpty()) {
             ConstraintViolation<T> violation = violations.iterator().next();
             throw new ValidationException(String.format("Violation error [%s], property [%s]", violation.getMessage(), violation.getPropertyPath()));
-        };
+        }
     }
 }

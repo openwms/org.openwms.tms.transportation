@@ -25,7 +25,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
 @Configuration
-public class TransportationSecurityConfiguration extends WebSecurityConfigurerAdapter {
+class TransportationSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     /**
      * {@inheritDoc}

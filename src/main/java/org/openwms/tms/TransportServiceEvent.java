@@ -26,7 +26,7 @@ import static java.lang.String.format;
  *
  * @author <a href="mailto:russelltina@users.sourceforge.net">Tina Russell</a>
  */
-public final class TransportServiceEvent<T extends TransportServiceEvent.TYPE> extends ApplicationEvent implements Serializable {
+public final class TransportServiceEvent extends ApplicationEvent implements Serializable {
 
     private TYPE type;
 
