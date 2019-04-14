@@ -21,6 +21,7 @@ import org.openwms.TransportationTestBase;
 import org.openwms.common.location.api.LocationVO;
 import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.api.CreateTransportOrderVO;
+import org.openwms.tms.api.TMS_API;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -55,7 +56,7 @@ public class ChangeTUDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
+                patch(TMS_API.TRANSPORT_ORDERS +"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
                 )
@@ -75,7 +76,7 @@ public class ChangeTUDocumentation extends TransportationTestBase {
 
         // test ...
         MvcResult res = mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
+                patch(TMS_API.TRANSPORT_ORDERS +"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
                 )
@@ -96,7 +97,7 @@ public class ChangeTUDocumentation extends TransportationTestBase {
 // TODO [openwms]: 10/08/16
         // test ...
         mockMvc.perform(
-                patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
+                patch(TMS_API.TRANSPORT_ORDERS +"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
         )

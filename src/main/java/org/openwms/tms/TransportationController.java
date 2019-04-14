@@ -20,6 +20,7 @@ import org.ameba.exception.BehaviorAwareException;
 import org.ameba.exception.BusinessRuntimeException;
 import org.ameba.http.Response;
 import org.openwms.tms.api.CreateTransportOrderVO;
+import org.openwms.tms.api.TMS_API;
 import org.openwms.tms.api.TransportOrderVO;
 import org.openwms.tms.api.UpdateTransportOrderVO;
 import org.slf4j.Logger;
@@ -62,19 +63,19 @@ class TransportationController {
     }
 
     @Measured
-    @GetMapping(value = TMSConstants.ROOT_ENTITIES, params = {"barcode", "state"})
+    @GetMapping(value = TMS_API.TRANSPORT_ORDERS, params = {"barcode", "state"})
     public List<TransportOrderVO> findBy(@RequestParam String barcode, @RequestParam String state) {
         return transportationFacade.findBy(barcode, state);
     }
 
     @Measured
-    @GetMapping(TMSConstants.ROOT_ENTITIES + "/{pKey}")
+    @GetMapping(TMS_API.TRANSPORT_ORDERS + "/{pKey}")
     public TransportOrderVO findByPKey(@PathVariable(value = "pKey") String pKey) {
         return transportationFacade.findByPKey(pKey);
     }
 
     @Measured
-    @PostMapping(value = TMSConstants.ROOT_ENTITIES, params = {"barcode", "target"})
+    @PostMapping(value = TMS_API.TRANSPORT_ORDERS, params = {"barcode", "target"})
     @ResponseStatus(HttpStatus.CREATED)
     public void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target, @RequestParam(value = "priority", required = false) String priority, HttpServletRequest req, HttpServletResponse resp) {
         if (LOGGER.isDebugEnabled()) {
@@ -85,7 +86,7 @@ class TransportationController {
     }
 
     @Measured
-    @PostMapping(TMSConstants.ROOT_ENTITIES)
+    @PostMapping(TMS_API.TRANSPORT_ORDERS)
     @ResponseStatus(HttpStatus.CREATED)
     public void createTO(@RequestBody CreateTransportOrderVO vo, HttpServletRequest req, HttpServletResponse resp) {
         if (LOGGER.isDebugEnabled()) {
@@ -96,14 +97,14 @@ class TransportationController {
     }
 
     @Measured
-    @PatchMapping(TMSConstants.ROOT_ENTITIES + "/{pKey}")
+    @PatchMapping(TMS_API.TRANSPORT_ORDERS + "/{pKey}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateTO(@PathVariable(value = "pKey") String pKey, @RequestBody UpdateTransportOrderVO vo) {
         transportationFacade.updateTO(pKey, vo);
     }
 
     @Measured
-    @PostMapping(value = TMSConstants.ROOT_ENTITIES + "/{pKey}", params = {"state"})
+    @PostMapping(value = TMS_API.TRANSPORT_ORDERS + "/{pKey}", params = {"state"})
     public void changeState(@PathVariable(value = "pKey") String pKey, @RequestParam(value = "state") String state) {
         transportationFacade.changeState(pKey, state);
     }

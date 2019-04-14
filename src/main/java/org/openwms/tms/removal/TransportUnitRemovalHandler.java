@@ -16,7 +16,6 @@
 package org.openwms.tms.removal;
 
 import org.ameba.annotation.TxService;
-import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.common.transport.api.commands.TUCommand;
 import org.openwms.tms.Message;
 import org.openwms.tms.StateChangeException;
@@ -56,7 +55,9 @@ class TransportUnitRemovalHandler {
     private final ApplicationContext ctx;
     private final List<String> blockStates;
 
-    TransportUnitRemovalHandler(TransportOrderRepository repository, ApplicationContext ctx, @Value("${owms.tms.block-tu-deletion-states}") String cancelStartedTO) {
+    TransportUnitRemovalHandler(TransportOrderRepository repository,
+            ApplicationContext ctx,
+            @Value("${owms.tms.block-tu-deletion-states}") String cancelStartedTO) {
         this.repository = repository;
         this.ctx = ctx;
         this.blockStates = cancelStartedTO == null ?
@@ -69,19 +70,13 @@ class TransportUnitRemovalHandler {
 
     /**
      * {@inheritDoc}
-     * <p>
-     * The implementation verifies that no active {@link TransportOrder}s exist, before a {@link TransportUnitVO} is going to be removed. <ul>
-     * <li>In case where already 'started' {@link TransportOrder}s exist it is not allowed to remove the {@link TransportUnitVO} therefore an
-     * exception is thrown.</li> <li>If {@link TransportOrder}s in a state less than 'started' exist they will be canceled and removed. The
-     * removal of the {@link TransportUnitVO} is accepted.</li> </ul>
-     *
-     * @throws RemovalNotAllowedException when active {@link TransportOrder}s exist for the {@link TransportUnitVO} entity.
      */
     @Transactional
     public void preRemove(TUCommand command) throws RemovalNotAllowedException {
         Assert.notNull(command, "Not allowed to call preRemove with null argument");
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("The TransportUnit with pKey [{}] is going to be removed. Check for existing TransportOrders", command.getTransportUnit().getpKey());
+            LOGGER.debug("The TransportUnit with pKey [{}] is going to be removed. Check for existing TransportOrders",
+                    command.getTransportUnit().getpKey());
         }
         try {
             checkForStarted(command);
@@ -96,7 +91,11 @@ class TransportUnitRemovalHandler {
     }
 
     protected void checkForStarted(TUCommand command) {
-        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(command.getTransportUnit().getBarcode(), STARTED);
+        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(
+                command.getTransportUnit().getBarcode(),
+                STARTED
+        );
+
         if (blockStates.contains(STARTED.toString()) &&
                 !transportOrders.isEmpty()) {
 
@@ -116,14 +115,23 @@ class TransportUnitRemovalHandler {
             transportOrder.changeState(CANCELED);
             String barcode = transportOrder.getTransportUnitBK();
             eraseTuID(transportOrder, new Message.Builder()
-                    .withMessage(format("TransportUnit with ID [%s] was deleted and Transport Order canceled", barcode))
+                    .withMessage(
+                            format("TransportUnit with ID [%s] was deleted and Transport Order canceled",
+                                    barcode
+                            )
+                    )
                     .build()
             );
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Successfully unlinked and canceled TransportOrder with PK [{}]", transportOrder.getPk());
+                LOGGER.info("Successfully unlinked and canceled TransportOrder with PK [{}]",
+                        transportOrder.getPk());
             }
         } catch (StateChangeException sce) {
-            transportOrder.setProblem(new Message.Builder().withMessage(sce.getMessage()).build());
+            transportOrder.setProblem(
+                    new Message.Builder()
+                            .withMessage(sce.getMessage())
+                            .build()
+            );
         } finally {
             repository.save(transportOrder);
         }
@@ -136,8 +144,11 @@ class TransportUnitRemovalHandler {
     }
 
     protected void cancelInitializedOrders(TUCommand command) {
-        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(command.getTransportUnit().getBarcode(), CREATED,
-                INITIALIZED);
+        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(
+                command.getTransportUnit().getBarcode(),
+                CREATED,
+                INITIALIZED
+        );
 
         if ((blockStates.contains(INITIALIZED.toString()) ||
                 (blockStates.contains(CREATED.toString()))) &&
@@ -155,8 +166,11 @@ class TransportUnitRemovalHandler {
     }
 
     protected void unlinkFinishedOrders(TUCommand command) {
-        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(command.getTransportUnit().getBarcode(), FINISHED,
-                ONFAILURE);
+        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(
+                command.getTransportUnit().getBarcode(),
+                FINISHED,
+                ONFAILURE
+        );
 
         if ((blockStates.contains(FINISHED.toString()) ||
                 (blockStates.contains(ONFAILURE.toString()))) &&
@@ -172,17 +186,25 @@ class TransportUnitRemovalHandler {
             transportOrders.forEach(to -> {
                 eraseTuID(to,
                         new Message.Builder()
-                                .withMessage(format("TransportUnit with barcode [%s] was removed and TransportOrder unlinked", command.getTransportUnit().getBarcode()))
+                                .withMessage(
+                                        format("TransportUnit with barcode [%s] was removed and TransportOrder unlinked",
+                                                command.getTransportUnit().getBarcode()
+                                        )
+                                )
                                 .build());
                 if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Successfully unlinked TransportOrder with PK [{}]", to.getPk());
+                    LOGGER.info("Successfully unlinked TransportOrder with PK [{}]",
+                            to.getPk());
                 }
             });
         }
     }
 
     protected void unlinkCanceledOrders(TUCommand command) {
-        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(command.getTransportUnit().getBarcode(), CANCELED);
+        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(
+                command.getTransportUnit().getBarcode(),
+                CANCELED
+        );
         if (transportOrders.isEmpty()) {
 
             LOGGER.debug("No CANCELED TransportOrders found to unlink");
@@ -191,10 +213,15 @@ class TransportUnitRemovalHandler {
             transportOrders.forEach(to -> {
                 eraseTuID(to,
                         new Message.Builder()
-                                .withMessage(format("TransportUnit with barcode [%s] was removed and TransportOrder unlinked", command.getTransportUnit().getBarcode()))
+                                .withMessage(
+                                        format("TransportUnit with barcode [%s] was removed and TransportOrder unlinked",
+                                                command.getTransportUnit().getBarcode()
+                                        )
+                                )
                                 .build());
                 if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Successfully unlinked canceled TransportOrder with PK [{}]", to.getPk());
+                    LOGGER.info("Successfully unlinked canceled TransportOrder with PK [{}]",
+                            to.getPk());
                 }
             });
         }

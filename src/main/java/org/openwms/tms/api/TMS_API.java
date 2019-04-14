@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms;
+package org.openwms.tms.api;
 
 /**
- * A TMSConstants holds general constants of this microservice module.
+ * A TMS_API defines the root API entry URL of the service.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-public final class TMSConstants {
+public final class TMS_API {
+
+    /** API version. */
+    public static final String API_VERSION = "v1";
 
     /** API root to hit TransportOrders (plural). */
-    public static final String ROOT_ENTITIES = "/transport-orders";
+    public static final String TRANSPORT_ORDERS = "/" + API_VERSION + "/transport-orders";
 }

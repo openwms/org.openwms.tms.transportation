@@ -18,6 +18,7 @@ package org.openwms.tms;
 import org.junit.Test;
 import org.openwms.TransportationTestBase;
 import org.openwms.tms.api.CreateTransportOrderVO;
+import org.openwms.tms.api.TMS_API;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultMatcher;
 
@@ -111,7 +112,7 @@ public class RedirectTODocumentation extends TransportationTestBase {
     private void sendPatch(CreateTransportOrderVO vo, ResultMatcher rm, String output) throws Exception {
         // test ...
         mockMvc.perform(
-            patch(TMSConstants.ROOT_ENTITIES+"/"+vo.getpKey())
+            patch(TMS_API.TRANSPORT_ORDERS +"/"+vo.getpKey())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(vo))
             )
