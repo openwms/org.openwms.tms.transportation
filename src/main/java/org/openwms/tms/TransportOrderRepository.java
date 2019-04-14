@@ -36,13 +36,25 @@ public interface TransportOrderRepository extends JpaRepository<TransportOrder, 
 
     List<TransportOrder> findByTargetLocationInAndStateAndSourceLocationIn(List<String> targetLocation, TransportOrderState state, List<String> sourceLocation);
 
-    @Query("select to from TransportOrder to where to.targetLocation not in :targetLocations and to.state = :state and to.sourceLocation in :sourceLocations")
-    List<TransportOrder> findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(@Param("targetLocations") List<String> targetLocations, @Param("state") TransportOrderState state, @Param("sourceLocations") List<String> sourceLocations);
+    @Query("select to " +
+            "from TransportOrder to " +
+            "where to.targetLocation not in :targetLocations " +
+            "and to.state = :state " +
+            "and to.sourceLocation in :sourceLocations " +
+            "order by to.priority desc, to.startDate, to.createDt")
+    List<TransportOrder> findByTargetLocationGroupIsNotAndStateAndSourceLocationIn(
+            @Param("targetLocations") List<String> targetLocations,
+            @Param("state") TransportOrderState state,
+            @Param("sourceLocations") List<String> sourceLocations);
 
     @Query("select to from TransportOrder to where to.pKey in ?1")
     List<TransportOrder> findByPKey(List<String> pKeys);
 
-    @Query("select to from TransportOrder to where to.transportUnitBK = ?1 and to.state in ?2 order by to.priority desc, to.createDt")
+    @Query("select to " +
+            "from TransportOrder to " +
+            "where to.transportUnitBK = ?1 " +
+            "and to.state in ?2 " +
+            "order by to.priority desc, to.startDate, to.createDt")
     List<TransportOrder> findByTransportUnitBKAndStates(String transportUnitBK, TransportOrderState... states);
 
     List<TransportOrder> findByTargetLocation(String targetLocation);

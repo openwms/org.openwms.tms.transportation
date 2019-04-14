@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.api;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openwms.tms.Message;
 
 import javax.validation.constraints.NotEmpty;
@@ -35,7 +36,28 @@ public class CreateTransportOrderVO implements Serializable {
     private Message problem;
     private String state;
     @NotEmpty
+    @JsonProperty("targetLocation")
     private String target;
+
+    @JsonProperty("targetLocationGroup")
+    public String getTargetLocationGroup() {
+        return target;
+    }
+    public CreateTransportOrderVO() {
+
+    }
+    private CreateTransportOrderVO(Builder builder) {
+        setpKey(builder.pKey);
+        setBarcode(builder.barcode);
+        setPriority(builder.priority);
+        setProblem(builder.problem);
+        setState(builder.state);
+        setTarget(builder.target);
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
 
     public String getpKey() {
         return pKey;
@@ -95,5 +117,52 @@ public class CreateTransportOrderVO implements Serializable {
                 ", state='" + state + '\'' +
                 ", target='" + target + '\'' +
                 '}';
+    }
+
+
+    public static final class Builder {
+        private @NotEmpty String pKey;
+        private @NotEmpty String barcode;
+        private String priority;
+        private Message problem;
+        private String state;
+        private @NotEmpty String target;
+
+        private Builder() {
+        }
+
+        public Builder withPKey(@NotEmpty String val) {
+            pKey = val;
+            return this;
+        }
+
+        public Builder withBarcode(@NotEmpty String val) {
+            barcode = val;
+            return this;
+        }
+
+        public Builder withPriority(String val) {
+            priority = val;
+            return this;
+        }
+
+        public Builder withProblem(Message val) {
+            problem = val;
+            return this;
+        }
+
+        public Builder withState(String val) {
+            state = val;
+            return this;
+        }
+
+        public Builder withTarget(@NotEmpty String val) {
+            target = val;
+            return this;
+        }
+
+        public CreateTransportOrderVO build() {
+            return new CreateTransportOrderVO(this);
+        }
     }
 }

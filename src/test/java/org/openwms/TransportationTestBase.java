@@ -96,11 +96,9 @@ public abstract class TransportationTestBase {
 
     /**
      * Do something before each test method.
-     *
-     * @throws Exception Any error
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         INIT_LOC = new LocationVO();
         INIT_LOC.setLocationId(INIT_LOC_STRING);
         ERR_LOC = new LocationVO();
@@ -116,24 +114,30 @@ public abstract class TransportationTestBase {
     }
 
     protected CreateTransportOrderVO createTO() {
-        CreateTransportOrderVO vo = new CreateTransportOrderVO();
-        vo.setPriority(PriorityLevel.HIGHEST.toString());
-        vo.setBarcode(BC_4711);
-        vo.setTarget(ERR_LOC_STRING);
+        CreateTransportOrderVO.Builder vo = CreateTransportOrderVO
+                .newBuilder()
+                .withPriority(PriorityLevel.HIGHEST.toString())
+                .withBarcode(BC_4711)
+                .withTarget(ERR_LOC_STRING)
+                ;
 
         LocationVO actualLocation = new LocationVO();
         actualLocation.setLocationId(INIT_LOC_STRING);
+        actualLocation.setIncomingActive(true);
+        actualLocation.setOutgoingActive(true);
         LocationVO errorLocation = new LocationVO();
         errorLocation.setLocationId(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
         TransportUnitVO tu = new TransportUnitVO();
-        tu.setBarcode(vo.getBarcode());
-        tu.setActualLocation(actualLocation.getLocationId());
-        tu.setTarget(vo.getTarget());
+        tu.setBarcode(BC_4711);
+        tu.setActualLocation(actualLocation);
+        tu.setTarget(ERR_LOC_STRING);
 
-        given(transportUnitApi.findTransportUnit(vo.getBarcode())).willReturn(tu);
-        given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(Optional.of(errorLocation));
-        given(locationGroupApi.findByName(vo.getTarget())).willReturn(Optional.empty());
-        return vo;
+        given(transportUnitApi.findTransportUnit(BC_4711, Boolean.FALSE)).willReturn(tu);
+        given(locationApi.findLocationByCoordinate(ERR_LOC_STRING)).willReturn(Optional.of(errorLocation));
+        given(locationGroupApi.findByName(ERR_LOC_STRING)).willReturn(Optional.empty());
+        return vo.build();
     }
 
     protected MvcResult postTOAndValidate(CreateTransportOrderVO vo, String outputFile) throws Exception {

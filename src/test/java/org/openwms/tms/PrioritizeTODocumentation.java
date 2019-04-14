@@ -17,6 +17,7 @@ package org.openwms.tms;
 
 import org.junit.Test;
 import org.openwms.TransportationTestBase;
+import org.openwms.common.location.api.LocationVO;
 import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.springframework.http.MediaType;
@@ -68,9 +69,11 @@ public class PrioritizeTODocumentation extends TransportationTestBase {
         postTOAndValidate(vo, NOTLOGGED);
         TransportUnitVO transportUnit = new TransportUnitVO();
         transportUnit.setBarcode(KNOWN);
-        transportUnit.setActualLocation(INIT_LOC_STRING);
+        LocationVO location = new LocationVO();
+        location.setLocationId(INIT_LOC_STRING);
+        transportUnit.setActualLocation(location);
         transportUnit.setTarget(ERR_LOC_STRING);
-        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
+        given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
 
         mockMvc.perform(
                 get(TMSConstants.ROOT_ENTITIES + "/" + vo.getpKey()))

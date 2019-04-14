@@ -17,8 +17,8 @@ package org.openwms.tms.redirection;
 
 import org.openwms.common.location.api.LocationApi;
 import org.openwms.common.location.api.LocationVO;
+import org.openwms.common.transport.TransportUnitEvent;
 import org.openwms.common.transport.api.TransportUnitVO;
-import org.openwms.common.transport.events.TransportUnitEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
@@ -53,15 +53,15 @@ class LocationRedirector extends TargetRedirector<LocationVO> {
 
     @Override
     protected Optional<LocationVO> resolveTarget(RedirectVote vote) {
-        return locationApi.findLocationByCoordinate(vote.getTarget());
+        return (vote.getTargetLocation() == null || vote.getTargetLocation().isEmpty()) ? Optional.empty() : locationApi.findLocationByCoordinate(vote.getTargetLocation());
     }
 
     @Override
     protected void assignTarget(RedirectVote vote) {
-        vote.getTransportOrder().setTargetLocation(vote.getTarget());
+        vote.getTransportOrder().setTargetLocation(vote.getTargetLocation());
         TransportUnitVO transportUnit = new TransportUnitVO();
         transportUnit.setBarcode(vote.getTransportOrder().getTransportUnitBK());
-        transportUnit.setTarget(vote.getTarget());
+        transportUnit.setTarget(vote.getTargetLocation());
         ctx.publishEvent(TransportUnitEvent.newBuilder().tu(transportUnit).type(TransportUnitEvent.TransportUnitEventType.CHANGE_TARGET).build());
     }
 }

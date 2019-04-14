@@ -42,6 +42,7 @@ public class RedirectTODocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setTarget(UNKNOWN);
+        INIT_LOC.setIncomingActive(true);
         given(locationGroupApi.findByName(UNKNOWN)).willReturn(Optional.empty());
         given(locationApi.findLocationByCoordinate(UNKNOWN)).willReturn(Optional.of(INIT_LOC));
 

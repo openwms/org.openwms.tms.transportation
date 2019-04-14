@@ -76,22 +76,4 @@ class TransportOrderApiImpl implements TransportOrderApi {
     public TransportOrderVO findByPKey(String pKey) {
         return facade.findByPKey(pKey);
     }
-
-    @Measured
-    @Override
-    public TransportOrderVO getNextInfeed(String sourceLocation, String state, String searchTargetLocationGroups) {
-        return facade.getNextInfeed(sourceLocation, state, searchTargetLocationGroups);
-    }
-
-    @Measured
-    @Override
-    public TransportOrderVO getNextInAisle(String sourceLocationGroupName, String targetLocationGroupName, String state) {
-        return facade.getNextInAisle(sourceLocationGroupName, targetLocationGroupName, state);
-    }
-
-    @Measured
-    @Override
-    public TransportOrderVO getNextOutfeed(String state, String sourceLocationGroupName) {
-        return facade.getNextOutfeed(state, sourceLocationGroupName);
-    }
 }

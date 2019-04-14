@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * This package contains all types required to describe transport unit items.
+ * This package contains all supported Message types of the transportation-service.
  */
 package org.openwms.common.transport;

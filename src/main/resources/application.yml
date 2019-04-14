@@ -19,5 +19,8 @@ owms:
     common:
       tu:
         exchange-name: common.tu
+    tms:
+      to:
+        exchange-name: tms.events
   tms:
     block-tu-deletion-states:

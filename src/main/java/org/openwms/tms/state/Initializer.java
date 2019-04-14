@@ -60,14 +60,14 @@ class Initializer implements ApplicationListener<TransportServiceEvent> {
     @Override
     public void onApplicationEvent(final TransportServiceEvent event) {
         if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_CREATED) {
-            TransportOrder to = repository.findById((Long) event.getSource()).orElseThrow(NotFoundException::new);
+            TransportOrder to = repository.findById(((TransportOrder) event.getSource()).getPk()).orElseThrow(NotFoundException::new);
             List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.CREATED);
             transportOrders.sort(new TransportStartComparator());
             for (TransportOrder transportOrder : transportOrders) {
                 try {
                     transportOrder
                             .changeState(TransportOrderState.INITIALIZED)
-                            .setSourceLocation(transportUnitApi.findTransportUnit(transportOrder.getTransportUnitBK()).getActualLocation());
+                            .setSourceLocation(transportUnitApi.findTransportUnit(transportOrder.getTransportUnitBK(), Boolean.FALSE).getActualLocation().getLocationId());
                     transportOrder = repository.save(transportOrder);
                     LOGGER.debug("TransportOrder with PK [{}] INITIALIZED", transportOrder.getPk());
                 } catch (StateChangeException sce) {
@@ -75,8 +75,7 @@ class Initializer implements ApplicationListener<TransportServiceEvent> {
                     continue;
                 }
                 try {
-                    ctx.publishEvent(new TransportServiceEvent(transportOrder.getPk(),
-                            TransportServiceEvent.TYPE.INITIALIZED));
+                    ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.INITIALIZED));
                 } catch (StateChangeException sce) {
                     LOGGER.warn("Post-processing of TransportOrder with PK [{}] failed with message: [{}]", transportOrder.getPk(), sce.getMessage());
                 }

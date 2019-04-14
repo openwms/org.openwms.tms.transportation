@@ -28,40 +28,91 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.util.List;
 
 /**
- * A TransportOrderApi.
+ * A TransportOrderApi is a part of the Transportation Service' public RESTful API.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
 @FeignClient(name = "tms-service", qualifier = "transportOrderApi", decode404 = true)
 public interface TransportOrderApi {
 
+    /**
+     * Find and return all {@code TransportOrder}s in a particular {@code state} for the
+     * {@code TransportUnit} with the given {@code barcode}.
+     *
+     * @param barcode The business identifier of the TransportUnit
+     * @param state The TransportOrder state
+     * @return A List implementation of the result instances, never {@literal null}
+     */
     @GetMapping(value = "/transport-orders", params = {"barcode", "state"})
-    List<TransportOrderVO> findBy(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "state") String state);
+    List<TransportOrderVO> findBy(
+            @RequestParam(value = "barcode") String barcode,
+            @RequestParam(value = "state") String state
+    );
 
+    /**
+     * Find and return a {@code TransportOrder} identified by its persistent key.
+     *
+     * @param pKey The persistent key of the TransportOrder (not the primary key)
+     * @return The instance
+     * @throws org.ameba.exception.NotFoundException if no TransportOrder with that id exists
+     */
     @GetMapping(value = "/transport-orders/{pKey}")
-    TransportOrderVO findByPKey(@PathVariable(value = "pKey") String pKey);
+    TransportOrderVO findByPKey(
+            @PathVariable(value = "pKey") String pKey
+    );
 
-    @GetMapping(value = "/transport-orders", params ={"sourceLocation", "state", "searchTargetLocationGroupNames"})
-    TransportOrderVO getNextInfeed(@RequestParam("sourceLocation") String sourceLocation, @RequestParam("state") String state, @RequestParam("searchTargetLocationGroupNames") String searchTargetLocationGroups);
-
-    @GetMapping(value = "/transport-orders", params ={"sourceLocationGroupName", "targetLocationGroupName", "state"})
-    TransportOrderVO getNextInAisle(@RequestParam("sourceLocationGroupName") String sourceLocationGroupName, @RequestParam("targetLocationGroupName") String targetLocationGroupName, @RequestParam("state") String state);
-
-    @GetMapping(value = "/transport-orders", params ={"state", "sourceLocationGroupName"})
-    TransportOrderVO getNextOutfeed(@RequestParam("state") String state, @RequestParam("sourceLocationGroupName") String sourceLocationGroupName);
-
+    /**
+     * Create a {@code TransportOrder} for a {@code TransportUnit} identified by the given
+     * {@code barcode} to the given {@code target}.
+     *
+     * @param barcode The business identifier of the TransportUnit
+     * @param target Either a Location of a LocationGroup
+     */
     @PostMapping(value = "/transport-orders")
     @ResponseStatus(HttpStatus.CREATED)
-    void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target);
+    void createTO(
+            @RequestParam(value = "barcode") String barcode,
+            @RequestParam(value = "target") String target
+    );
 
+    /**
+     * Create a {@code TransportOrder} for a {@code TransportUnit} identified by the given
+     * {@code barcode} to the given {@code target} and the given {@code priority}.
+     *
+     * @param barcode The business identifier of the TransportUnit
+     * @param target Either a Location of a LocationGroup
+     * @param priority The priority of the TransportOrder
+     */
     @PostMapping(value = "/transport-orders")
     @ResponseStatus(HttpStatus.CREATED)
-    void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target, @RequestParam(value = "priority", required = false) String priority);
+    void createTO(
+            @RequestParam(value = "barcode") String barcode,
+            @RequestParam(value = "target") String target,
+            @RequestParam(value = "priority", required = false) String priority
+    );
 
+    /**
+     * Request to change the state of an existing {@code TransportOrder}.
+     *
+     * @param pKey The persistent key of the TransportOrder (not the primary key)
+     * @param state The requested TransportOrder state
+     */
     @PostMapping(value = "/transport-orders/{pKey}", params = {"state"})
-    void changeState(@PathVariable(value = "pKey") String pKey, @RequestParam(value = "state") String state);
+    void changeState(
+            @PathVariable(value = "pKey") String pKey,
+            @RequestParam(value = "state") String state
+    );
 
+    /**
+     * Request to update an existing {@code TransportOrder}.
+     *
+     * @param pKey The persistent key of the TransportOrder (not the primary key)
+     * @param transportOrder The minimal necessary structure of the change set
+     */
     @PatchMapping("/transport-orders/{pKey}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void updateTO(@PathVariable(value = "pKey") String pKey, @RequestBody UpdateTransportOrderVO vo);
+    void updateTO(
+            @PathVariable(value = "pKey") String pKey,
+            @RequestBody UpdateTransportOrderVO transportOrder
+    );
 }

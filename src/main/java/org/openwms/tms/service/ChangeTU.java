@@ -19,13 +19,16 @@ import org.openwms.common.transport.api.TransportUnitApi;
 import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.UpdateFunction;
-import org.openwms.tms.ValidationGroups;
+import org.openwms.tms.api.ValidationGroups;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ValidationException;
 import javax.validation.Validator;
+import java.util.Set;
 
 /**
  * A ChangeTU is responsible to change a {@link TransportOrder}s assigned {@code TransportUnit}.
@@ -71,6 +74,9 @@ class ChangeTU implements UpdateFunction {
     }
 
     private void validateAttributes(TransportOrder to) {
-        validator.validate(to, ValidationGroups.class);
+        Set<ConstraintViolation<TransportOrder>> violations = validator.validate(to, ValidationGroups.class);
+        if (!violations.isEmpty()) {
+            throw new ValidationException(violations.iterator().next().getMessage());
+        };
     }
 }

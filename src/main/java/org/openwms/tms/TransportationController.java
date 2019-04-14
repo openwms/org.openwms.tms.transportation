@@ -63,38 +63,20 @@ class TransportationController {
 
     @Measured
     @GetMapping(value = TMSConstants.ROOT_ENTITIES, params = {"barcode", "state"})
-    List<TransportOrderVO> findBy(@RequestParam String barcode, @RequestParam String state) {
+    public List<TransportOrderVO> findBy(@RequestParam String barcode, @RequestParam String state) {
         return transportationFacade.findBy(barcode, state);
     }
 
     @Measured
     @GetMapping(TMSConstants.ROOT_ENTITIES + "/{pKey}")
-    TransportOrderVO findByPKey(@PathVariable(value = "pKey") String pKey) {
+    public TransportOrderVO findByPKey(@PathVariable(value = "pKey") String pKey) {
         return transportationFacade.findByPKey(pKey);
-    }
-
-    @Measured
-    @GetMapping(value = TMSConstants.ROOT_ENTITIES, params = {"sourceLocation", "state", "searchTargetLocationGroupNames"})
-    TransportOrderVO getNextInfeed(@RequestParam("sourceLocation") String sourceLocation, @RequestParam("state") String state, @RequestParam("searchTargetLocationGroupNames") String searchTargetLocationGroups) {
-        return transportationFacade.getNextInfeed(sourceLocation, state, searchTargetLocationGroups);
-    }
-
-    @Measured
-    @GetMapping(value = TMSConstants.ROOT_ENTITIES, params = {"sourceLocationGroupName", "targetLocationGroupName", "state"})
-    TransportOrderVO getNextInAisle(@RequestParam("sourceLocationGroupName") String sourceLocationGroupName, @RequestParam("targetLocationGroupName") String targetLocationGroupName, @RequestParam("state") String state) {
-        return transportationFacade.getNextInAisle(sourceLocationGroupName, targetLocationGroupName, state);
-    }
-
-    @Measured
-    @GetMapping(value = TMSConstants.ROOT_ENTITIES, params = {"state", "sourceLocationGroupName"})
-    TransportOrderVO getNextOutfeed(@RequestParam("state") String state, @RequestParam("sourceLocationGroupName") String sourceLocationGroupName) {
-        return transportationFacade.getNextOutfeed(state, sourceLocationGroupName);
     }
 
     @Measured
     @PostMapping(value = TMSConstants.ROOT_ENTITIES, params = {"barcode", "target"})
     @ResponseStatus(HttpStatus.CREATED)
-    void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target, @RequestParam(value = "priority", required = false) String priority, HttpServletRequest req, HttpServletResponse resp) {
+    public void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target, @RequestParam(value = "priority", required = false) String priority, HttpServletRequest req, HttpServletResponse resp) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create TransportOrder with Barcode [{}] and Target [{}] and Priority [{}]", barcode, target, priority);
         }
@@ -105,7 +87,7 @@ class TransportationController {
     @Measured
     @PostMapping(TMSConstants.ROOT_ENTITIES)
     @ResponseStatus(HttpStatus.CREATED)
-    void createTO(@RequestBody CreateTransportOrderVO vo, HttpServletRequest req, HttpServletResponse resp) {
+    public void createTO(@RequestBody CreateTransportOrderVO vo, HttpServletRequest req, HttpServletResponse resp) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create TransportOrder [{}]", vo.toString());
         }
@@ -116,13 +98,13 @@ class TransportationController {
     @Measured
     @PatchMapping(TMSConstants.ROOT_ENTITIES + "/{pKey}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void updateTO(@PathVariable(value = "pKey") String pKey, @RequestBody UpdateTransportOrderVO vo) {
+    public void updateTO(@PathVariable(value = "pKey") String pKey, @RequestBody UpdateTransportOrderVO vo) {
         transportationFacade.updateTO(pKey, vo);
     }
 
     @Measured
     @PostMapping(value = TMSConstants.ROOT_ENTITIES + "/{pKey}", params = {"state"})
-    void changeState(@PathVariable(value = "pKey") String pKey, @RequestParam(value = "state") String state) {
+    public void changeState(@PathVariable(value = "pKey") String pKey, @RequestParam(value = "state") String state) {
         transportationFacade.changeState(pKey, state);
     }
 

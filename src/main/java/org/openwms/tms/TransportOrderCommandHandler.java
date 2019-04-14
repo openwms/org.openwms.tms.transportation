@@ -21,11 +21,17 @@ import org.ameba.exception.ServiceLayerException;
 import org.ameba.mapping.BeanMapper;
 import org.openwms.core.SpringProfiles;
 import org.openwms.tms.api.TOCommand;
+import org.openwms.tms.api.UpdateTransportOrderVO;
+import org.openwms.tms.api.ValidationGroups;
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.handler.annotation.Payload;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ValidationException;
 import javax.validation.Validator;
+import java.util.Set;
 
 import static java.lang.String.format;
 
@@ -51,18 +57,38 @@ class TransportOrderCommandHandler {
     @Measured
     @RabbitListener(queues = "${owms.commands.tms.to.queue-name}")
     void receive(@Payload TOCommand command) {
-        switch (command.getType()) {
-            case CREATE:
-                validator.validate(command.getCreateTransportOrder(), ValidationGroups.OrderCreation.class);
-                service.create(command.getCreateTransportOrder().getBarcode(), command.getCreateTransportOrder().getTarget(), command.getCreateTransportOrder().getPriority());
-                break;
-            case CHANGE_ACTUAL_LOCATION:
-            case CHANGE_TARGET:
-                validator.validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);
-                service.update(mapper.map(command.getUpdateTransportOrder(), TransportOrder.class));
-                break;
-            default:
-                throw new ServiceLayerException(format("Operation [%s] of TOCommand not supported", command.getType()));
+        try {
+            switch (command.getType()) {
+                case CREATE:
+                    validate(command.getCreateTransportOrder(), ValidationGroups.OrderCreation.class);
+                    service.create(command.getCreateTransportOrder().getBarcode(), command.getCreateTransportOrder().getTarget(), command.getCreateTransportOrder().getPriority());
+                    break;
+                case CHANGE_TARGET:
+                    validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);
+                    service.update(mapper.map(command.getUpdateTransportOrder(), TransportOrder.class));
+                    break;
+                case FINISH:
+                    validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);
+                    service.update(mapper.map(command.getUpdateTransportOrder(), TransportOrder.class));
+                    break;
+                case CANCEL_ALL:
+                    UpdateTransportOrderVO vo = command.getUpdateTransportOrder();
+                    service.change(vo.getBarcode(), TransportOrderState.INITIALIZED, TransportOrderState.CANCELED, vo.getProblem());
+                    service.change(vo.getBarcode(), TransportOrderState.STARTED, TransportOrderState.CANCELED, vo.getProblem());
+                    break;
+                default:
+                    throw new ServiceLayerException(format("Operation [%s] of TOCommand not supported", command.getType()));
+            }
+        } catch (Exception e) {
+            throw new AmqpRejectAndDontRequeueException(e.getMessage(), e);
         }
+    }
+
+    private <T> void validate(T to, Class<?>... clazz) {
+        Set<ConstraintViolation<T>> violations = validator.validate(to, clazz);
+        if (!violations.isEmpty()) {
+            ConstraintViolation<T> violation = violations.iterator().next();
+            throw new ValidationException(String.format("Violation error [%s], property [%s]", violation.getMessage(), violation.getPropertyPath()));
+        };
     }
 }

@@ -17,6 +17,7 @@ package org.openwms.tms.api;
 
 import org.openwms.tms.Message;
 
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 /**
@@ -26,12 +27,14 @@ import java.io.Serializable;
  */
 public class UpdateTransportOrderVO implements Serializable {
 
+    @NotEmpty(groups = ValidationGroups.OrderUpdate.class)
     private String pKey;
     private String barcode;
     private String priority;
     private Message problem;
     private String state;
-    private String target;
+    private String targetLocation;
+    private String targetLocationGroup;
     private String actualLocation;
 
     UpdateTransportOrderVO() {
@@ -43,7 +46,8 @@ public class UpdateTransportOrderVO implements Serializable {
         setPriority(builder.priority);
         setProblem(builder.problem);
         setState(builder.state);
-        setTarget(builder.target);
+        setTargetLocation(builder.targetLocation);
+        setTargetLocationGroup(builder.targetLocationGroup);
         setActualLocation(builder.actualLocation);
     }
 
@@ -91,12 +95,20 @@ public class UpdateTransportOrderVO implements Serializable {
         this.state = state;
     }
 
-    public String getTarget() {
-        return target;
+    public String getTargetLocation() {
+        return targetLocation;
     }
 
-    public void setTarget(String target) {
-        this.target = target;
+    public void setTargetLocation(String targetLocation) {
+        this.targetLocation = targetLocation;
+    }
+
+    public String getTargetLocationGroup() {
+        return targetLocationGroup;
+    }
+
+    public void setTargetLocationGroup(String targetLocationGroup) {
+        this.targetLocationGroup = targetLocationGroup;
     }
 
     public String getActualLocation() {
@@ -109,7 +121,7 @@ public class UpdateTransportOrderVO implements Serializable {
 
     @Override
     public String toString() {
-        return "UpdateTransportOrderVO{" + "pKey='" + pKey + '\'' + ", barcode='" + barcode + '\'' + ", priority='" + priority + '\'' + ", problem=" + problem + ", state='" + state + '\'' + ", target='" + target + '\'' + ", actualLocation='" + actualLocation + '\'' + '}';
+        return "UpdateTransportOrderVO{" + "pKey='" + pKey + '\'' + ", barcode='" + barcode + '\'' + ", priority='" + priority + '\'' + ", problem=" + problem + ", state='" + state + '\'' + ", targetLocation='" + targetLocation + '\'' + ", targetLocationGroup='" + targetLocationGroup + '\'' + ", actualLocation='" + actualLocation + '\'' + '}';
     }
 
     public static final class Builder {
@@ -118,7 +130,8 @@ public class UpdateTransportOrderVO implements Serializable {
         private String priority;
         private Message problem;
         private String state;
-        private String target;
+        private String targetLocation;
+        private String targetLocationGroup;
         private String actualLocation;
 
         private Builder() {
@@ -149,8 +162,13 @@ public class UpdateTransportOrderVO implements Serializable {
             return this;
         }
 
-        public Builder withTarget(String val) {
-            target = val;
+        public Builder withTargetLocation(String val) {
+            targetLocation = val;
+            return this;
+        }
+
+        public Builder withTargetLocationGroup(String val) {
+            targetLocationGroup = val;
             return this;
         }
 

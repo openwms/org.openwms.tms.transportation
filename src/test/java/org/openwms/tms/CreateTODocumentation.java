@@ -75,7 +75,7 @@ public class CreateTODocumentation extends TransportationTestBase {
     void testCreateTOUnknownTU() throws Exception {
         CreateTransportOrderVO vo = createTO();
         vo.setBarcode("UNKNOWN");
-        given(transportUnitApi.findTransportUnit(vo.getBarcode())).willThrow(new NotFoundException());
+        given(transportUnitApi.findTransportUnit(vo.getBarcode(), Boolean.FALSE)).willThrow(new NotFoundException());
 
         mockMvc.perform(post(TMSConstants.ROOT_ENTITIES)
                 .contentType(MediaType.APPLICATION_JSON)

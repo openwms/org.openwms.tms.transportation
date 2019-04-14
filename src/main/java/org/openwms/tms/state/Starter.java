@@ -27,11 +27,14 @@ import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.TransportServiceEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+
+import static java.lang.String.format;
 
 /**
  * A Starter.
@@ -46,11 +49,13 @@ class Starter implements ApplicationListener<TransportServiceEvent> {
     private final TransportOrderRepository repository;
     private final LocationApi locationApi;
     private final LocationGroupApi locationGroupApi;
+    private final ApplicationContext ctx;
 
-    Starter(TransportOrderRepository repository, LocationApi locationApi, LocationGroupApi locationGroupApi) {
+    Starter(TransportOrderRepository repository, LocationApi locationApi, LocationGroupApi locationGroupApi, ApplicationContext ctx) {
         this.repository = repository;
         this.locationApi = locationApi;
         this.locationGroupApi = locationGroupApi;
+        this.ctx = ctx;
     }
 
     /**
@@ -60,7 +65,8 @@ class Starter implements ApplicationListener<TransportServiceEvent> {
      */
     @Override
     public void onApplicationEvent(TransportServiceEvent event) {
-        final TransportOrder to = repository.findById((Long) event.getSource()).orElseThrow(NotFoundException::new);
+        Long pk = ((TransportOrder) event.getSource()).getPk();
+        final TransportOrder to = repository.findById(pk).orElseThrow(NotFoundException::new);
         switch (event.getType()) {
             case INITIALIZED:
                 start(to);
@@ -110,10 +116,11 @@ class Starter implements ApplicationListener<TransportServiceEvent> {
 
         List<TransportOrder> others = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.STARTED);
         if (!others.isEmpty()) {
-            throw new StateChangeException("Cannot start TransportOrder for TransportUnit [" + to.getTransportUnitBK() + "] because " + others.size() + " TransportOrders already started [" + others.get(0).getPersistentKey() + "]");
+            throw new StateChangeException(format("Cannot start TransportOrder for TransportUnit [%s] because [%s] TransportOrders already started [%s]", to.getTransportUnitBK(), others.size(), others.get(0).getPersistentKey()));
         }
         to.changeState(TransportOrderState.STARTED);
         repository.save(to);
-        LOGGER.info("TransportOrder for TransportUnit with Barcode {} STARTED at {}. Persisted key is {}", to.getTransportUnitBK(), to.getStartDate(), to.getPk());
+        LOGGER.info("TransportOrder for TransportUnit with Barcode [{}] STARTED at [{}]. Persisted key is [{}]", to.getTransportUnitBK(), to.getStartDate(), to.getPk());
+        ctx.publishEvent(new TransportServiceEvent(to, TransportServiceEvent.TYPE.STARTED));
     }
 }

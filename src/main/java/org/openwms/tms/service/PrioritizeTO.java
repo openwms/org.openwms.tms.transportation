@@ -33,7 +33,7 @@ class PrioritizeTO implements UpdateFunction {
      */
     @Override
     public void update(TransportOrder saved, TransportOrder toUpdate) {
-        if (saved.getPriority() != toUpdate.getPriority()) {
+        if (saved.getPriority() != toUpdate.getPriority() && toUpdate.getPriority() != null) {
 
             // Request to change priority
             saved.setPriority(toUpdate.getPriority() == null ? PriorityLevel.NORMAL : toUpdate.getPriority());

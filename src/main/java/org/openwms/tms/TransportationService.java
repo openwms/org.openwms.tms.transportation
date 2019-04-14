@@ -46,38 +46,6 @@ public interface TransportationService<T extends TransportOrder> {
     T findByPKey(String pKey);
 
     /**
-     * Find and return all {@link TransportOrder}s with the given {@code state} and the
-     * {@code sourceLocation} to the {@code targetLocationGroupNames} as target.
-     *
-     * @param state The state
-     * @param sourceLocation Name of the sourceLocation, probably the infeed position
-     * @param targetLocationGroupNames Name of the targetLocationGroups
-     * @return All TransportOrders or an empty collection, never {@literal null}
-     */
-    List<TransportOrder> findInfeed(TransportOrderState state, String sourceLocation, String... targetLocationGroupNames);
-
-    /**
-     * Find and return all {@link TransportOrder}s with the given {@code state} and the
-     * {@code sourceLocationGroupName} and {@code targetLocationGroupName}.
-     *
-     * @param state The state
-     * @param sourceLocationGroupName Name of the source LocationGroup
-     * @param targetLocationGroupName Name of the target LocationGroup
-     * @return All TransportOrders or an empty collection, never {@literal null}
-     */
-    List<T> findInAisle(TransportOrderState state, String sourceLocationGroupName, String targetLocationGroupName);
-
-    /**
-     * Find and return all {@link TransportOrder}s with the given {@code state} and the
-     * {@code sourceLocationGroupNames} as source.
-     *
-     * @param state The state
-     * @param sourceLocationGroupNames Name of the source LocationGroups
-     * @return All TransportOrders or an empty collection, never {@literal null}
-     */
-    List<T> findOutfeed(TransportOrderState state, String... sourceLocationGroupNames);
-
-    /**
      * Returns the number of {@link TransportOrder}s that have the {@code target} as target and are in one of the {@code states}.
      *
      * @param target The target place to search TransportOrders for
@@ -112,4 +80,16 @@ public interface TransportationService<T extends TransportOrder> {
      * @return A list of persisted keys of {@link TransportOrder}s that have not been changed
      */
     Collection<String> change(TransportOrderState state, Collection<String> pKeys);
+
+    /**
+     * Request a state change for all {@link TransportOrder}s for the {@code TransportUnit}
+     * with the given {@code barcode}.
+     *
+     * @param barcode The ID of the {@code TransportUnit} to move
+     * @param currentState The state of TransportOrders to change
+     * @param targetState The state to change all orders to
+     * @param message A messages attached to the changed TransportOrder, may be {@literal null}
+     * @return A list of persisted keys of {@link TransportOrder}s that have not been changed
+     */
+    Collection<String> change(String barcode, TransportOrderState currentState, TransportOrderState targetState, Message message);
 }

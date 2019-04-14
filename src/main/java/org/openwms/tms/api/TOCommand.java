@@ -39,9 +39,14 @@ public class TOCommand implements Serializable {
     }
 
     public enum Type {
+        /** Create a new order. */
         CREATE,
+        /** Change the target of the order. */
         CHANGE_TARGET,
-        CHANGE_ACTUAL_LOCATION
+        /** Finish started order. */
+        FINISH,
+        /** Cancel started order and cancel initialized ones. */
+        CANCEL_ALL
     }
 
     protected TOCommand() {

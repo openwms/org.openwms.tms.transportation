@@ -3,6 +3,8 @@ spring:
     user:
       password: sa
       name: user
+  main:
+    banner-mode: "off"
 owms:
   eureka:
     url: http://user:sa@localhost:8761

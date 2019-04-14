@@ -23,7 +23,6 @@ import org.openwms.tms.api.UpdateTransportOrderVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -65,7 +64,8 @@ public class TransportationFacade implements TransportOrderApi {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Change the state of the TransportOrder with persistent key [{}] to [{}]", pKey, state);
         }
-        service.change(TransportOrderState.valueOf(state), Collections.singleton(pKey));
+        TransportOrder order = service.findByPKey(pKey);
+        service.change(order.getTransportUnitBK(), order.getState(), TransportOrderState.valueOf(state), null);
     }
 
     @Override
@@ -94,54 +94,5 @@ public class TransportationFacade implements TransportOrderApi {
             LOGGER.debug("Find TransportOrder with persistent key [{}]", pKey);
         }
         return mapper.map(service.findByPKey(pKey), TransportOrderVO.class);
-    }
-
-    @Override
-    public TransportOrderVO getNextInfeed(String sourceLocation, String state, String searchTargetLocationGroups) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Find TransportOrder from infeed position [{}] in state [{}]", sourceLocation, state);
-        }
-        List<TransportOrder> tos = service.findInfeed(TransportOrderState.valueOf(state), sourceLocation, searchTargetLocationGroups);
-        if (tos.isEmpty()) {
-            LOGGER.debug("> No TransportOrder for infeed exists");
-            return null;
-        }
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("> Found TransportOrder with pk [{}] for infeed", tos.get(0).getPk());
-        }
-        return mapper.map(tos.get(0), TransportOrderVO.class);
-    }
-
-    @Override
-    public TransportOrderVO getNextInAisle(String sourceLocationGroupName, String targetLocationGroupName, String state) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Find TransportOrders within one aisle with source [{}] and target [{}] in state [{}]", sourceLocationGroupName, targetLocationGroupName, state);
-        }
-        List<TransportOrder> tos = service.findInAisle(TransportOrderState.valueOf(state), sourceLocationGroupName, targetLocationGroupName);
-        if (tos.isEmpty()) {
-            LOGGER.debug("> No in-aisle TransportOrders exist");
-            return null;
-        }
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("> [{}] in-aisle TransportOrders exists, returning the first one with pk [{}]", tos.size(), tos.get(0).getPk());
-        }
-        return mapper.map(tos.get(0), TransportOrderVO.class);
-    }
-
-    @Override
-    public TransportOrderVO getNextOutfeed(String state, String sourceLocationGroupName) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Find TransportOrders for outfeed position [{}] in state [{}]", sourceLocationGroupName, state);
-        }
-        List<TransportOrder> tos = service.findOutfeed(TransportOrderState.valueOf(state), sourceLocationGroupName);
-        if (tos.isEmpty()) {
-            LOGGER.debug("> No TransportOrder for outfeed exists");
-            return null;
-        }
-        TransportOrder to = tos.get(0);
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("> TransportOrder with pk [{}] exists for outfeed", to.getPk());
-        }
-        return mapper.map(to, TransportOrderVO.class);
     }
 }

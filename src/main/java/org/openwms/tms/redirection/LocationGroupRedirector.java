@@ -49,11 +49,11 @@ class LocationGroupRedirector extends TargetRedirector<LocationGroupVO> {
 
     @Override
     protected Optional<LocationGroupVO> resolveTarget(RedirectVote vote) {
-        return locationGroupApi.findByName(vote.getTarget());
+        return (vote.getTargetLocationGroup() == null || vote.getTargetLocationGroup().isEmpty()) ? Optional.empty() : locationGroupApi.findByName(vote.getTargetLocationGroup());
     }
 
     @Override
     protected void assignTarget(RedirectVote vote) {
-        vote.getTransportOrder().setTargetLocationGroup(vote.getTarget());
+        vote.getTransportOrder().setTargetLocationGroup(vote.getTargetLocationGroup());
     }
 }

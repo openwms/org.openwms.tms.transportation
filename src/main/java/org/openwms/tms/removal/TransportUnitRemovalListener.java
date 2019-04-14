@@ -56,7 +56,7 @@ class TransportUnitRemovalListener {
         switch (command.getType()) {
             case REMOVE:
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Sending command to finally REMOVE the TransportUnit [{}]", command.getId());
+                    LOGGER.debug("Sending command to finally REMOVE the TransportUnit with pKey [{}]", command.getTransportUnit().getpKey());
                 }
                 amqpTemplate.convertAndSend(exchangeName, "common.tu.command.remove", command);
                 break;

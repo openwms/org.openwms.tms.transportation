@@ -52,7 +52,7 @@ class ChangeState implements UpdateFunction {
                 LOGGER.debug("Trying to turn TransportOrder [{}] into state [{}]", saved.getPk(), toUpdate.getState());
             }
             saved.changeState(toUpdate.getState());
-            ctx.publishEvent(new TransportServiceEvent(saved.getPk(), TransportServiceEvent.TYPE.of(toUpdate.getState())));
+            ctx.publishEvent(new TransportServiceEvent(saved, TransportServiceEvent.TYPE.of(toUpdate.getState())));
         }
     }
 }

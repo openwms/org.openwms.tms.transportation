@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms;
+package org.openwms.tms.api;
 
 /**
  * A ValidationGroups is a collection of marker interfaces used for Bean Validation with

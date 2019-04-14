@@ -27,6 +27,14 @@ owms:
 server:
   port: ${PORT:8131}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+logging:
+  file: "/tmp/owms/BOOT-TMS.log"
+
 feign:
   httpclient:
     connection-timeout: 30000

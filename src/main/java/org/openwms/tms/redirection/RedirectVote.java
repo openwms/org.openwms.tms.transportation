@@ -25,27 +25,39 @@ import org.openwms.tms.TransportOrder;
  */
 public class RedirectVote extends Vote {
 
-    private String target;
+    private String targetLocation;
+    private String targetLocationGroup;
     private TransportOrder transportOrder;
 
     /**
      * Create a new RedirectVote.
      *
-     * @param target The target destination to verify
+     * @param targetLocation The target Location to verify
+     * @param targetLocationGroup The target LocationGroup to verify
      * @param transportOrder The TransportOrder to vote for
      */
-    public RedirectVote(String target, TransportOrder transportOrder) {
-        this.target = target;
+    public RedirectVote(String targetLocation, String targetLocationGroup, TransportOrder transportOrder) {
+        this.targetLocation = targetLocation;
+        this.targetLocationGroup = targetLocationGroup;
         this.transportOrder = transportOrder;
     }
 
     /**
-     * Get the locationGroup.
+     * Get the targetLocation.
      *
-     * @return the locationGroup.
+     * @return the LocationId.
      */
-    public String getTarget() {
-        return target;
+    public String getTargetLocation() {
+        return targetLocation;
+    }
+
+    /**
+     * Get the targetLocationGroup.
+     *
+     * @return the LocationGroup name.
+     */
+    public String getTargetLocationGroup() {
+        return targetLocationGroup;
     }
 
     /**
