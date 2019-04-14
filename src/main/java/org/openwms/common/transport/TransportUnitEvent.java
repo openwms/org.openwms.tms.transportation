@@ -49,10 +49,9 @@ public class TransportUnitEvent extends RootApplicationEvent {
         return new TransportUnitEvent(tu, type);
     }
 
-    public static enum TransportUnitEventType {
+    public enum TransportUnitEventType {
         CHANGE_TARGET;
     }
-
 
     public static final class Builder {
         private TransportUnitVO source;

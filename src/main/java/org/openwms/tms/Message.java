@@ -134,9 +134,6 @@ public class Message implements Serializable {
         private String messageNo;
         private String message;
 
-        public Builder() {
-        }
-
         /**
          * Sets the {@code occurred} and returns a reference to this Builder so that the methods can be chained together.
          *

@@ -29,5 +29,5 @@ public interface StateManager {
      * @param transportOrder The TransportOrder to check the state transition for
      * @throws StateChangeException in case of errors
      */
-    void validate(TransportOrderState newState, TransportOrder transportOrder) throws StateChangeException;
+    void validate(TransportOrderState newState, TransportOrder transportOrder);
 }
