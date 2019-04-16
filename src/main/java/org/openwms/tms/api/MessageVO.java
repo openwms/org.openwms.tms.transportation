@@ -15,23 +15,35 @@
  */
 package org.openwms.tms.api;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * A MessageVO.
  *
  * @author <a href="mailto:hscherrer@interface21.io">Heiko Scherrer</a>
  */
-public class MessageVO {
+public class MessageVO implements Serializable {
 
+    @JsonProperty
     private Date occurred;
+    @JsonProperty
     private String messageNo;
+    @JsonProperty
     private String message;
 
     private MessageVO(Builder builder) {
         occurred = builder.occurred;
         messageNo = builder.messageNo;
         message = builder.message;
+    }
+
+    @JsonCreator
+    protected MessageVO() {
     }
 
     public static Builder newBuilder() {
@@ -64,5 +76,34 @@ public class MessageVO {
         public MessageVO build() {
             return new MessageVO(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        MessageVO messageVO = (MessageVO) o;
+        return Objects.equals(occurred, messageVO.occurred) && Objects.equals(messageNo, messageVO.messageNo) && Objects.equals(message, messageVO.message);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(occurred, messageNo, message);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Use all fields.
+     */
+    @Override
+    public String toString() {
+        return "Message{" +
+                "occurred=" + occurred +
+                ", messageNo='" + messageNo + '\'' +
+                ", message='" + message + '\'' +
+                '}';
     }
 }

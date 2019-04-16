@@ -15,6 +15,7 @@
  */
 package org.openwms.tms;
 
+import org.ameba.mapping.BeanMapper;
 import org.junit.Test;
 import org.openwms.TransportationTestBase;
 import org.openwms.tms.api.CreateTransportOrderVO;
@@ -41,7 +42,8 @@ public class AddProblemDocumentation extends TransportationTestBase {
 
     @Autowired
     private EntityManager em;
-
+    @Autowired
+    private BeanMapper mapper;
     public
     @Test
     void testNullAsAddProblem() throws Exception {
@@ -51,7 +53,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
         MessageVO msg = MessageVO.newBuilder().message("text").messageNo("77").build();
         vo.setProblem(msg);
         addProblem(vo);
-        assertThat(readTransportOrder(vo.getpKey()).getProblem()).isEqualTo(msg);
+        assertThat(mapper.map(readTransportOrder(vo.getpKey()).getProblem(), MessageVO.class)).isEqualTo(msg);
 
         // test ...
         vo.setProblem(null);
@@ -64,7 +66,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
                 .andDo(document("to-patch-addproblem-null"))
         ;
 
-        assertThat(readTransportOrder(vo.getpKey()).getProblem()).isEqualTo(msg);
+        assertThat(mapper.map(readTransportOrder(vo.getpKey()).getProblem(), MessageVO.class)).isEqualTo(msg);
         assertThat(getProblemHistories()).hasSize(0);
     }
 
@@ -86,7 +88,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
                 .andExpect(status().isNoContent())
                 .andDo(document("to-patch-addproblem"))
         ;
-        assertThat(readTransportOrder(vo.getpKey()).getProblem()).isEqualTo(msg);
+        assertThat(mapper.map(readTransportOrder(vo.getpKey()).getProblem(), MessageVO.class)).isEqualTo(msg);
         assertThat(getProblemHistories()).hasSize(0);
     }
 
@@ -112,12 +114,12 @@ public class AddProblemDocumentation extends TransportationTestBase {
             .andExpect(status().isNoContent())
             .andDo(document("to-patch-addsecondproblem"))
         ;
-        assertThat(readTransportOrder(vo.getpKey()).getProblem()).isEqualTo(msg2);
+        assertThat(mapper.map(readTransportOrder(vo.getpKey()).getProblem(), MessageVO.class)).isEqualTo(msg2);
         List<ProblemHistory> problemHistories = getProblemHistories();
         assertThat(problemHistories).hasSize(1);
         assertThat(problemHistories.get(0))
                 .extracting("problem")
-                .contains(msg);
+                .contains(mapper.map(msg, Message.class));
     }
 
     private List<ProblemHistory> getProblemHistories() {

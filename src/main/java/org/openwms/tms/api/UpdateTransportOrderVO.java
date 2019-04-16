@@ -15,6 +15,8 @@
  */
 package org.openwms.tms.api;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
@@ -29,6 +31,7 @@ public class UpdateTransportOrderVO implements Serializable {
     private String pKey;
     private String barcode;
     private String priority;
+    @JsonProperty
     private MessageVO problem;
     private String state;
     private String targetLocation;

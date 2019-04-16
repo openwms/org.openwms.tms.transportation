@@ -32,6 +32,7 @@ public class CreateTransportOrderVO implements Serializable {
     @NotEmpty
     private String barcode;
     private String priority;
+    @JsonProperty
     private MessageVO problem;
     private String state;
     @NotEmpty
