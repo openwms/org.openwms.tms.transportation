@@ -16,4 +16,4 @@
 /**
  * This package contains Spring configuration classes.
  */
-package org.openwms.tms.config;
+package org.openwms.tms.app;
