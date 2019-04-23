@@ -13,7 +13,8 @@ spring:
     user:
       password: sa
       name: user
-
+  jpa:
+    database: h2
 owms:
   eureka:
     url: http://user:sa@localhost:8761
