@@ -34,7 +34,7 @@ management:
       exposure:
         include: "*"
 logging:
-  file: "/tmp/owms/BOOT-TMS.log"
+  file: "/tmp/owms/BOOT-TMS-Transportation.log"
 
 feign:
   httpclient:

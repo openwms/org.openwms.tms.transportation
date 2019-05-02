@@ -24,7 +24,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@SpringBootApplication(scanBasePackageClasses = {TransportationRunner.class, SolutionApp.class})
+@SpringBootApplication(scanBasePackageClasses = {
+        TransportationRunner.class,
+        SolutionApp.class
+})
 public class TransportationRunner {
 
     /**
