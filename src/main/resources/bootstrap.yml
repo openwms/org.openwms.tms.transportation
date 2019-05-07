@@ -15,6 +15,11 @@ spring:
       name: user
   jpa:
     database: h2
+    properties:
+      hibernate:
+        hbm2ddl:
+          import_files: transportation.sql
+
 owms:
   eureka:
     url: http://user:sa@localhost:8761

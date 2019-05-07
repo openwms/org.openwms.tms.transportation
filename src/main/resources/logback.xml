@@ -2,8 +2,7 @@
 <configuration debug="false" scan="true" scanPeriod="30 seconds">
 
     <property name="LOG_TEMP" value="/tmp/owms" />
-    <property name="MODULE_NAME" value="TMS" />
-    <property name="SERVICE_NAME" value="TMS-Transportation" />
+    <property name="MODULE_NAME" value="TMS-Transportation" />
 
     <include resource="logback-appenders.xml" />
     <include resource="logback-loggers.xml" />
