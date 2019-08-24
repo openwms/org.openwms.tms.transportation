@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransportOrderApiImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.inmem</a> &gt; <span class="el_source">TransportOrderApiImpl.java</span></div><h1>TransportOrderApiImpl.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2018 Heiko Scherrer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.openwms.tms.inmem;
+
+import org.ameba.annotation.Measured;
+import org.ameba.annotation.TxService;
+import org.openwms.tms.TransportationFacade;
+import org.openwms.tms.api.TransportOrderApi;
+import org.openwms.tms.api.TransportOrderVO;
+import org.openwms.tms.api.UpdateTransportOrderVO;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
+
+import java.util.List;
+
+/**
+ * A TransportOrderApiImpl.
+ *
+ * @author &lt;a href=&quot;mailto:scherrer@openwms.org&quot;&gt;Heiko Scherrer&lt;/a&gt;
+ */
+@Profile(&quot;INMEM&quot;)
+@Primary
+@TxService
+class TransportOrderApiImpl implements TransportOrderApi {
+
+    private final TransportationFacade facade;
+
+<span class="nc" id="L41">    TransportOrderApiImpl(TransportationFacade facade) {</span>
+<span class="nc" id="L42">        this.facade = facade;</span>
+<span class="nc" id="L43">    }</span>
+
+    @Override
+    @Measured
+    public void createTO(String barcode, String target) {
+<span class="nc" id="L48">        facade.createTO(barcode, target, null);</span>
+<span class="nc" id="L49">    }</span>
+
+    @Override
+    @Measured
+    public void createTO(String barcode, String target, String priority) {
+<span class="nc" id="L54">        facade.createTO(barcode, target, priority);</span>
+<span class="nc" id="L55">    }</span>
+
+    @Override
+    @Measured
+    public void changeState(String id, String state) {
+<span class="nc" id="L60">        facade.changeState(id, state);</span>
+<span class="nc" id="L61">    }</span>
+
+    @Override
+    @Measured
+    public void updateTO(String pKey, UpdateTransportOrderVO vo) {
+<span class="nc" id="L66">        facade.updateTO(pKey, vo);</span>
+<span class="nc" id="L67">    }</span>
+
+    @Override
+    @Measured
+    public List&lt;TransportOrderVO&gt; findBy(String barcode, String state) {
+<span class="nc" id="L72">        return facade.findBy(barcode, state);</span>
+    }
+
+    @Override
+    @Measured
+    public TransportOrderVO findByPKey(String pKey) {
+<span class="nc" id="L78">        return facade.findByPKey(pKey);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

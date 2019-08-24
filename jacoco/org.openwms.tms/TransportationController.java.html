@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransportationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms</a> &gt; <span class="el_source">TransportationController.java</span></div><h1>TransportationController.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2018 Heiko Scherrer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.openwms.tms;
+
+import org.ameba.annotation.Measured;
+import org.ameba.exception.BehaviorAwareException;
+import org.ameba.exception.BusinessRuntimeException;
+import org.ameba.http.Response;
+import org.openwms.tms.api.CreateTransportOrderVO;
+import org.openwms.tms.api.TMSApi;
+import org.openwms.tms.api.TransportOrderVO;
+import org.openwms.tms.api.UpdateTransportOrderVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriTemplate;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+
+/**
+ * A TransportationController.
+ *
+ * @author &lt;a href=&quot;mailto:scherrer@openwms.org&quot;&gt;Heiko Scherrer&lt;/a&gt;
+ */
+@Profile(&quot;!INMEM&quot;)
+@RestController
+class TransportationController {
+
+<span class="fc" id="L56">    private static final Logger LOGGER = LoggerFactory.getLogger(TransportationController.class);</span>
+    private final TransportationService&lt;TransportOrder&gt; service;
+    private final TransportationFacade transportationFacade;
+
+<span class="fc" id="L60">    TransportationController(TransportationService&lt;TransportOrder&gt; service, TransportationFacade transportationFacade) {</span>
+<span class="fc" id="L61">        this.service = service;</span>
+<span class="fc" id="L62">        this.transportationFacade = transportationFacade;</span>
+<span class="fc" id="L63">    }</span>
+
+    @Measured
+    @GetMapping(value = TMSApi.TRANSPORT_ORDERS, params = {&quot;barcode&quot;, &quot;state&quot;})
+    public List&lt;TransportOrderVO&gt; findBy(@RequestParam String barcode, @RequestParam String state) {
+<span class="nc" id="L68">        return transportationFacade.findBy(barcode, state);</span>
+    }
+
+    @Measured
+    @GetMapping(TMSApi.TRANSPORT_ORDERS + &quot;/{pKey}&quot;)
+    public TransportOrderVO findByPKey(@PathVariable(value = &quot;pKey&quot;) String pKey) {
+<span class="fc" id="L74">        return transportationFacade.findByPKey(pKey);</span>
+    }
+
+    @Measured
+    @PostMapping(value = TMSApi.TRANSPORT_ORDERS, params = {&quot;barcode&quot;, &quot;target&quot;})
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createTO(@RequestParam(value = &quot;barcode&quot;) String barcode, @RequestParam(value = &quot;target&quot;) String target, @RequestParam(value = &quot;priority&quot;, required = false) String priority, HttpServletRequest req, HttpServletResponse resp) {
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L82">            LOGGER.debug(&quot;Create TransportOrder with Barcode [{}] and Target [{}] and Priority [{}]&quot;, barcode, target, priority);</span>
+        }
+<span class="nc" id="L84">        TransportOrder to = service.create(barcode, target, priority);</span>
+<span class="nc" id="L85">        resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));</span>
+<span class="nc" id="L86">    }</span>
+
+    @Measured
+    @PostMapping(TMSApi.TRANSPORT_ORDERS)
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createTO(@RequestBody CreateTransportOrderVO vo, HttpServletRequest req, HttpServletResponse resp) {
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
+<span class="fc" id="L93">            LOGGER.debug(&quot;Create TransportOrder [{}]&quot;, vo);</span>
+        }
+<span class="fc" id="L95">        TransportOrder to = service.create(vo.getBarcode(), vo.getTarget(), vo.getPriority());</span>
+<span class="fc" id="L96">        resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));</span>
+<span class="fc" id="L97">    }</span>
+
+    @Measured
+    @PatchMapping(TMSApi.TRANSPORT_ORDERS + &quot;/{pKey}&quot;)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateTO(@PathVariable(value = &quot;pKey&quot;) String pKey, @RequestBody UpdateTransportOrderVO vo) {
+<span class="fc" id="L103">        transportationFacade.updateTO(pKey, vo);</span>
+<span class="fc" id="L104">    }</span>
+
+    @Measured
+    @PostMapping(value = TMSApi.TRANSPORT_ORDERS + &quot;/{pKey}&quot;, params = {&quot;state&quot;})
+    public void changeState(@PathVariable(value = &quot;pKey&quot;) String pKey, @RequestParam(value = &quot;state&quot;) String state) {
+<span class="nc" id="L109">        transportationFacade.changeState(pKey, state);</span>
+<span class="nc" id="L110">    }</span>
+
+    @ExceptionHandler(BusinessRuntimeException.class)
+    public ResponseEntity&lt;Response&gt; handleNotFound(BusinessRuntimeException ex) {
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        if (ex instanceof BehaviorAwareException) {</span>
+<span class="fc" id="L115">            BehaviorAwareException bae = (BehaviorAwareException) ex;</span>
+<span class="fc" id="L116">            return new ResponseEntity&lt;&gt;(</span>
+<span class="fc" id="L117">                    Response.newBuilder()</span>
+<span class="fc" id="L118">                            .withMessage(ex.getMessage())</span>
+<span class="fc" id="L119">                            .withMessageKey(bae.getMessageKey())</span>
+<span class="fc" id="L120">                            .withHttpStatus(bae.getStatus().toString())</span>
+<span class="fc" id="L121">                            .withObj(bae.getData())</span>
+<span class="fc" id="L122">                            .build(),</span>
+<span class="fc" id="L123">                    bae.getStatus()</span>
+            );
+        }
+<span class="nc" id="L126">        return new ResponseEntity&lt;&gt;(</span>
+<span class="nc" id="L127">                Response.newBuilder()</span>
+<span class="nc" id="L128">                        .withMessage(ex.getMessage())</span>
+<span class="nc" id="L129">                        .withMessageKey(ex.getMessageKey())</span>
+<span class="nc" id="L130">                        .withHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR.toString())</span>
+<span class="nc" id="L131">                        .withObj(new String[]{ex.getMessageKey()})</span>
+<span class="nc" id="L132">                        .build(),</span>
+<span class="nc" id="L133">                HttpStatus.INTERNAL_SERVER_ERROR</span>
+        );
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity&lt;Response&gt; handleBadRequests(IllegalArgumentException ex) {
+<span class="fc" id="L139">        return new ResponseEntity&lt;&gt;(</span>
+<span class="fc" id="L140">                Response.newBuilder()</span>
+<span class="fc" id="L141">                        .withMessage(ex.getMessage())</span>
+<span class="fc" id="L142">                        .withHttpStatus(HttpStatus.BAD_REQUEST.toString())</span>
+<span class="fc" id="L143">                        .build(),</span>
+<span class="fc" id="L144">                HttpStatus.BAD_REQUEST</span>
+        );
+    }
+
+    private String getCreatedResourceURI(HttpServletRequest req, String objId) {
+<span class="fc" id="L149">        StringBuffer url = req.getRequestURL();</span>
+<span class="fc" id="L150">        UriTemplate template = new UriTemplate(url.append(&quot;/{objId}/&quot;).toString());</span>
+<span class="fc" id="L151">        return template.expand(objId).toASCIIString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

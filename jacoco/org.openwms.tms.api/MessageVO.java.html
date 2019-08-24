@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MessageVO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.api</a> &gt; <span class="el_source">MessageVO.java</span></div><h1>MessageVO.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2019 Heiko Scherrer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.openwms.tms.api;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Objects;
+
+/**
+ * A MessageVO.
+ *
+ * @author &lt;a href=&quot;mailto:hscherrer@interface21.io&quot;&gt;Heiko Scherrer&lt;/a&gt;
+ */
+public class MessageVO implements Serializable {
+
+    @JsonProperty
+    private Date occurred;
+    @JsonProperty
+    private String messageNo;
+    @JsonProperty
+    private String message;
+
+<span class="fc" id="L39">    private MessageVO(Builder builder) {</span>
+<span class="fc" id="L40">        occurred = builder.occurred;</span>
+<span class="fc" id="L41">        messageNo = builder.messageNo;</span>
+<span class="fc" id="L42">        message = builder.message;</span>
+<span class="fc" id="L43">    }</span>
+
+    @JsonCreator
+<span class="fc" id="L46">    protected MessageVO() {</span>
+<span class="fc" id="L47">    }</span>
+
+    public static Builder newBuilder() {
+<span class="fc" id="L50">        return new Builder();</span>
+    }
+
+    public static final class Builder {
+        private Date occurred;
+        private String messageNo;
+        private String message;
+
+        private Builder() {
+        }
+
+        public Builder occurred(Date val) {
+<span class="nc" id="L62">            occurred = val;</span>
+<span class="nc" id="L63">            return this;</span>
+        }
+
+        public Builder messageNo(String val) {
+<span class="fc" id="L67">            messageNo = val;</span>
+<span class="fc" id="L68">            return this;</span>
+        }
+
+        public Builder message(String val) {
+<span class="fc" id="L72">            message = val;</span>
+<span class="fc" id="L73">            return this;</span>
+        }
+
+        public MessageVO build() {
+<span class="fc" id="L77">            return new MessageVO(this);</span>
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        if (this == o)</span>
+<span class="nc" id="L84">            return true;</span>
+<span class="pc bpc" id="L85" title="2 of 4 branches missed.">        if (o == null || getClass() != o.getClass())</span>
+<span class="nc" id="L86">            return false;</span>
+<span class="fc" id="L87">        MessageVO messageVO = (MessageVO) o;</span>
+<span class="pc bpc" id="L88" title="3 of 6 branches missed.">        return Objects.equals(occurred, messageVO.occurred) &amp;&amp; Objects.equals(messageNo, messageVO.messageNo) &amp;&amp; Objects.equals(message, messageVO.message);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L93">        return Objects.hash(occurred, messageNo, message);</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Use all fields.
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L103">        return &quot;Message{&quot; +</span>
+<span class="nc" id="L104">                &quot;occurred=&quot; + occurred +</span>
+<span class="nc" id="L105">                &quot;, messageNo='&quot; + messageNo + '\'' +</span>
+<span class="nc" id="L106">                &quot;, message='&quot; + message + '\'' +</span>
+<span class="nc" id="L107">                '}';</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

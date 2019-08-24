@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransportOrder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms</a> &gt; <span class="el_source">TransportOrder.java</span></div><h1>TransportOrder.java</h1><pre class="source lang-java linenums"><span class="pc" id="L1">/*</span>
+ * Copyright 2018 Heiko Scherrer
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.openwms.tms;
+
+import org.ameba.integration.jpa.ApplicationEntity;
+import org.openwms.tms.api.ValidationGroups;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.validation.constraints.Min;
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * A TransportOrder is used to move {@code TransportUnit}s from a current {@code Location} to a target.
+ *
+ * @author &lt;a href=&quot;mailto:scherrer@openwms.org&quot;&gt;Heiko Scherrer&lt;/a&gt;
+ */
+@Configurable
+@Entity
+@Table(name = &quot;TMS_TRANSPORT_ORDER&quot;)
+public class TransportOrder extends ApplicationEntity implements Serializable {
+
+    /**
+     * The bk of the {@code TransportUnit} to be moved by this {@code TransportOrder}. Allowed to be {@literal null} to keep {@code
+     * TransportOrder}s without {@code TransportUnit}s.
+     */
+    @Column(name = &quot;C_TRANSPORT_UNIT_BK&quot;)
+    @Min(value = 1, groups = ValidationGroups.ValidateBKAndTarget.class)
+    private String transportUnitBK;
+
+    /**
+     * A priority level of the {@code TransportOrder}. The lower the value the lower the priority.&lt;br&gt; The priority level affects the
+     * execution of the {@code TransportOrder}. An order with high priority will be processed faster than those with lower priority.
+     */
+    @Column(name = &quot;C_PRIORITY&quot;)
+    @Enumerated(EnumType.STRING)
+<span class="fc" id="L59">    private PriorityLevel priority = PriorityLevel.NORMAL;</span>
+
+    /**
+     * Date when the {@code TransportOrder} was started.
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = &quot;C_START_DATE&quot;)
+    private Date startDate;
+
+    /**
+     * Last reported problem on the {@code TransportOrder}.
+     */
+    @Column(name = &quot;C_PROBLEM&quot;)
+    private Message problem;
+
+    /**
+     * Date when the {@code TransportOrder} ended.
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = &quot;C_END_DATE&quot;)
+    private Date endDate;
+
+    /**
+     * State of the {@code TransportOrder}.
+     */
+    @Column(name = &quot;C_STATE&quot;)
+    @Enumerated(EnumType.STRING)
+<span class="fc" id="L86">    private TransportOrderState state = TransportOrderState.CREATED;</span>
+
+    /**
+     * The source {@code Location} of the {@code TransportOrder}.&lt;br&gt; This property is set before the {@code TransportOrder} was started.
+     */
+    @Column(name = &quot;C_SOURCE_LOCATION&quot;)
+    private String sourceLocation;
+
+    /**
+     * The target {@code Location} of the {@code TransportOrder}.&lt;br&gt; This property is set before the {@code TransportOrder} was started.
+     */
+    @Column(name = &quot;C_TARGET_LOCATION&quot;)
+    private String targetLocation;
+
+    /**
+     * A {@code LocationGroup} can also be set as target. At least one target must be set when the {@code TransportOrder} is being started.
+     */
+    @Column(name = &quot;C_TARGET_LOCATION_GROUP&quot;)
+    @Min(value = 1, groups = ValidationGroups.ValidateBKAndTarget.class)
+    private String targetLocationGroup;
+
+    @Transient
+    @Autowired
+    private transient StateManager stateManager;
+
+    /* ----------------------------- constructors ------------------- */
+
+    /** Dear JPA and Dozer ... */
+<span class="pc bpc" id="L114" title="9 of 18 branches missed.">    protected TransportOrder() {</span>
+<span class="pc bpc" id="L115" title="2 of 4 branches missed.">    }</span>
+
+    /**
+     * Create a TransportOrder with the given TransportUnit's business key.
+     *
+     * @param transportUnitBK TransportUnit business key
+     */
+<span class="pc bpc" id="L122" title="9 of 18 branches missed.">    public TransportOrder(String transportUnitBK) {</span>
+<span class="fc" id="L123">        this.transportUnitBK = transportUnitBK;</span>
+<span class="pc bpc" id="L124" title="2 of 4 branches missed.">    }</span>
+
+    /*~ ----------------------------- methods ------------------- */
+
+    /**
+     * Returns the priority level of the {@code TransportOrder}.
+     *
+     * @return The priority
+     */
+    public PriorityLevel getPriority() {
+<span class="fc" id="L134">        return this.priority;</span>
+    }
+
+    /**
+     * Set the priority level of the {@code TransportOrder}.
+     *
+     * @param priority The priority to set
+     */
+    public void setPriority(PriorityLevel priority) {
+<span class="fc" id="L143">        this.priority = priority;</span>
+<span class="fc" id="L144">    }</span>
+
+    /**
+     * Returns the date when the {@code TransportOrder} was started.
+     *
+     * @return The date when started
+     */
+    public Date getStartDate() {
+<span class="fc" id="L152">        return this.startDate;</span>
+    }
+
+    /**
+     * Set the date when the TransportOrder has been activated for processing.
+     *
+     * @param startDate The start date
+     */
+    public void setStartDate(Date startDate) {
+<span class="fc" id="L161">        this.startDate = startDate;</span>
+<span class="fc" id="L162">    }</span>
+
+    /**
+     * Get the {@code TransportUnit} assigned to the {@code TransportOrder} .
+     *
+     * @return The business key of the assigned {@code TransportUnit}
+     */
+    public String getTransportUnitBK() {
+<span class="fc" id="L170">        return this.transportUnitBK;</span>
+    }
+
+    /**
+     * Assign a {@code TransportUnit} to the {@code TransportOrder}. Setting the {@code TransportUnit} to {@literal null} is allowed here to
+     * unlink both.
+     *
+     * @param transportUnitBK The business key of the {@code TransportUnit} to be assigned
+     */
+    public void setTransportUnitBK(String transportUnitBK) {
+<span class="fc" id="L180">        this.transportUnitBK = transportUnitBK;</span>
+<span class="fc" id="L181">    }</span>
+
+    /**
+     * Returns the state of the {@code TransportOrder}.
+     *
+     * @return The state of the order
+     */
+    public TransportOrderState getState() {
+<span class="fc" id="L189">        return state;</span>
+    }
+
+    /**
+     * Change the state of the {@code TransportOrder} regarding some rules.
+     *
+     * @param newState The new state of the order
+     * @return The modified instance
+     * @throws StateChangeException in case &lt;ul&gt; &lt;li&gt;the newState is {@literal null} or&lt;/li&gt; &lt;li&gt;the newState is less than the old state
+     * or&lt;/li&gt; &lt;li&gt;the {@code TransportOrder} is in state {@link TransportOrderState#CREATED} and shall be manually turned into something
+     * else then {@link TransportOrderState#INITIALIZED} or {@link TransportOrderState#CANCELED}&lt;/li&gt; &lt;li&gt;the {@code TransportOrder} is
+     * {@link TransportOrderState#CREATED} and shall be {@link TransportOrderState#INITIALIZED} but it is incomplete&lt;/li&gt; &lt;/ul&gt;
+     */
+    public TransportOrder changeState(TransportOrderState newState) {
+<span class="fc" id="L203">        stateManager.validate(newState, this);</span>
+<span class="fc" id="L204">        state = newState;</span>
+<span class="fc" id="L205">        return this;</span>
+    }
+
+    /**
+     * Get the target {@code Location} of this {@code TransportOrder}.
+     *
+     * @return The targetLocation if any, otherwise {@literal null}
+     */
+    public String getTargetLocation() {
+<span class="fc" id="L214">        return targetLocation;</span>
+    }
+
+    public boolean hasTargetLocation() {
+<span class="nc bnc" id="L218" title="All 4 branches missed.">        return this.targetLocation != null &amp;&amp; !this.targetLocation.isEmpty();</span>
+    }
+
+    /**
+     * Set the target {@code Location} of this {@code TransportOrder}.
+     *
+     * @param targetLocation The location to move on
+     * @return this
+     */
+    public TransportOrder setTargetLocation(String targetLocation) {
+<span class="fc" id="L228">        this.targetLocation = targetLocation;</span>
+<span class="fc" id="L229">        return this;</span>
+    }
+
+    /**
+     * Get the targetLocationGroup.
+     *
+     * @return The targetLocationGroup if any, otherwise {@literal null}
+     */
+    public String getTargetLocationGroup() {
+<span class="fc" id="L238">        return targetLocationGroup;</span>
+    }
+
+    public boolean hasTargetLocationGroup() {
+<span class="pc bpc" id="L242" title="1 of 4 branches missed.">        return this.targetLocationGroup != null &amp;&amp; !this.targetLocationGroup.isEmpty();</span>
+    }
+
+    /**
+     * Set the targetLocationGroup.
+     *
+     * @param targetLocationGroup The targetLocationGroup to set.
+     * @return this
+     */
+    public TransportOrder setTargetLocationGroup(String targetLocationGroup) {
+<span class="fc" id="L252">        this.targetLocationGroup = targetLocationGroup;</span>
+<span class="fc" id="L253">        return this;</span>
+    }
+
+    /**
+     * Get the last {@link Message}.
+     *
+     * @return The last problem.
+     */
+    public Message getProblem() {
+<span class="fc" id="L262">        return problem;</span>
+    }
+
+    /**
+     * Set the last {@link Message}.
+     *
+     * @param problem The {@link Message} to set.
+     * @return this
+     */
+    public TransportOrder setProblem(Message problem) {
+<span class="fc" id="L272">        this.problem = problem;</span>
+<span class="fc" id="L273">        return this;</span>
+    }
+
+    /**
+     * Get the endDate.
+     *
+     * @return The date the order ended
+     */
+    public Date getEndDate() {
+<span class="nc" id="L282">        return endDate;</span>
+    }
+
+    /**
+     * Set the date when the TransportOrder has been deactivated for processing.
+     *
+     * @param endDate The end date
+     */
+    public void setEndDate(Date endDate) {
+<span class="fc" id="L291">        this.endDate = endDate;</span>
+<span class="fc" id="L292">    }</span>
+
+    /**
+     * Get the sourceLocation.
+     *
+     * @return The sourceLocation
+     */
+    public String getSourceLocation() {
+<span class="nc" id="L300">        return sourceLocation;</span>
+    }
+
+    /**
+     * Set the sourceLocation.
+     *
+     * @param sourceLocation The sourceLocation to set
+     * @return this
+     */
+    public TransportOrder setSourceLocation(String sourceLocation) {
+<span class="fc" id="L310">        this.sourceLocation = sourceLocation;</span>
+<span class="fc" id="L311">        return this;</span>
+    }
+
+    /**
+     * Check whether a problem was reported on this TO.
+     *
+     * @return {@literal true} if so, otherwise {@literal false}
+     */
+    public boolean hasProblem() {
+<span class="fc bfc" id="L320" title="All 2 branches covered.">        return problem != null;</span>
+    }
+
+    /**
+     * Check whether one of the targets has changed between this TransportOrder and the one passed as {@code transportOrder}.
+     *
+     * @param transportOrder The TransportOrder to verify against
+     * @return {@literal true} if targets has changed, otherwise {@literal false}
+     */
+    boolean hasTargetChanged(TransportOrder transportOrder) {
+<span class="nc bnc" id="L330" title="All 4 branches missed.">        return ((targetLocation != null &amp;&amp; !targetLocation.equals(transportOrder.getTargetLocation())) ||</span>
+<span class="nc bnc" id="L331" title="All 4 branches missed.">                (targetLocationGroup != null &amp;&amp; targetLocationGroup.equals(transportOrder.getTargetLocationGroup())));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>
