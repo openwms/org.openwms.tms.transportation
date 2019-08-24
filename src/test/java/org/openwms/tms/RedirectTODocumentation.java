@@ -15,7 +15,7 @@
  */
 package org.openwms.tms;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openwms.TransportationTestBase;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.openwms.tms.api.TMSApi;

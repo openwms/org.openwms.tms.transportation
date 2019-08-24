@@ -24,3 +24,5 @@ owms:
         exchange-name: tms.events
   tms:
     block-tu-deletion-states:
+  transportation:
+    serialization: json

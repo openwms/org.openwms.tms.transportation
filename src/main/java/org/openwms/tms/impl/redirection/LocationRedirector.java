@@ -19,7 +19,6 @@ import org.openwms.common.location.api.LocationApi;
 import org.openwms.common.location.api.LocationVO;
 import org.openwms.common.transport.TransportUnitEvent;
 import org.openwms.common.transport.api.TransportUnitVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
@@ -40,8 +39,7 @@ class LocationRedirector extends TargetRedirector<LocationVO> {
     private final LocationApi locationApi;
     private final ApplicationContext ctx;
 
-    @Autowired
-    public LocationRedirector(LocationApi locationApi, ApplicationContext ctx) {
+    LocationRedirector(LocationApi locationApi, ApplicationContext ctx) {
         this.locationApi = locationApi;
         this.ctx = ctx;
     }
@@ -53,15 +51,24 @@ class LocationRedirector extends TargetRedirector<LocationVO> {
 
     @Override
     protected Optional<LocationVO> resolveTarget(RedirectVote vote) {
-        return (vote.getTargetLocation() == null || vote.getTargetLocation().isEmpty()) ? Optional.empty() : locationApi.findLocationByCoordinate(vote.getTargetLocation());
+        return (
+                vote.getTargetLocation() == null || vote.getTargetLocation().isEmpty())
+                ? Optional.empty()
+                : locationApi.findLocationByCoordinate(vote.getTargetLocation());
     }
 
     @Override
     protected void assignTarget(RedirectVote vote) {
         vote.getTransportOrder().setTargetLocation(vote.getTargetLocation());
-        TransportUnitVO transportUnit = new TransportUnitVO();
-        transportUnit.setBarcode(vote.getTransportOrder().getTransportUnitBK());
-        transportUnit.setTarget(vote.getTargetLocation());
-        ctx.publishEvent(TransportUnitEvent.newBuilder().tu(transportUnit).type(TransportUnitEvent.TransportUnitEventType.CHANGE_TARGET).build());
+        ctx.publishEvent(
+                TransportUnitEvent.newBuilder()
+                        .tu(
+                            TransportUnitVO.builder()
+                                    .barcode(vote.getTransportOrder().getTransportUnitBK())
+                                    .target(vote.getTargetLocation())
+                                    .build()
+                        )
+                        .type(TransportUnitEvent.TransportUnitEventType.CHANGE_TARGET)
+                        .build());
     }
 }

@@ -15,19 +15,19 @@
  */
 package org.openwms.tms.impl;
 
-import org.openwms.common.location.api.Target;
+import org.openwms.common.location.api.TargetVO;
 
 import java.util.Optional;
 
 /**
- * A TargetResolver is responsible to resolve a {@link Target}.
+ * A TargetResolver is responsible to resolve a {@link TargetVO}.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-public interface TargetResolver<T extends Target> {
+public interface TargetResolver<T extends TargetVO> {
 
     /**
-     * Resolves a {@link Target} for a given {@code target}.
+     * Resolves a {@link TargetVO} for a given {@code target}.
      *
      * @param target The target to resolve
      * @return The target instance

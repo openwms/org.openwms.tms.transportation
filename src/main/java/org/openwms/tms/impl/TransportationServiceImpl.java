@@ -19,7 +19,7 @@ import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
 import org.ameba.i18n.Translator;
-import org.openwms.common.location.api.Target;
+import org.openwms.common.location.api.TargetVO;
 import org.openwms.tms.Message;
 import org.openwms.tms.PriorityLevel;
 import org.openwms.tms.StateChangeException;
@@ -53,7 +53,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     private final ApplicationContext ctx;
     private final TransportOrderRepository repository;
     @Autowired(required = false)
-    private List<TargetResolver<Target>> targetResolvers;
+    private List<TargetResolver<TargetVO>> targetResolvers;
     @Autowired(required = false)
     private List<UpdateFunction> updateFunctions;
     private final Translator translator;
@@ -93,8 +93,8 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     @Measured
     public int getNoTransportOrdersToTarget(String target, String... states) {
         int i = 0;
-        for (TargetResolver<Target> tr : targetResolvers) {
-            Optional<Target> t = tr.resolve(target);
+        for (TargetResolver<TargetVO> tr : targetResolvers) {
+            Optional<TargetVO> t = tr.resolve(target);
             if (t.isPresent()) {
                 i = +tr.getHandler().getNoTOToTarget(t.get());
             }

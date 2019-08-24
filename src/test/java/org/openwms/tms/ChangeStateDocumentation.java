@@ -15,8 +15,8 @@
  */
 package org.openwms.tms;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openwms.TransportationTestBase;
 import org.openwms.common.location.api.LocationVO;
 import org.openwms.common.transport.api.TransportUnitVO;
@@ -38,24 +38,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-public class ChangeStateDocumentation extends TransportationTestBase {
+class ChangeStateDocumentation extends TransportationTestBase{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChangeStateDocumentation.class);
 
-    public
-    @Test
-    void turnBackState() throws Exception {
+    @Test void turnBackState() throws Exception {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setState(TransportOrderState.INITIALIZED.toString());
-        TransportUnitVO transportUnit = new TransportUnitVO();
-        transportUnit.setBarcode(KNOWN);
-        LocationVO location = new LocationVO();
-        location.setLocationId(INIT_LOC_STRING);
+        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
+        LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
         transportUnit.setTarget(ERR_LOC_STRING);
-        given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
+        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
         mockMvc.perform(
@@ -70,8 +66,7 @@ public class ChangeStateDocumentation extends TransportationTestBase {
     }
 
     /* ----------------- INITIALIZED -------------------*/
-    @Ignore("Test runs on OSX and Jenkins@Linux but not on TravisCI. Needs further investigation")
-    public
+    @Disabled("Test runs on OSX and Jenkins@Linux but not on TravisCI. Needs further investigation")
     @Test
     void createAnNewOneWhenOneIsAlreadyStarted() throws Exception {
         // setup ...
@@ -81,13 +76,11 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo2 = createTO();
         postTOAndValidate(vo2, NOTLOGGED);
         vo2.setState(TransportOrderState.STARTED.toString());
-        TransportUnitVO transportUnit = new TransportUnitVO();
-        transportUnit.setBarcode(KNOWN);
-        LocationVO location = new LocationVO();
-        location.setLocationId(INIT_LOC_STRING);
+        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
+        LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
         transportUnit.setTarget(ERR_LOC_STRING);
-        given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
+        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         LOGGER.debug("Calling API with:" + vo2);
         // test ...
@@ -102,7 +95,6 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         ;
     }
 
-    public
     @Test
     void cancellingAnInitializedOne() throws Exception {
         // setup ...
@@ -111,13 +103,11 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo2 = createTO();
         postTOAndValidate(vo2, NOTLOGGED);
         vo2.setState(TransportOrderState.CANCELED.toString());
-        TransportUnitVO transportUnit = new TransportUnitVO();
-        transportUnit.setBarcode(KNOWN);
-        LocationVO location = new LocationVO();
-        location.setLocationId(INIT_LOC_STRING);
+        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
+        LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
         transportUnit.setTarget(ERR_LOC_STRING);
-        given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
+        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
         mockMvc.perform(
@@ -130,7 +120,6 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         ;
     }
 
-    public
     @Test
     void settingAnInitializedOneOnFailure() throws Exception {
         // setup ...
@@ -139,14 +128,12 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo2 = createTO();
         postTOAndValidate(vo2, NOTLOGGED);
         vo2.setState(TransportOrderState.ONFAILURE.toString());
-        TransportUnitVO transportUnit = new TransportUnitVO();
-        transportUnit.setBarcode(KNOWN);
-        LocationVO location = new LocationVO();
-        location.setLocationId(INIT_LOC_STRING);
+        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
+        LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
         transportUnit.setTarget(ERR_LOC_STRING);
 
-        given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
+        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
         mockMvc.perform(
@@ -159,7 +146,6 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         ;
     }
 
-    public
     @Test
     void finishingAnInitializedOne() throws Exception {
         // setup ...
@@ -168,13 +154,11 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo2 = createTO();
         postTOAndValidate(vo2, NOTLOGGED);
         vo2.setState(TransportOrderState.FINISHED.toString());
-        TransportUnitVO transportUnit = new TransportUnitVO();
-        transportUnit.setBarcode(KNOWN);
-        LocationVO location = new LocationVO();
-        location.setLocationId(INIT_LOC_STRING);
+        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
+        LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
         transportUnit.setTarget(ERR_LOC_STRING);
-        given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
+        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
         mockMvc.perform(
@@ -185,23 +169,21 @@ public class ChangeStateDocumentation extends TransportationTestBase {
                 .andExpect(status().isBadRequest())
                 .andDo(document("to-patch-state-finish-an-initialized"))
         ;
+
     }
 
     /* ----------------- STARTED -------------------*/
-    public
     @Test
     void startingAnStartedOne() throws Exception {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setState(TransportOrderState.STARTED.toString());
-        TransportUnitVO transportUnit = new TransportUnitVO();
-        transportUnit.setBarcode(KNOWN);
-        LocationVO location = new LocationVO();
-        location.setLocationId(INIT_LOC_STRING);
+        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
+        LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
         transportUnit.setTarget(ERR_LOC_STRING);
-        given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
+        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
         mockMvc.perform(
@@ -214,20 +196,17 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         ;
     }
 
-    public
     @Test
     void cancellingAnStartedOne() throws Exception {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setState(TransportOrderState.CANCELED.toString());
-        TransportUnitVO transportUnit = new TransportUnitVO();
-        transportUnit.setBarcode(KNOWN);
-        LocationVO location = new LocationVO();
-        location.setLocationId(INIT_LOC_STRING);
+        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
+        LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
         transportUnit.setTarget(ERR_LOC_STRING);
-        given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
+        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
         mockMvc.perform(
@@ -240,20 +219,17 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         ;
     }
 
-    public
     @Test
     void settingAnStartedOneOnFailure() throws Exception {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setState(TransportOrderState.ONFAILURE.toString());
-        TransportUnitVO transportUnit = new TransportUnitVO();
-        transportUnit.setBarcode(KNOWN);
-        LocationVO location = new LocationVO();
-        location.setLocationId(INIT_LOC_STRING);
+        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
+        LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
         transportUnit.setTarget(ERR_LOC_STRING);
-        given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
+        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
         mockMvc.perform(
@@ -266,20 +242,17 @@ public class ChangeStateDocumentation extends TransportationTestBase {
         ;
     }
 
-    public
     @Test
     void finishingAnStartedOne() throws Exception {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setState(TransportOrderState.FINISHED.toString());
-        TransportUnitVO transportUnit = new TransportUnitVO();
-        transportUnit.setBarcode(KNOWN);
-        LocationVO location = new LocationVO();
-        location.setLocationId(INIT_LOC_STRING);
+        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
+        LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
         transportUnit.setTarget(ERR_LOC_STRING);
-        given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
+        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
         mockMvc.perform(
@@ -293,19 +266,16 @@ public class ChangeStateDocumentation extends TransportationTestBase {
     }
 
     /* ----------------- FINISHED -------------------*/
-    public
     @Test
     void changingAnFinishedOne() throws Exception {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        TransportUnitVO transportUnit = new TransportUnitVO();
-        transportUnit.setBarcode(KNOWN);
-        LocationVO location = new LocationVO();
-        location.setLocationId(INIT_LOC_STRING);
+        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
+        LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
         transportUnit.setTarget(ERR_LOC_STRING);
-        given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
+        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
         vo.setState(TransportOrderState.FINISHED.toString());
         mockMvc.perform(
                 patch(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
@@ -328,19 +298,16 @@ public class ChangeStateDocumentation extends TransportationTestBase {
     }
 
     /* ----------------- ONFAILURE -------------------*/
-    public
     @Test
     void changingAnOnFailureOne() throws Exception {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        TransportUnitVO transportUnit = new TransportUnitVO();
-        transportUnit.setBarcode(KNOWN);
-        LocationVO location = new LocationVO();
-        location.setLocationId(INIT_LOC_STRING);
+        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
+        LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
         transportUnit.setTarget(ERR_LOC_STRING);
-        given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
+        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
         vo.setState(TransportOrderState.ONFAILURE.toString());
         mockMvc.perform(
                 patch(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
@@ -363,19 +330,16 @@ public class ChangeStateDocumentation extends TransportationTestBase {
     }
 
     /* ----------------- CANCELED -------------------*/
-    public
     @Test
     void changingAnCanceledOne() throws Exception {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        TransportUnitVO transportUnit = new TransportUnitVO();
-        transportUnit.setBarcode(KNOWN);
-        LocationVO location = new LocationVO();
-        location.setLocationId(INIT_LOC_STRING);
+        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
+        LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
         transportUnit.setTarget(ERR_LOC_STRING);
-        given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
+        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
         vo.setState(TransportOrderState.CANCELED.toString());
         mockMvc.perform(
                 patch(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())

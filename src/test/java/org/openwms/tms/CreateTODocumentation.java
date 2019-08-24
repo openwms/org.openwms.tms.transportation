@@ -16,7 +16,7 @@
 package org.openwms.tms;
 
 import org.ameba.exception.NotFoundException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openwms.TransportationTestBase;
 import org.openwms.common.location.api.LocationVO;
 import org.openwms.tms.api.CreateTransportOrderVO;
@@ -76,7 +76,7 @@ public class CreateTODocumentation extends TransportationTestBase {
     void testCreateTOUnknownTU() throws Exception {
         CreateTransportOrderVO vo = createTO();
         vo.setBarcode("UNKNOWN");
-        given(transportUnitApi.findTransportUnit(vo.getBarcode(), Boolean.FALSE)).willThrow(new NotFoundException());
+        given(transportUnitApi.findTransportUnit(vo.getBarcode())).willThrow(new NotFoundException());
 
         mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -107,8 +107,7 @@ public class CreateTODocumentation extends TransportationTestBase {
     void testCreateTOTargetNotAvailable() throws Exception {
         CreateTransportOrderVO vo = createTO();
         vo.setTarget(ERR_LOC_STRING);
-        LocationVO loc = new LocationVO();
-        loc.setLocationId(ERR_LOC_STRING);
+        LocationVO loc = new LocationVO(ERR_LOC_STRING);
         loc.setIncomingActive(false);
         given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(Optional.of(loc));
 

@@ -15,7 +15,7 @@
  */
 package org.openwms.tms.impl;
 
-import org.openwms.common.location.api.Target;
+import org.openwms.common.location.api.TargetVO;
 
 /**
  * A TargetHandler offers a set of functions according to the specific of the {@code Target} implementation.
@@ -23,7 +23,7 @@ import org.openwms.common.location.api.Target;
  * @param <T> some kind of {@code Target}
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-public interface TargetHandler<T extends Target> {
+public interface TargetHandler<T extends TargetVO> {
 
     /**
      * Get the number of {@code TransportOrder}s that are on the way to the specific {@code Target}.

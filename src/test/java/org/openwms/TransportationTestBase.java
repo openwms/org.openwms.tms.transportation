@@ -16,9 +16,9 @@
 package org.openwms;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mockito;
 import org.openwms.common.location.api.LocationApi;
 import org.openwms.common.location.api.LocationGroupApi;
 import org.openwms.common.location.api.LocationGroupState;
@@ -27,29 +27,27 @@ import org.openwms.common.location.api.LocationVO;
 import org.openwms.common.transport.api.TransportUnitApi;
 import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.PriorityLevel;
+import org.openwms.tms.TMSApplicationTest;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.openwms.tms.api.TMSApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.JUnitRestDocumentation;
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,25 +56,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=RANDOM_PORT)
-@Transactional
+@TMSApplicationTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public abstract class TransportationTestBase {
 
     @Autowired
     @Qualifier("jacksonOM")
     protected ObjectMapper objectMapper;
     protected MockMvc mockMvc;
-    @Autowired
-    protected WebApplicationContext context;
     @MockBean
     protected LocationApi locationApi;
     @MockBean
     protected LocationGroupApi locationGroupApi;
     @MockBean
     protected TransportUnitApi transportUnitApi;
-    @Rule
-    public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation("target/generated-snippets");
     public static final String NOTLOGGED = "--";
     public static final String INIT_LOC_STRING = "INIT/0000/0000/0000/0000";
     protected LocationVO INIT_LOC;
@@ -97,20 +90,21 @@ public abstract class TransportationTestBase {
     /**
      * Do something before each test method.
      */
-    @Before
-    public void setUp() {
-        INIT_LOC = new LocationVO();
-        INIT_LOC.setLocationId(INIT_LOC_STRING);
-        ERR_LOC = new LocationVO();
-        ERR_LOC.setLocationId(ERR_LOC_STRING);
+    @BeforeEach
+    void setUp(RestDocumentationContextProvider restDocumentation, WebApplicationContext context) {
+        INIT_LOC = new LocationVO(INIT_LOC_STRING);
+        ERR_LOC = new LocationVO(ERR_LOC_STRING);
         INIT_LOCGRB = new LocationGroupVO(INIT_LOCGB_STRING, LocationGroupState.AVAILABLE, LocationGroupState.AVAILABLE);
         ERR_LOCGRB = new LocationGroupVO(ERR_LOCGB_STRING, LocationGroupState.AVAILABLE, LocationGroupState.AVAILABLE);
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation).uris()
-                        .withPort(8888))
+        mockMvc = MockMvcBuilders.webAppContextSetup(context)
+                .apply(documentationConfiguration(restDocumentation))
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .build();
+    }
+
+    @AfterEach
+    public void reset_mocks() {
+        Mockito.reset(locationApi, locationGroupApi, transportUnitApi);
     }
 
     protected CreateTransportOrderVO createTO() {
@@ -121,20 +115,17 @@ public abstract class TransportationTestBase {
                 .withTarget(ERR_LOC_STRING)
                 ;
 
-        LocationVO actualLocation = new LocationVO();
-        actualLocation.setLocationId(INIT_LOC_STRING);
+        LocationVO actualLocation = new LocationVO(INIT_LOC_STRING);
         actualLocation.setIncomingActive(true);
         actualLocation.setOutgoingActive(true);
-        LocationVO errorLocation = new LocationVO();
-        errorLocation.setLocationId(ERR_LOC_STRING);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
         errorLocation.setIncomingActive(true);
         errorLocation.setOutgoingActive(true);
-        TransportUnitVO tu = new TransportUnitVO();
-        tu.setBarcode(BC_4711);
+        TransportUnitVO tu = new TransportUnitVO(BC_4711);
         tu.setActualLocation(actualLocation);
         tu.setTarget(ERR_LOC_STRING);
 
-        given(transportUnitApi.findTransportUnit(BC_4711, Boolean.FALSE)).willReturn(tu);
+        given(transportUnitApi.findTransportUnit(BC_4711)).willReturn(tu);
         given(locationApi.findLocationByCoordinate(ERR_LOC_STRING)).willReturn(Optional.of(errorLocation));
         given(locationGroupApi.findByName(ERR_LOC_STRING)).willReturn(Optional.empty());
         return vo.build();

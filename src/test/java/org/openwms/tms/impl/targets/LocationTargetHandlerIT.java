@@ -39,8 +39,7 @@ public class LocationTargetHandlerIT {
     @Ignore
     @Test
     void test() {
-        LocationVO location = new LocationVO();
-        location.setLocationId("ERR_/0000/0000/0000/0000");
+        LocationVO location = new LocationVO("ERR_/0000/0000/0000/0000");
         int no = lth.getNoTOToTarget(location);
     }
 }

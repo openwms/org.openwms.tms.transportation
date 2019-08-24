@@ -16,7 +16,7 @@
 package org.openwms.tms.impl.redirection;
 
 import org.ameba.i18n.Translator;
-import org.openwms.common.location.api.Target;
+import org.openwms.common.location.api.TargetVO;
 import org.openwms.tms.Message;
 import org.openwms.tms.TMSMessageCodes;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ import java.util.Optional;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-abstract class TargetRedirector<T extends Target> implements DecisionVoter<RedirectVote> {
+abstract class TargetRedirector<T extends TargetVO> implements DecisionVoter<RedirectVote> {
 
     @Autowired
     private Translator translator;

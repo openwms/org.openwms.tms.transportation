@@ -3,10 +3,11 @@ spring:
     name: tms-service
   cloud:
     config:
-      fail-fast: true # true means retry
       discovery:
-        enabled: true
+        enabled: false
         service-id: openwms-config
+      enabled: false
+      fail-fast: true # true means retry
       retry:
         max-attempts: 120
   security:
@@ -14,11 +15,23 @@ spring:
       password: sa
       name: user
   jpa:
+    show-sql: false
+    open-in-view: false
     database: h2
     properties:
       hibernate:
         hbm2ddl:
           import_files: transportation.sql
+  jackson:
+    date-format: yyyy-MM-dd'T'HH:mm:ss.SSSZ
+
+feign:
+  httpclient:
+    connection-timeout: 30000
+    connection-timer-repeat: 30000
+ribbon:
+  connectTimeout: 30000
+  ReadTimeout: 30000
 
 owms:
   eureka:
@@ -33,41 +46,43 @@ owms:
 server:
   port: ${PORT:8131}
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-logging:
-  file: "/tmp/owms/BOOT-TMS-Transportation.log"
-
-feign:
-  httpclient:
-    connection-timeout: 30000
-    connection-timer-repeat: 30000
-
-ribbon:
-  connectTimeout: 30000
-  ReadTimeout: 30000
-
 eureka:
   client:
     instance-info-replication-interval-seconds: 10 # default is 30
     service-url:
       defaultZone: ${owms.eureka.zone}  # Must be camelCase
   instance:
+    hostname: ${owms.srv.hostname}
+    secure-port-enabled: false
+    non-secure-port-enabled: true
     metadata-map:
       username: ${spring.security.user.name}
       password: ${spring.security.user.password}
       protocol: ${owms.srv.protocol}
       zone: ${owms.eureka.zone}
-    hostname: ${owms.srv.hostname}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    rabbit:
+      enabled: false
+
+logging:
+  file: "/tmp/owms/BOOT-TMS-Transportation.log"
 
 ---
 spring:
   profiles: CLOUD
   main:
     banner-mode: "OFF"
+  cloud:
+    config:
+      discovery:
+        enabled: true
+      enabled: true
 
 owms:
   srv:
@@ -81,3 +96,21 @@ eureka:
     statusPageUrl: ${owms.srv.protocol}://${owms.srv.hostname}:${server.port}/actuator/info
     healthCheckUrl: ${owms.srv.protocol}://${owms.srv.hostname}:${server.port}/actuator/health
     homePageUrl: ${owms.srv.protocol}://${owms.srv.hostname}:${server.port}/actuator/
+
+---
+spring:
+  profiles: ASYNCHRONOUS
+
+management:
+  health:
+    rabbit:
+      enabled: true
+
+---
+spring:
+  profiles: TEST
+  cloud:
+    config:
+      fail-fast: false
+  main:
+    banner-mode: "off"

@@ -16,7 +16,7 @@
 package org.openwms.tms;
 
 import org.ameba.exception.NotFoundException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openwms.TransportationTestBase;
 import org.openwms.common.location.api.LocationVO;
 import org.openwms.common.transport.api.TransportUnitVO;
@@ -46,13 +46,11 @@ public class ChangeTUDocumentation extends TransportationTestBase {
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setBarcode(KNOWN);
-        TransportUnitVO transportUnit = new TransportUnitVO();
-        transportUnit.setBarcode(KNOWN);
-        LocationVO location = new LocationVO();
-        location.setLocationId(INIT_LOC_STRING);
+        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
+        LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
         transportUnit.setTarget(ERR_LOC_STRING);
-        given(transportUnitApi.findTransportUnit(KNOWN, Boolean.FALSE)).willReturn(transportUnit);
+        given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
         mockMvc.perform(
