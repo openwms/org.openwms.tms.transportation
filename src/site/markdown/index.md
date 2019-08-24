@@ -18,3 +18,15 @@ across projects - perhaps in different flavor. The microservice is deployed as R
 | https://openwms-tms-transportation.herokuapp.com
   https://openwms.org/tms/transportation | no | Heroku SLA for Europe region depends on AWS Europe region |
 
+## Release
+
+```
+$ mvn deploy -Prelease,gpg
+```
+
+### Release Documentation
+
+```
+$ mvn package -DsurefireArgs=-Dspring.profiles.active=ASYNCHRONOUS,TEST -Psonar
+$ mvn site scm-publish:publish-scm
+```
