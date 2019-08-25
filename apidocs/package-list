@@ -12,4 +12,3 @@ org.openwms.tms.impl.redirection
 org.openwms.tms.impl.removal
 org.openwms.tms.impl.state
 org.openwms.tms.impl.targets
-org.openwms.tms.inmem
