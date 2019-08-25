@@ -25,7 +25,7 @@ import java.util.StringJoiner;
  */
 public class TransportOrderMO implements Serializable {
 
-    public static enum EventType {
+    public enum EventType {
         STARTED;
     }
 

@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms;
+package org.openwms.tms.impl;
 
 import org.ameba.annotation.TxService;
 import org.ameba.mapping.BeanMapper;
+import org.openwms.tms.PriorityLevel;
+import org.openwms.tms.TransportOrder;
+import org.openwms.tms.TransportOrderState;
+import org.openwms.tms.TransportationService;
 import org.openwms.tms.api.TransportOrderApi;
 import org.openwms.tms.api.TransportOrderVO;
 import org.openwms.tms.api.UpdateTransportOrderVO;
@@ -32,7 +36,7 @@ import java.util.List;
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
 @TxService
-public class TransportationFacade implements TransportOrderApi {
+class TransportationFacade implements TransportOrderApi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationFacade.class);
     private final BeanMapper mapper;

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms.inmem;
+package org.openwms.tms.impl;
 
 import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
-import org.openwms.tms.TransportationFacade;
+import org.openwms.core.SpringProfiles;
 import org.openwms.tms.api.TransportOrderApi;
 import org.openwms.tms.api.TransportOrderVO;
 import org.openwms.tms.api.UpdateTransportOrderVO;
@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Profile("INMEM")
+@Profile(SpringProfiles.IN_MEMORY)
 @Primary
 @TxService
 class TransportOrderApiImpl implements TransportOrderApi {

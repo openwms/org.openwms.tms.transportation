@@ -21,6 +21,7 @@ import org.ameba.exception.BusinessRuntimeException;
 import org.ameba.http.Response;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.openwms.tms.api.TMSApi;
+import org.openwms.tms.api.TransportOrderApi;
 import org.openwms.tms.api.TransportOrderVO;
 import org.openwms.tms.api.UpdateTransportOrderVO;
 import org.slf4j.Logger;
@@ -55,9 +56,9 @@ class TransportationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationController.class);
     private final TransportationService<TransportOrder> service;
-    private final TransportationFacade transportationFacade;
+    private final TransportOrderApi transportationFacade;
 
-    TransportationController(TransportationService<TransportOrder> service, TransportationFacade transportationFacade) {
+    TransportationController(TransportationService<TransportOrder> service, TransportOrderApi transportationFacade) {
         this.service = service;
         this.transportationFacade = transportationFacade;
     }
