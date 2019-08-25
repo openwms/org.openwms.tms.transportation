@@ -139,7 +139,8 @@ class TransportUnitRemovalHandler {
 
     private void eraseTuID(TransportOrder transportOrder, Message problem) {
         transportOrder.setProblem(problem);
-        transportOrder.setTransportUnitBK(null);
+        // CHECK [openwms]: 2019-08-01 Preserve the TransportUnitBK
+        //transportOrder.setTransportUnitBK(null);
         repository.save(transportOrder);
     }
 
