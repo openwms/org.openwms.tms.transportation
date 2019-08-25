@@ -20,10 +20,14 @@ import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import org.ameba.annotation.TxService;
+import org.slf4j.Logger;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
 /**
@@ -35,21 +39,22 @@ import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.sli
 class EnsureArchitectureIT {
 
     @ArchTest
+    public static final ArchRule verify_logger_definition =
+        fields().that().haveRawType(Logger.class)
+                .should().bePrivate()
+                .andShould().beStatic()
+                .andShould().beFinal()
+                .because("This a an agreed convention")
+            ;
+
+    @ArchTest
     public static final ArchRule verify_api_package =
             classes().that()
                     .resideInAPackage("..tms.api..")
                     .should()
                     .onlyDependOnClassesThat()
                     .resideInAnyPackage("..tms.api..", "org.openwms.core..", "org.openwms.common..", "java..", "org.springframework..")
-            ;
-
-    @ArchTest
-    public static final ArchRule rule1 =
-            noClasses().that()
-                    .resideInAPackage("..tms.")
-                    .should()
-                    .dependOnClassesThat()
-                    .resideInAnyPackage("..tms.app..", "..tms.commands..", "..tms.events..", "..tms.impl..", "..tms.inmem..")
+                    .because("The API package is separated and the only package accessible by the client")
             ;
 
     @ArchTest
@@ -60,10 +65,32 @@ class EnsureArchitectureIT {
                     .areAnnotatedWith(Service.class)
                     .should()
                     .bePackagePrivate()
-                    .andShould().resideInAnyPackage("..impl..", "..commands..", "..events..")
+                    .andShould()
+                    .resideInAnyPackage("..impl..", "..commands..", "..events..")
+                    .because("By convention Transactional Services should only reside in internal packages")
             ;
 
     @ArchTest
-    public static final ArchRule cycles =
-            slices().matching("org.openwms.(*)..").should().beFreeOfCycles();
+    public static final ArchRule verify_transactional_repository_access =
+            classes().that()
+                    .areAnnotatedWith(Repository.class)
+                    .or()
+                    .areAssignableFrom(JpaRepository.class)
+                    .should()
+                    .bePackagePrivate()
+                    .andShould()
+                    .onlyHaveDependentClassesThat()
+                    .areAnnotatedWith(TxService.class)
+                    .orShould()
+                    .onlyHaveDependentClassesThat()
+                    .areAnnotatedWith(Transactional.class)
+                    .because("A Repository must only be access in a transaction context")
+            ;
+
+    @ArchTest
+    public static final ArchRule verify_no_cycles =
+            slices().matching("..(*)..")
+                    .should().beFreeOfCycles()
+                    .because("For maintainability reasons")
+            ;
 }
