@@ -3,6 +3,10 @@ eureka:
     healthcheck:
       enabled: true
 
+---
+spring:
+  profiles: ASYNCHRONOUS
+
 owms:
   commands:
     common:
