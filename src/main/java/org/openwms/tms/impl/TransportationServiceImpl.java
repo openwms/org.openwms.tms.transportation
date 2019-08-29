@@ -19,6 +19,7 @@ import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
 import org.ameba.i18n.Translator;
+import org.openwms.common.location.LocationPK;
 import org.openwms.common.location.api.TargetVO;
 import org.openwms.tms.Message;
 import org.openwms.tms.PriorityLevel;
@@ -120,7 +121,12 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Trying to create TransportOrder with Barcode [{}], to Target [{}], with Priority [{}]", barcode, target, priority);
         }
-        TransportOrder transportOrder = new TransportOrder(barcode).setTargetLocation(target).setTargetLocationGroup(target);
+        TransportOrder transportOrder = new TransportOrder(barcode);
+        if (LocationPK.isValid(target)) {
+            transportOrder.setTargetLocation(target);
+        } else {
+            transportOrder.setTargetLocationGroup(target);
+        }
         if (priority != null && !priority.isEmpty()) {
             transportOrder.setPriority(PriorityLevel.of(priority));
         } else {

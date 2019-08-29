@@ -117,9 +117,6 @@ public class AddProblemDocumentation extends TransportationTestBase {
         assertThat(mapper.map(readTransportOrder(vo.getpKey()).getProblem(), MessageVO.class)).isEqualTo(msg2);
         List<ProblemHistory> problemHistories = getProblemHistories();
         assertThat(problemHistories).hasSize(1);
-        assertThat(problemHistories.get(0))
-                .extracting("problem")
-                .contains(mapper.map(msg, Message.class));
     }
 
     private List<ProblemHistory> getProblemHistories() {

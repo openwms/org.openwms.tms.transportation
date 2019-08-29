@@ -47,14 +47,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class CreateTODocumentation extends TransportationTestBase {
 
-    public
     @Test
     void testCreateTO() throws Exception {
         MvcResult res = postTOAndValidate(createTO(), "to-create");
         assertThat(res.getResponse().getHeaderValue(HttpHeaders.LOCATION)).isNotNull();
     }
 
-    public
     @Test
     void testCreateTOAndGet() throws Exception {
         CreateTransportOrderVO vo = createTO();
@@ -71,7 +69,6 @@ public class CreateTODocumentation extends TransportationTestBase {
         ;
     }
 
-    public
     @Test
     void testCreateTOUnknownTU() throws Exception {
         CreateTransportOrderVO vo = createTO();
@@ -86,7 +83,6 @@ public class CreateTODocumentation extends TransportationTestBase {
         ;
     }
 
-    public
     @Test
     void testCreateTOUnknownTarget() throws Exception {
         CreateTransportOrderVO vo = createTO();
@@ -102,7 +98,6 @@ public class CreateTODocumentation extends TransportationTestBase {
         ;
     }
 
-    public
     @Test
     void testCreateTOTargetNotAvailable() throws Exception {
         CreateTransportOrderVO vo = createTO();
@@ -128,7 +123,6 @@ public class CreateTODocumentation extends TransportationTestBase {
         ;
     }
 
-    public
     @Test
     void testCreateTOUnknownPriority() throws Exception {
         CreateTransportOrderVO vo = createTO();

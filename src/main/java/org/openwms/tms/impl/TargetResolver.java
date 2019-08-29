@@ -35,5 +35,10 @@ public interface TargetResolver<T extends TargetVO> {
      */
     Optional<T> resolve(String target);
 
+    /**
+     * Get a handle reference to the handler instance that actually resolves the target.
+     *
+     * @return The handler instance
+     */
     TargetHandler<T> getHandler();
 }

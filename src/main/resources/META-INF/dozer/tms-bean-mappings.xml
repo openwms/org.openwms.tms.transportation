@@ -5,7 +5,7 @@
 
 	<configuration>
 		<stop-on-errors>true</stop-on-errors>
-		<date-format>MM/dd/yyyy HH:mm</date-format>
+		<date-format>yyyy-MM-dd'T'HH:mm:ss.SSSZ</date-format>
 		<wildcard>true</wildcard>
 		<custom-converters>
 			<converter type="org.ameba.mapping.LocalDateTimeConverter">

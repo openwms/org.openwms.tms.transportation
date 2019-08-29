@@ -15,7 +15,9 @@
  */
 package org.openwms.tms.impl.state;
 
+import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
+import org.openwms.common.location.LocationPK;
 import org.openwms.common.location.api.LocationApi;
 import org.openwms.common.location.api.LocationGroupApi;
 import org.openwms.common.location.api.LocationGroupVO;
@@ -27,9 +29,10 @@ import org.openwms.tms.TransportServiceEvent;
 import org.openwms.tms.impl.TransportOrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,15 +44,16 @@ import static java.lang.String.format;
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-//@Transactional(propagation = Propagation.MANDATORY)
-@Component
-class Starter implements ApplicationListener<TransportServiceEvent> {
+@TxService
+class Starter implements Startable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Starter.class);
     private final TransportOrderRepository repository;
     private final LocationApi locationApi;
     private final LocationGroupApi locationGroupApi;
     private final ApplicationContext ctx;
+    @Autowired(required = false)
+    private ExternalStarter externalStarter;
 
     Starter(TransportOrderRepository repository, LocationApi locationApi, LocationGroupApi locationGroupApi, ApplicationContext ctx) {
         this.repository = repository;
@@ -59,40 +63,45 @@ class Starter implements ApplicationListener<TransportServiceEvent> {
     }
 
     /**
-     * Handle an application event.
+     * Find and return a {@link TransportOrder} by its unique identifying persistent key.
      *
-     * @param event the event to respond to
+     * @param pKey The unique persistent identifying key
+     * @throws NotFoundException If no instance with the given arguments exist
      */
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public void onApplicationEvent(TransportServiceEvent event) {
-        Long pk = ((TransportOrder) event.getSource()).getPk();
-        final TransportOrder to = repository.findById(pk).orElseThrow(NotFoundException::new);
-        switch (event.getType()) {
-            case INITIALIZED:
-                start(to);
-                break;
-            case TRANSPORT_FINISHED:
-            case TRANSPORT_ONFAILURE:
-            case TRANSPORT_CANCELED:
-            case TRANSPORT_INTERRUPTED:
-                startNext(to);
-                break;
-            default:
-                // just accept the evolution here
-        }
+    public void findAndStart(String pKey) {
+        this.start(repository.findByPKey(pKey).orElseThrow(NotFoundException::new));
     }
 
-    private void startNext(TransportOrder to) {
+    void startNext(TransportOrder to) {
         List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.INITIALIZED);
         if (!transportOrders.isEmpty()) {
-            start(transportOrders.get(0));
+            triggerStart(transportOrders.get(0));
         }
     }
 
+    void triggerStart(TransportOrder to) {
+        if (externalStarter == null) {
+            start(to);
+        } else {
+            externalStarter.request(to.getPersistentKey());
+        }
+    }
+
+        /**
+         * Call to start the {@link TransportOrder} identified by the information of {@code to}.
+         *
+         * @param to At last one of the targets must be present as well as the referring TransportUnitID
+         * @throws NotFoundException If input parameters are not valid
+         * @throws StateChangeException If it is not allowed to change the TransportOrders state
+         */
     private void start(TransportOrder to) {
         LOGGER.debug("> Request to start the TransportOrder with PKey [{}]", to.getPersistentKey());
-        Optional<LocationGroupVO> lg = locationGroupApi.findByName(to.getTargetLocationGroup());
-        Optional<LocationVO> loc = to.getTargetLocation() == null ? Optional.empty() : locationApi.findLocationByCoordinate(to.getTargetLocation());
+        Optional<LocationGroupVO> lg = to.getTargetLocationGroup() == null ? Optional.empty() : locationGroupApi.findByName(to.getTargetLocationGroup());
+        Optional<LocationVO> loc = to.getTargetLocation() != null && LocationPK.isValid(to.getTargetLocation())
+                ? locationApi.findLocationByCoordinate(to.getTargetLocation())
+                : Optional.empty();
         if (!lg.isPresent() && !loc.isPresent()) {
             // At least one target must be set
             throw new NotFoundException("Neither a valid target LocationGroup nor a Location are set, hence it is not possible to start the TransportOrder");

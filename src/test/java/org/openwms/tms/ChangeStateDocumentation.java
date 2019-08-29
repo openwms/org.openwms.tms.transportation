@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-class ChangeStateDocumentation extends TransportationTestBase{
+class ChangeStateDocumentation extends TransportationTestBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChangeStateDocumentation.class);
 
@@ -169,7 +169,6 @@ class ChangeStateDocumentation extends TransportationTestBase{
                 .andExpect(status().isBadRequest())
                 .andDo(document("to-patch-state-finish-an-initialized"))
         ;
-
     }
 
     /* ----------------- STARTED -------------------*/

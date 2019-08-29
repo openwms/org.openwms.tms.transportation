@@ -36,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class RedirectTODocumentation extends TransportationTestBase {
 
-    public
     @Test
     void testRedirectToUnknownLocationGroupButLoc() throws Exception {
         // setup ...
@@ -51,7 +50,6 @@ public class RedirectTODocumentation extends TransportationTestBase {
         sendPatch(vo, status().isNoContent(), "to-patch-target-unknown-loc");
     }
 
-    public
     @Test
     void testRedirectToUnknownLocationButLocGroup() throws Exception {
         // setup ...
@@ -65,7 +63,6 @@ public class RedirectTODocumentation extends TransportationTestBase {
         sendPatch(vo, status().isNoContent(), "to-patch-target-unknown-locgb");
     }
 
-    public
     @Test
     void testRedirectToUnknownTargets() throws Exception {
         // setup ...
@@ -79,7 +76,6 @@ public class RedirectTODocumentation extends TransportationTestBase {
         sendPatch(vo, status().isConflict(), "to-patch-target-unknown");
     }
 
-    public
     @Test
     void testRedirectToBlockedLocation() throws Exception {
         // setup ...
@@ -94,7 +90,6 @@ public class RedirectTODocumentation extends TransportationTestBase {
         sendPatch(vo, status().isConflict(), "to-patch-target-blocked-loc");
     }
 
-    public
     @Test
     void testRedirectToBlockedLocationGroup() throws Exception {
         // setup ...

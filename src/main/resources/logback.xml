@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false" scan="true" scanPeriod="30 seconds">
 
-    <property name="LOG_TEMP" value="/tmp/owms" />
-    <property name="MODULE_NAME" value="TMS-Transportation" />
+    <property name="LOG_TEMP" value="/tmp/owms"/>
+    <property name="MODULE_NAME" value="TMS-Transportation"/>
 
-    <include resource="logback-appenders.xml" />
-    <include resource="logback-loggers.xml" />
+    <include resource="logback-appenders.xml"/>
+    <include resource="logback-loggers.xml"/>
 
-    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
-    <logger name="com.netflix.discovery" level="OFF" />
+    <logger name="com.netflix.discovery" level="OFF"/>
     <logger name="org.dozer" level="ERROR"/>
     <logger name="org.hibernate.SQL" level="OFF"/>
     <logger name="org.hibernate.type" level="OFF"/>
@@ -35,7 +35,7 @@
     <logger name="CORE_INTEGRATION_MESSAGING" level="DEBUG"/>
 
     <root level="INFO">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
         <appender-ref ref="LOGFILE"/>
     </root>
 
