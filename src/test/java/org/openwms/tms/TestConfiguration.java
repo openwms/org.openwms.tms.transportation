@@ -35,18 +35,6 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 class TestConfiguration {
 
-    // ------ Common Resources -------
-
-    @Bean
-    TopicExchange commonTuExchange() {
-        return new TopicExchange("common.tu", true, false);
-    }
-    @Bean
-    TopicExchange commonTuCommandsExchange() {
-        return new TopicExchange("common.tu.commands", true, false);
-    }
-
-
     @Bean
     TestStateAcceptor testStateAcceptor(AmqpTemplate amqpTemplate) {
         return new TestStateAcceptor(amqpTemplate);
