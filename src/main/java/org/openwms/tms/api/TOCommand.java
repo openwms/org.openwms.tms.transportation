@@ -28,6 +28,9 @@ public class TOCommand implements Serializable {
     private UpdateTransportOrderVO updateTransportOrder;
     private Type type;
 
+    protected TOCommand() {
+    }
+
     private TOCommand(Builder builder) {
         setCreateTransportOrder(builder.createTransportOrder);
         setUpdateTransportOrder(builder.updateTransportOrder);
@@ -47,9 +50,6 @@ public class TOCommand implements Serializable {
         FINISH,
         /** Cancel started order and cancel initialized ones. */
         CANCEL_ALL
-    }
-
-    protected TOCommand() {
     }
 
     public CreateTransportOrderVO getCreateTransportOrder() {

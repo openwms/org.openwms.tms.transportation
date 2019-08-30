@@ -22,6 +22,7 @@ import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * A Message is used to encapsulate a message text with an identifier.
@@ -107,11 +108,11 @@ public class Message implements Serializable {
      */
     @Override
     public String toString() {
-        return "Message{" +
-                "occurred=" + occurred +
-                ", messageNo='" + messageNo + '\'' +
-                ", message='" + message + '\'' +
-                '}';
+        return new StringJoiner(", ", Message.class.getSimpleName() + "[", "]")
+                .add("occurred=" + occurred)
+                .add("messageNo='" + messageNo + "'")
+                .add("message='" + message + "'")
+                .toString();
     }
 
     /**

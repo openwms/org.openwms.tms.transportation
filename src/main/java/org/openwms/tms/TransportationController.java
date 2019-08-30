@@ -21,7 +21,6 @@ import org.ameba.exception.BusinessRuntimeException;
 import org.ameba.http.Response;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.openwms.tms.api.TMSApi;
-import org.openwms.tms.api.TransportOrderApi;
 import org.openwms.tms.api.TransportOrderVO;
 import org.openwms.tms.api.UpdateTransportOrderVO;
 import org.slf4j.Logger;
@@ -56,9 +55,9 @@ class TransportationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationController.class);
     private final TransportationService<TransportOrder> service;
-    private final TransportOrderApi transportationFacade;
+    private final TransportationFacade transportationFacade;
 
-    TransportationController(TransportationService<TransportOrder> service, TransportOrderApi transportationFacade) {
+    TransportationController(TransportationService<TransportOrder> service, TransportationFacade transportationFacade) {
         this.service = service;
         this.transportationFacade = transportationFacade;
     }
@@ -106,8 +105,13 @@ class TransportationController {
 
     @Measured
     @PostMapping(value = TMSApi.TRANSPORT_ORDERS + "/{pKey}", params = {"state"})
-    public void changeState(@PathVariable(value = "pKey") String pKey, @RequestParam(value = "state") String state) {
-        transportationFacade.changeState(pKey, state);
+    public ResponseEntity<Void> changeState(@PathVariable(value = "pKey") String pKey, @RequestParam(value = "state") String state) {
+        try {
+            transportationFacade.changeState(pKey, state);
+            return ResponseEntity.noContent().build();
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @ExceptionHandler(BusinessRuntimeException.class)

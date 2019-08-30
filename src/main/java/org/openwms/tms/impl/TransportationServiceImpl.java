@@ -19,6 +19,7 @@ import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
 import org.ameba.i18n.Translator;
+import org.openwms.common.location.LocationPK;
 import org.openwms.common.location.api.TargetVO;
 import org.openwms.tms.Message;
 import org.openwms.tms.PriorityLevel;
@@ -32,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -112,6 +115,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
      *                           can be found.
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW, noRollbackFor = StateChangeException.class)
     @Measured
     public TransportOrder create(String barcode, String target, String priority) {
         if (barcode == null) {
@@ -120,17 +124,23 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Trying to create TransportOrder with Barcode [{}], to Target [{}], with Priority [{}]", barcode, target, priority);
         }
-        TransportOrder transportOrder = new TransportOrder(barcode).setTargetLocation(target).setTargetLocationGroup(target);
+        TransportOrder transportOrder = new TransportOrder(barcode);
+        if (LocationPK.isValid(target)) {
+            transportOrder.setTargetLocation(target);
+        } else {
+            transportOrder.setTargetLocationGroup(target);
+        }
         if (priority != null && !priority.isEmpty()) {
             transportOrder.setPriority(PriorityLevel.of(priority));
         } else {
             transportOrder.setPriority(PriorityLevel.NORMAL);
         }
-        transportOrder = repository.save(transportOrder);
+        transportOrder = repository.saveAndFlush(transportOrder);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("TransportOrder for Barcode [{}] created. PKey is [{}], PK is [{}]", barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
         }
         ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.TRANSPORT_CREATED));
+        transportOrder = repository.findByPKey(transportOrder.getPersistentKey()).orElseThrow(NotFoundException::new);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("TransportOrder for Barcode [{}] persisted. PKey is [{}], PK is [{}]", barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
         }

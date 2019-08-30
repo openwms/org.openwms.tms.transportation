@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.state;
 
+import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
 import org.openwms.common.transport.api.TransportUnitApi;
 import org.openwms.tms.StateChangeException;
@@ -25,21 +26,21 @@ import org.openwms.tms.impl.TransportOrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
+import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 /**
  * A Initializer.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Transactional(propagation = Propagation.MANDATORY)
-@Component
-class Initializer implements ApplicationListener<TransportServiceEvent> {
+@TxService(propagation = Propagation.REQUIRED)
+class Initializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Initializer.class);
     private final TransportOrderRepository repository;
@@ -57,8 +58,9 @@ class Initializer implements ApplicationListener<TransportServiceEvent> {
      *
      * @param event the event to respond to
      */
-    @Override
-    public void onApplicationEvent(final TransportServiceEvent event) {
+    @EventListener
+    @Transactional(propagation = REQUIRED, noRollbackFor = StateChangeException.class)
+    public void onEvent(final TransportServiceEvent event) {
         if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_CREATED) {
             TransportOrder to = repository.findById(((TransportOrder) event.getSource()).getPk()).orElseThrow(NotFoundException::new);
             List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.CREATED);

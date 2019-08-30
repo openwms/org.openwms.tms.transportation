@@ -28,12 +28,12 @@ import org.springframework.transaction.annotation.Propagation;
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
 @TxService(propagation = Propagation.MANDATORY)
-class AddProblemImpl implements AddProblem {
+class AddProblemFunction implements UpdateFunction {
 
     private final ProblemHistoryRepository repository;
 
     @Autowired
-    public AddProblemImpl(ProblemHistoryRepository repository) {
+    public AddProblemFunction(ProblemHistoryRepository repository) {
         this.repository = repository;
     }
 
@@ -41,8 +41,13 @@ class AddProblemImpl implements AddProblem {
      * {@inheritDoc}
      */
     @Override
-    public void add(Message problem, TransportOrder transportOrder) {
-        addInternal(problem, transportOrder);
+    public void update(TransportOrder saved, TransportOrder toUpdate) {
+        if (saved.hasProblem() && toUpdate.hasProblem() && !saved.getProblem().equals(toUpdate.getProblem()) ||
+                !saved.hasProblem() && toUpdate.hasProblem()) {
+
+            // A Problem occurred and must be added to the TO ...
+            addInternal(toUpdate.getProblem(), saved);
+        }
     }
 
     // Internal because of TX Aspects

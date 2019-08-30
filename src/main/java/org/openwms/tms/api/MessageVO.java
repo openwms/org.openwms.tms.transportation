@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * A MessageVO.
@@ -36,6 +37,7 @@ public class MessageVO implements Serializable {
     @JsonProperty
     private String message;
 
+    /*~-------------------- constructors --------------------*/
     private MessageVO(Builder builder) {
         occurred = builder.occurred;
         messageNo = builder.messageNo;
@@ -46,10 +48,24 @@ public class MessageVO implements Serializable {
     protected MessageVO() {
     }
 
+    /*~-------------------- accessors --------------------*/
     public static Builder newBuilder() {
         return new Builder();
     }
 
+    public Date getOccurred() {
+        return occurred;
+    }
+
+    public String getMessageNo() {
+        return messageNo;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    /*~-------------------- builder --------------------*/
     public static final class Builder {
         private Date occurred;
         private String messageNo;
@@ -74,6 +90,9 @@ public class MessageVO implements Serializable {
         }
 
         public MessageVO build() {
+            if (this.occurred == null) {
+                this.occurred = new Date();
+            }
             return new MessageVO(this);
         }
     }
@@ -100,10 +119,10 @@ public class MessageVO implements Serializable {
      */
     @Override
     public String toString() {
-        return "Message{" +
-                "occurred=" + occurred +
-                ", messageNo='" + messageNo + '\'' +
-                ", message='" + message + '\'' +
-                '}';
+        return new StringJoiner(", ", MessageVO.class.getSimpleName() + "[", "]")
+                .add("occurred=" + occurred)
+                .add("messageNo='" + messageNo + "'")
+                .add("message='" + message + "'")
+                .toString();
     }
 }

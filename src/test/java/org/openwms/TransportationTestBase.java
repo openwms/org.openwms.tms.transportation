@@ -44,6 +44,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -148,6 +149,7 @@ public abstract class TransportationTestBase {
                     .andReturn();
         }
 
+        TimeUnit.SECONDS.sleep(1);
         String toLocation = (String) res.getResponse().getHeaderValue(HttpHeaders.LOCATION);
         toLocation = toLocation.substring(0, toLocation.length() - 1);
         vo.setpKey(toLocation.substring(toLocation.lastIndexOf("/") + 1));

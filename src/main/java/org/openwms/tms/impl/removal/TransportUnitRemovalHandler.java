@@ -114,7 +114,7 @@ class TransportUnitRemovalHandler {
         try {
             transportOrder.changeState(CANCELED);
             String barcode = transportOrder.getTransportUnitBK();
-            eraseTuID(transportOrder, new Message.Builder()
+            setProblem(transportOrder, new Message.Builder()
                     .withMessage(
                             format("TransportUnit with ID [%s] was deleted and Transport Order canceled",
                                     barcode
@@ -137,10 +137,8 @@ class TransportUnitRemovalHandler {
         }
     }
 
-    private void eraseTuID(TransportOrder transportOrder, Message problem) {
+    private void setProblem(TransportOrder transportOrder, Message problem) {
         transportOrder.setProblem(problem);
-        // CHECK [openwms]: 2019-08-01 Preserve the TransportUnitBK
-        //transportOrder.setTransportUnitBK(null);
         repository.save(transportOrder);
     }
 
@@ -185,7 +183,7 @@ class TransportUnitRemovalHandler {
         } else {
 
             transportOrders.forEach(to -> {
-                eraseTuID(to,
+                setProblem(to,
                         new Message.Builder()
                                 .withMessage(
                                         format("TransportUnit with barcode [%s] was removed and TransportOrder unlinked",
@@ -212,7 +210,7 @@ class TransportUnitRemovalHandler {
         } else {
 
             transportOrders.forEach(to -> {
-                eraseTuID(to,
+                setProblem(to,
                         new Message.Builder()
                                 .withMessage(
                                         format("TransportUnit with barcode [%s] was removed and TransportOrder unlinked",

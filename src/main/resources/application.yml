@@ -2,6 +2,9 @@ eureka:
   client:
     healthcheck:
       enabled: true
+owms:
+  tms:
+    block-tu-deletion-states:
 
 ---
 spring:
@@ -26,7 +29,11 @@ owms:
     tms:
       to:
         exchange-name: tms.events
-  tms:
-    block-tu-deletion-states:
+  requests:
+    tms:
+      to:
+        exchange-name: tms.requests
+        routing-key: response.state.change
+        queue-name: tms-to-requests
   transportation:
     serialization: json

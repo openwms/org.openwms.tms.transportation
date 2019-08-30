@@ -39,7 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class ChangeTUDocumentation extends TransportationTestBase {
 
-    public
     @Test
     void testTUChange() throws Exception {
         // setup ...
@@ -63,7 +62,6 @@ public class ChangeTUDocumentation extends TransportationTestBase {
         ;
     }
 
-    public
     @Test
     void testTUChangeUnknownTU() throws Exception {
         // setup ...
@@ -85,7 +83,6 @@ public class ChangeTUDocumentation extends TransportationTestBase {
         assertThat(res.getResponse().getContentAsString().contains("COMMON.BARCODE_NOT_FOUND")).isTrue();
     }
 
-    public
     @Test
     void testTUChangeTUWithNUll() throws Exception {
         // setup ...

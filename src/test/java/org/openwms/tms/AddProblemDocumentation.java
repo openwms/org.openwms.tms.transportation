@@ -44,7 +44,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
     private EntityManager em;
     @Autowired
     private BeanMapper mapper;
-    public
+
     @Test
     void testNullAsAddProblem() throws Exception {
         // setup ...
@@ -70,7 +70,6 @@ public class AddProblemDocumentation extends TransportationTestBase {
         assertThat(getProblemHistories()).hasSize(0);
     }
 
-    public
     @Test
     void testAddProblem() throws Exception {
         // setup ...
@@ -92,7 +91,6 @@ public class AddProblemDocumentation extends TransportationTestBase {
         assertThat(getProblemHistories()).hasSize(0);
     }
 
-    public
     @Test
     void testAddSecondProblem() throws Exception {
         // setup ...
@@ -117,9 +115,6 @@ public class AddProblemDocumentation extends TransportationTestBase {
         assertThat(mapper.map(readTransportOrder(vo.getpKey()).getProblem(), MessageVO.class)).isEqualTo(msg2);
         List<ProblemHistory> problemHistories = getProblemHistories();
         assertThat(problemHistories).hasSize(1);
-        assertThat(problemHistories.get(0))
-                .extracting("problem")
-                .contains(mapper.map(msg, Message.class));
     }
 
     private List<ProblemHistory> getProblemHistories() {

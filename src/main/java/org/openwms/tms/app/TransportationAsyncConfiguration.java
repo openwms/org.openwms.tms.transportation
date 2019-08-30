@@ -121,4 +121,22 @@ class TransportationAsyncConfiguration {
                 .to(tmsCommandsExchange)
                 .with(routingKey);
     }
+
+    @Bean
+    TopicExchange tmsRequestsExchange(@Value("${owms.requests.tms.to.exchange-name}") String exchangeName) {
+        return new TopicExchange(exchangeName, true, false);
+    }
+
+    @Bean
+    Queue tmsRequestsQueue(@Value("${owms.requests.tms.to.queue-name}") String queueName) {
+        return new Queue(queueName, true);
+    }
+
+    @Bean
+    Binding tmsRequestsBinding(TopicExchange tmsRequestsExchange, Queue tmsRequestsQueue, @Value("${owms.requests.tms.to.routing-key}") String routingKey) {
+        return BindingBuilder
+                .bind(tmsRequestsQueue)
+                .to(tmsRequestsExchange)
+                .with(routingKey);
+    }
 }
