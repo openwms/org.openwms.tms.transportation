@@ -16,7 +16,7 @@ spring:
       name: user
   jpa:
     show-sql: false
-    open-in-view: false
+    open-in-view: true
     database: h2
     properties:
       hibernate:
