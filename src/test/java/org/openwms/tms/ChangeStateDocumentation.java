@@ -251,6 +251,7 @@ class ChangeStateDocumentation extends TransportationTestBase {
     }
 
     /* ----------------- FINISHED -------------------*/
+    @Disabled
     @Test
     void changingAnFinishedOne() throws Exception {
         // setup ...
