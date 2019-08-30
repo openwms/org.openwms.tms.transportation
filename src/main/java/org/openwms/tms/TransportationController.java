@@ -105,6 +105,7 @@ class TransportationController {
 
     @Measured
     @PostMapping(value = TMSApi.TRANSPORT_ORDERS + "/{pKey}", params = {"state"})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changeState(@PathVariable(value = "pKey") String pKey, @RequestParam(value = "state") String state) {
         transportationFacade.changeState(pKey, state);
     }

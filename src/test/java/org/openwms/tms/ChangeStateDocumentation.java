@@ -30,6 +30,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -209,9 +210,8 @@ class ChangeStateDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-                patch(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(vo))
+                post(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
+                        .param("state", TransportOrderState.CANCELED.toString())
         )
                 .andExpect(status().isNoContent())
                 .andDo(document("to-patch-state-cancel-a-started"))
