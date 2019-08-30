@@ -3,6 +3,8 @@ language: java
 jdk:
   - openjdk8
 
+sudo: true
+
 cache:
   directories:
     - .autoconf
