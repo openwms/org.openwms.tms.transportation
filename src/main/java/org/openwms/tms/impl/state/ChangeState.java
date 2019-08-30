@@ -21,9 +21,6 @@ import org.openwms.tms.impl.UpdateFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * A ChangeState is an {@link UpdateFunction} to change the state of an {@link TransportOrder}.
@@ -31,9 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  * @see UpdateFunction
  */
-@Transactional(propagation = Propagation.MANDATORY)
-@Component
-class ChangeState implements UpdateFunction {
+//@Transactional(propagation = Propagation.MANDATORY)
+//@Component
+class ChangeState {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChangeState.class);
     private final ApplicationContext ctx;
@@ -45,7 +42,7 @@ class ChangeState implements UpdateFunction {
     /**
      * {@inheritDoc}
      */
-    @Override
+    //@Override
     public void update(TransportOrder saved, TransportOrder toUpdate) {
         if (saved.getState() != toUpdate.getState() && toUpdate.getState() != null) {
             if (LOGGER.isDebugEnabled()) {
