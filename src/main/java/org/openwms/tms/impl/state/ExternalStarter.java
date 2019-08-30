@@ -16,11 +16,18 @@
 package org.openwms.tms.impl.state;
 
 /**
- * A ExternalStarter.
+ * A ExternalStarter is able to vote whether a {@code TransportOrder} shall be started or not. An implementation may work asynchronously and
+ * may send out events to remote services that vote on starting or not. Finally this implementation would inject an instance of {@link Startable}
+ * to trigger the actual start.
  *
  * @author Heiko Scherrer
  */
-interface ExternalStarter {
+public interface ExternalStarter {
 
+    /**
+     * Request to start a {@code TransportOrder}.
+     *
+     * @param pKey The persistent key of the TransportOrder.
+     */
     void request(String pKey);
 }

@@ -44,7 +44,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
     private EntityManager em;
     @Autowired
     private BeanMapper mapper;
-    public
+
     @Test
     void testNullAsAddProblem() throws Exception {
         // setup ...
@@ -70,7 +70,6 @@ public class AddProblemDocumentation extends TransportationTestBase {
         assertThat(getProblemHistories()).hasSize(0);
     }
 
-    public
     @Test
     void testAddProblem() throws Exception {
         // setup ...
@@ -92,7 +91,6 @@ public class AddProblemDocumentation extends TransportationTestBase {
         assertThat(getProblemHistories()).hasSize(0);
     }
 
-    public
     @Test
     void testAddSecondProblem() throws Exception {
         // setup ...

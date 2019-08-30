@@ -19,8 +19,15 @@ import org.ameba.exception.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.openwms.TransportationTestBase;
 import org.openwms.common.location.api.LocationVO;
+import org.openwms.core.SpringProfiles;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.openwms.tms.api.TMSApi;
+import org.openwms.tms.impl.state.ExternalStarter;
+import org.openwms.tms.impl.state.Startable;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
@@ -45,7 +52,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-public class CreateTODocumentation extends TransportationTestBase {
+class CreateTODocumentation extends TransportationTestBase {
+
+    @Configuration
+    static class TestConfig {
+
+        @Profile(SpringProfiles.ASYNCHRONOUS_PROFILE)
+        @Primary
+        @Bean
+        ExternalStarter DefaultStartListener(Startable startable) {
+            return new TestExternalStarter(startable);
+        }
+    }
 
     @Test
     void testCreateTO() throws Exception {

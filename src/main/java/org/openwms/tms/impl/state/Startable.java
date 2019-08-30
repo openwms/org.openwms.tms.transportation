@@ -15,12 +15,33 @@
  */
 package org.openwms.tms.impl.state;
 
+import org.openwms.tms.TransportOrder;
+
 /**
- * A Startable.
+ * A Startable implementation is able to start or restart {@code TransportOrder}s.
  *
  * @author Heiko Scherrer
  */
 public interface Startable {
 
-    void findAndStart(String pKey);
+    /**
+     * Start the {@code TransportOrder} with the given id.
+     *
+     * @param pKey The persistent key of the TransportOrder to start
+     */
+    void start(String pKey);
+
+    /**
+     * Start the next {@code TransportOrder} for the {@code TransportUnit} with the given barcode.
+     *
+     * @param barcode The barcode of the {@code TransportUnit}
+     */
+    void startNext(String barcode);
+
+    /**
+     * Trigger a start of the given {@code TransportOrder}.
+     *
+     * @param to The TransportOrder instance to start
+     */
+    void triggerStart(TransportOrder to);
 }

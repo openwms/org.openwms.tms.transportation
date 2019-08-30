@@ -31,9 +31,9 @@ import org.springframework.stereotype.Service;
 class StartListener {
 
     private final TransportOrderRepository repository;
-    private final Starter starter;
+    private final Startable starter;
 
-    StartListener(TransportOrderRepository repository, Starter starter) {
+    StartListener(TransportOrderRepository repository, Startable starter) {
         this.repository = repository;
         this.starter = starter;
     }
@@ -55,7 +55,7 @@ class StartListener {
             case TRANSPORT_ONFAILURE:
             case TRANSPORT_CANCELED:
             case TRANSPORT_INTERRUPTED:
-                starter.startNext(to);
+                starter.startNext(to.getTransportUnitBK());
                 break;
             default:
                 // just accept the evolution here

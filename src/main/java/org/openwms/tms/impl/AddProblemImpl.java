@@ -15,22 +15,20 @@
  */
 package org.openwms.tms.impl;
 
+import org.ameba.annotation.TxService;
 import org.openwms.tms.Message;
 import org.openwms.tms.ProblemHistory;
 import org.openwms.tms.TransportOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * A AddProblemImpl.
  *
  * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
  */
-@Transactional(propagation = Propagation.MANDATORY)
-@Component
-class AddProblemImpl implements UpdateFunction, AddProblem {
+@TxService(propagation = Propagation.MANDATORY)
+class AddProblemImpl implements AddProblem {
 
     private final ProblemHistoryRepository repository;
 
@@ -43,20 +41,12 @@ class AddProblemImpl implements UpdateFunction, AddProblem {
      * {@inheritDoc}
      */
     @Override
-    public void update(TransportOrder saved, TransportOrder toUpdate) {
-        if (saved.hasProblem() && toUpdate.hasProblem() && !saved.getProblem().equals(toUpdate.getProblem()) ||
-                !saved.hasProblem() && toUpdate.hasProblem()) {
-
-            // A Problem occurred and must be added to the TO ...
-            add(toUpdate.getProblem(), saved);
-        }
+    public void add(Message problem, TransportOrder transportOrder) {
+        addInternal(problem, transportOrder);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void add(Message problem, TransportOrder transportOrder) {
+    // Internal because of TX Aspects
+    private void addInternal(Message problem, TransportOrder transportOrder) {
         if (transportOrder.hasProblem()) {
             repository.save(new ProblemHistory(transportOrder, transportOrder.getProblem()));
         }

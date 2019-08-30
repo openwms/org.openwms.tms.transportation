@@ -68,22 +68,25 @@ class Starter implements Startable {
      * @param pKey The unique persistent identifying key
      * @throws NotFoundException If no instance with the given arguments exist
      */
-    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public void findAndStart(String pKey) {
-        this.start(repository.findByPKey(pKey).orElseThrow(NotFoundException::new));
+    @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = StateChangeException.class)
+    public void start(String pKey) {
+        this.startInternal(repository.findByPKey(pKey).orElseThrow(() -> new NotFoundException(format("No TransportOrder with pKey [%s] found", pKey))));
     }
 
-    void startNext(TransportOrder to) {
-        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.INITIALIZED);
+    @Override
+    public void startNext(String barcode) {
+        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(barcode, TransportOrderState.INITIALIZED);
         if (!transportOrders.isEmpty()) {
             triggerStart(transportOrders.get(0));
         }
     }
 
-    void triggerStart(TransportOrder to) {
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = StateChangeException.class)
+    public void triggerStart(TransportOrder to) {
         if (externalStarter == null) {
-            start(to);
+            startInternal(to);
         } else {
             externalStarter.request(to.getPersistentKey());
         }
@@ -96,7 +99,7 @@ class Starter implements Startable {
          * @throws NotFoundException If input parameters are not valid
          * @throws StateChangeException If it is not allowed to change the TransportOrders state
          */
-    private void start(TransportOrder to) {
+    private void startInternal(TransportOrder to) {
         LOGGER.debug("> Request to start the TransportOrder with PKey [{}]", to.getPersistentKey());
         Optional<LocationGroupVO> lg = to.getTargetLocationGroup() == null ? Optional.empty() : locationGroupApi.findByName(to.getTargetLocationGroup());
         Optional<LocationVO> loc = to.getTargetLocation() != null && LocationPK.isValid(to.getTargetLocation())

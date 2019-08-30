@@ -33,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -113,6 +115,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
      *                           can be found.
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW, noRollbackFor = StateChangeException.class)
     @Measured
     public TransportOrder create(String barcode, String target, String priority) {
         if (barcode == null) {
@@ -132,11 +135,12 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
         } else {
             transportOrder.setPriority(PriorityLevel.NORMAL);
         }
-        transportOrder = repository.save(transportOrder);
+        transportOrder = repository.saveAndFlush(transportOrder);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("TransportOrder for Barcode [{}] created. PKey is [{}], PK is [{}]", barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
         }
         ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.TRANSPORT_CREATED));
+        transportOrder = repository.findByPKey(transportOrder.getPersistentKey()).orElseThrow(NotFoundException::new);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("TransportOrder for Barcode [{}] persisted. PKey is [{}], PK is [{}]", barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
         }
