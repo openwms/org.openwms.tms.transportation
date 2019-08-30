@@ -228,6 +228,7 @@ class ChangeStateDocumentation extends TransportationTestBase {
         ;
     }
 
+    @Disabled
     @Test
     void finishingAnStartedOne() throws Exception {
         // setup ...
