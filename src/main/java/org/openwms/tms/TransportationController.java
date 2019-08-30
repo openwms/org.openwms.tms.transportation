@@ -105,9 +105,13 @@ class TransportationController {
 
     @Measured
     @PostMapping(value = TMSApi.TRANSPORT_ORDERS + "/{pKey}", params = {"state"})
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changeState(@PathVariable(value = "pKey") String pKey, @RequestParam(value = "state") String state) {
-        transportationFacade.changeState(pKey, state);
+    public ResponseEntity<Void> changeState(@PathVariable(value = "pKey") String pKey, @RequestParam(value = "state") String state) {
+        try {
+            transportationFacade.changeState(pKey, state);
+            return ResponseEntity.noContent().build();
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @ExceptionHandler(BusinessRuntimeException.class)

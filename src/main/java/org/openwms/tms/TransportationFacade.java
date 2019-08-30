@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -65,7 +66,10 @@ public class TransportationFacade implements TransportOrderApi {
             LOGGER.debug("Change the state of the TransportOrder with persistent key [{}] to [{}]", pKey, state);
         }
         TransportOrder order = service.findByPKey(pKey);
-        service.change(order.getTransportUnitBK(), order.getState(), TransportOrderState.valueOf(state), null);
+        Collection<String> failures = service.change(order.getTransportUnitBK(), order.getState(), TransportOrderState.valueOf(state), null);
+        if (!failures.isEmpty()) {
+            throw new StateChangeException("Failed to changed TransportOrders", "generic", failures.toArray());
+        }
     }
 
     @Override
