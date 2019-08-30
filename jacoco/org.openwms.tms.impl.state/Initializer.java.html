@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.state;
 
+import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
 import org.openwms.common.transport.api.TransportUnitApi;
 import org.openwms.tms.StateChangeException;
@@ -25,40 +26,41 @@ import org.openwms.tms.impl.TransportOrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
+import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
 /**
  * A Initializer.
  *
  * @author &lt;a href=&quot;mailto:scherrer@openwms.org&quot;&gt;Heiko Scherrer&lt;/a&gt;
  */
-@Transactional(propagation = Propagation.MANDATORY)
-@Component
-class Initializer implements ApplicationListener&lt;TransportServiceEvent&gt; {
+@TxService(propagation = Propagation.REQUIRED)
+class Initializer {
 
-<span class="fc" id="L44">    private static final Logger LOGGER = LoggerFactory.getLogger(Initializer.class);</span>
+<span class="fc" id="L45">    private static final Logger LOGGER = LoggerFactory.getLogger(Initializer.class);</span>
     private final TransportOrderRepository repository;
     private final TransportUnitApi transportUnitApi;
     private final ApplicationContext ctx;
 
-<span class="fc" id="L49">    Initializer(TransportOrderRepository repository, TransportUnitApi transportUnitApi, ApplicationContext ctx) {</span>
-<span class="fc" id="L50">        this.repository = repository;</span>
-<span class="fc" id="L51">        this.transportUnitApi = transportUnitApi;</span>
-<span class="fc" id="L52">        this.ctx = ctx;</span>
-<span class="fc" id="L53">    }</span>
+<span class="fc" id="L50">    Initializer(TransportOrderRepository repository, TransportUnitApi transportUnitApi, ApplicationContext ctx) {</span>
+<span class="fc" id="L51">        this.repository = repository;</span>
+<span class="fc" id="L52">        this.transportUnitApi = transportUnitApi;</span>
+<span class="fc" id="L53">        this.ctx = ctx;</span>
+<span class="fc" id="L54">    }</span>
 
     /**
      * Handle an application event.
      *
      * @param event the event to respond to
      */
-    @Override
-<span class="fc" id="L61">    public void onApplicationEvent(final TransportServiceEvent event) {</span>
+    @EventListener
+    @Transactional(propagation = REQUIRED, noRollbackFor = StateChangeException.class)
+<span class="fc" id="L63">    public void onEvent(final TransportServiceEvent event) {</span>
         if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_CREATED) {
             TransportOrder to = repository.findById(((TransportOrder) event.getSource()).getPk()).orElseThrow(NotFoundException::new);
             List&lt;TransportOrder&gt; transportOrders = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.CREATED);

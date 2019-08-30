@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransportationServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.impl</a> &gt; <span class="el_source">TransportationServiceImpl.java</span></div><h1>TransportationServiceImpl.java</h1><pre class="source lang-java linenums">/*
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransportationServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.impl</a> &gt; <span class="el_source">TransportationServiceImpl.java</span></div><h1>TransportationServiceImpl.java</h1><pre class="source lang-java linenums"><span class="fc" id="L1">/*</span>
  * Copyright 2018 Heiko Scherrer
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -19,6 +19,7 @@ import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
 import org.ameba.i18n.Translator;
+import org.openwms.common.location.LocationPK;
 import org.openwms.common.location.api.TargetVO;
 import org.openwms.tms.Message;
 import org.openwms.tms.PriorityLevel;
@@ -32,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,7 +51,7 @@ import java.util.stream.Stream;
 @TxService
 class TransportationServiceImpl implements TransportationService&lt;TransportOrder&gt; {
 
-<span class="fc" id="L51">    private static final Logger LOGGER = LoggerFactory.getLogger(TransportationServiceImpl.class);</span>
+<span class="fc" id="L54">    private static final Logger LOGGER = LoggerFactory.getLogger(TransportationServiceImpl.class);</span>
 
     private final ApplicationContext ctx;
     private final TransportOrderRepository repository;
@@ -58,11 +61,11 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
     private List&lt;UpdateFunction&gt; updateFunctions;
     private final Translator translator;
 
-<span class="fc" id="L61">    TransportationServiceImpl(Translator translator, TransportOrderRepository repository, ApplicationContext ctx) {</span>
-<span class="fc" id="L62">        this.translator = translator;</span>
-<span class="fc" id="L63">        this.repository = repository;</span>
-<span class="fc" id="L64">        this.ctx = ctx;</span>
-<span class="fc" id="L65">    }</span>
+<span class="fc" id="L64">    TransportationServiceImpl(Translator translator, TransportOrderRepository repository, ApplicationContext ctx) {</span>
+<span class="fc" id="L65">        this.translator = translator;</span>
+<span class="fc" id="L66">        this.repository = repository;</span>
+<span class="fc" id="L67">        this.ctx = ctx;</span>
+<span class="fc" id="L68">    }</span>
 
     /**
      * {@inheritDoc}
@@ -70,7 +73,7 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
     @Override
     @Measured
     public List&lt;TransportOrder&gt; findBy(String barcode, String... states) {
-<span class="nc" id="L73">        return repository.findByTransportUnitBKAndStates(barcode, Stream.of(states).map(TransportOrderState::valueOf).collect(Collectors.toList()).toArray(new TransportOrderState[states.length]));</span>
+<span class="nc" id="L76">        return repository.findByTransportUnitBKAndStates(barcode, Stream.of(states).map(TransportOrderState::valueOf).collect(Collectors.toList()).toArray(new TransportOrderState[states.length]));</span>
     }
 
     /**
@@ -79,11 +82,11 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
     @Override
     @Measured
     public TransportOrder findByPKey(String pKey) {
-<span class="fc" id="L82">        return findBy(pKey);</span>
+<span class="fc" id="L85">        return findBy(pKey);</span>
     }
 
     private TransportOrder findBy(String pKey) {
-<span class="pc" id="L86">        return repository.findByPKey(pKey).orElseThrow(() -&gt; new NotFoundException(translator, TMSMessageCodes.TO_WITH_PKEY_NOT_FOUND, new String[]{pKey}, pKey));</span>
+<span class="pc" id="L89">        return repository.findByPKey(pKey).orElseThrow(() -&gt; new NotFoundException(translator, TMSMessageCodes.TO_WITH_PKEY_NOT_FOUND, new String[]{pKey}, pKey));</span>
     }
 
     /**
@@ -92,14 +95,14 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
     @Override
     @Measured
     public int getNoTransportOrdersToTarget(String target, String... states) {
-<span class="nc" id="L95">        int i = 0;</span>
-<span class="nc bnc" id="L96" title="All 2 branches missed.">        for (TargetResolver&lt;TargetVO&gt; tr : targetResolvers) {</span>
-<span class="nc" id="L97">            Optional&lt;TargetVO&gt; t = tr.resolve(target);</span>
-<span class="nc bnc" id="L98" title="All 2 branches missed.">            if (t.isPresent()) {</span>
-<span class="nc" id="L99">                i = +tr.getHandler().getNoTOToTarget(t.get());</span>
+<span class="nc" id="L98">        int i = 0;</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        for (TargetResolver&lt;TargetVO&gt; tr : targetResolvers) {</span>
+<span class="nc" id="L100">            Optional&lt;TargetVO&gt; t = tr.resolve(target);</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">            if (t.isPresent()) {</span>
+<span class="nc" id="L102">                i = +tr.getHandler().getNoTOToTarget(t.get());</span>
             }
         }
-<span class="nc" id="L102">        return i;</span>
+<span class="nc" id="L105">        return i;</span>
     }
 
     /**
@@ -112,29 +115,36 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
      *                           can be found.
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW, noRollbackFor = StateChangeException.class)
     @Measured
-    public TransportOrder create(String barcode, String target, String priority) {
-<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        if (barcode == null) {</span>
-<span class="nc" id="L118">            throw new NotFoundException(&quot;Barcode cannot be null when creating a TransportOrder&quot;);</span>
+<span class="fc" id="L120">    public TransportOrder create(String barcode, String target, String priority) {</span>
+        if (barcode == null) {
+            throw new NotFoundException(&quot;Barcode cannot be null when creating a TransportOrder&quot;);
         }
-<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
-<span class="fc" id="L121">            LOGGER.debug(&quot;Trying to create TransportOrder with Barcode [{}], to Target [{}], with Priority [{}]&quot;, barcode, target, priority);</span>
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(&quot;Trying to create TransportOrder with Barcode [{}], to Target [{}], with Priority [{}]&quot;, barcode, target, priority);
         }
-<span class="fc" id="L123">        TransportOrder transportOrder = new TransportOrder(barcode).setTargetLocation(target).setTargetLocationGroup(target);</span>
-<span class="pc bpc" id="L124" title="2 of 4 branches missed.">        if (priority != null &amp;&amp; !priority.isEmpty()) {</span>
-<span class="fc" id="L125">            transportOrder.setPriority(PriorityLevel.of(priority));</span>
-<span class="fc" id="L126">        } else {</span>
-<span class="nc" id="L127">            transportOrder.setPriority(PriorityLevel.NORMAL);</span>
+        TransportOrder transportOrder = new TransportOrder(barcode);
+        if (LocationPK.isValid(target)) {
+            transportOrder.setTargetLocation(target);
+        } else {
+            transportOrder.setTargetLocationGroup(target);
         }
-<span class="fc" id="L129">        transportOrder = repository.save(transportOrder);</span>
-<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
-<span class="fc" id="L131">            LOGGER.debug(&quot;TransportOrder for Barcode [{}] created. PKey is [{}], PK is [{}]&quot;, barcode, transportOrder.getPersistentKey(), transportOrder.getPk());</span>
+        if (priority != null &amp;&amp; !priority.isEmpty()) {
+            transportOrder.setPriority(PriorityLevel.of(priority));
+        } else {
+            transportOrder.setPriority(PriorityLevel.NORMAL);
         }
-<span class="fc" id="L133">        ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.TRANSPORT_CREATED));</span>
-<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
-<span class="fc" id="L135">            LOGGER.debug(&quot;TransportOrder for Barcode [{}] persisted. PKey is [{}], PK is [{}]&quot;, barcode, transportOrder.getPersistentKey(), transportOrder.getPk());</span>
+        transportOrder = repository.saveAndFlush(transportOrder);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(&quot;TransportOrder for Barcode [{}] created. PKey is [{}], PK is [{}]&quot;, barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
         }
-<span class="fc" id="L137">        return transportOrder;</span>
+        ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.TRANSPORT_CREATED));
+        transportOrder = repository.findByPKey(transportOrder.getPersistentKey()).orElseThrow(NotFoundException::new);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(&quot;TransportOrder for Barcode [{}] persisted. PKey is [{}], PK is [{}]&quot;, barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
+        }
+        return transportOrder;
     }
 
     /**
@@ -143,9 +153,9 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
     @Override
     @Measured
     public TransportOrder update(TransportOrder transportOrder) {
-<span class="fc" id="L146">        TransportOrder saved = findBy(transportOrder.getPersistentKey());</span>
-<span class="fc" id="L147">        updateFunctions.forEach(up -&gt; up.update(saved, transportOrder));</span>
-<span class="fc" id="L148">        return repository.save(saved);</span>
+<span class="fc" id="L156">        TransportOrder saved = findBy(transportOrder.getPersistentKey());</span>
+<span class="fc" id="L157">        updateFunctions.forEach(up -&gt; up.update(saved, transportOrder));</span>
+<span class="fc" id="L158">        return repository.save(saved);</span>
     }
 
     /**
@@ -154,23 +164,23 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
     @Override
     @Measured
     public Collection&lt;String&gt; change(TransportOrderState state, Collection&lt;String&gt; pKeys) {
-<span class="nc" id="L157">        List&lt;String&gt; failure = new ArrayList&lt;&gt;(pKeys.size());</span>
-<span class="nc" id="L158">        List&lt;TransportOrder&gt; transportOrders = repository.findByPKey(new ArrayList&lt;&gt;(pKeys));</span>
-<span class="nc bnc" id="L159" title="All 2 branches missed.">        for (TransportOrder transportOrder : transportOrders) {</span>
+<span class="nc" id="L167">        List&lt;String&gt; failure = new ArrayList&lt;&gt;(pKeys.size());</span>
+<span class="nc" id="L168">        List&lt;TransportOrder&gt; transportOrders = repository.findByPKey(new ArrayList&lt;&gt;(pKeys));</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        for (TransportOrder transportOrder : transportOrders) {</span>
             try {
-<span class="nc bnc" id="L161" title="All 2 branches missed.">                if (LOGGER.isDebugEnabled()) {</span>
-<span class="nc" id="L162">                    LOGGER.debug(&quot;Trying to turn TransportOrder [{}] into state [{}]&quot;, transportOrder.getPk(), state);</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">                if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L172">                    LOGGER.debug(&quot;Trying to turn TransportOrder [{}] into state [{}]&quot;, transportOrder.getPk(), state);</span>
                 }
-<span class="nc" id="L164">                transportOrder.changeState(state);</span>
-<span class="nc" id="L165">                ctx.publishEvent(new TransportServiceEvent(transportOrder.getPk(), TransportServiceEvent.TYPE.of(state)));</span>
-<span class="nc" id="L166">            } catch (StateChangeException sce) {</span>
-<span class="nc" id="L167">                LOGGER.error(&quot;Could not turn TransportOrder: [{}] into [{}], because of [{}]&quot;, transportOrder.getPk(), state, sce.getMessage());</span>
-<span class="nc" id="L168">                Message problem = new Message.Builder().withMessage(sce.getMessage()).build();</span>
-<span class="nc" id="L169">                transportOrder.setProblem(problem);</span>
-<span class="nc" id="L170">                failure.add(transportOrder.getPk().toString());</span>
+<span class="nc" id="L174">                transportOrder.changeState(state);</span>
+<span class="nc" id="L175">                ctx.publishEvent(new TransportServiceEvent(transportOrder.getPk(), TransportServiceEvent.TYPE.of(state)));</span>
+<span class="nc" id="L176">            } catch (StateChangeException sce) {</span>
+<span class="nc" id="L177">                LOGGER.error(&quot;Could not turn TransportOrder: [{}] into [{}], because of [{}]&quot;, transportOrder.getPk(), state, sce.getMessage());</span>
+<span class="nc" id="L178">                Message problem = new Message.Builder().withMessage(sce.getMessage()).build();</span>
+<span class="nc" id="L179">                transportOrder.setProblem(problem);</span>
+<span class="nc" id="L180">                failure.add(transportOrder.getPk().toString());</span>
             }
         }
-<span class="nc" id="L173">        return failure;</span>
+<span class="nc" id="L183">        return failure;</span>
     }
 
     /**
@@ -179,26 +189,26 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
     @Override
     @Measured
     public Collection&lt;String&gt; change(String barcode, TransportOrderState currentState, TransportOrderState targetState, Message message) {
-<span class="nc" id="L182">        List&lt;TransportOrder&gt; transportOrders = repository.findByTransportUnitBKAndStates(barcode, currentState);</span>
-<span class="nc" id="L183">        List&lt;String&gt; failure = new ArrayList&lt;&gt;();</span>
-<span class="nc bnc" id="L184" title="All 2 branches missed.">        for (TransportOrder transportOrder : transportOrders) {</span>
+<span class="fc" id="L192">        List&lt;TransportOrder&gt; transportOrders = repository.findByTransportUnitBKAndStates(barcode, currentState);</span>
+<span class="fc" id="L193">        List&lt;String&gt; failure = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        for (TransportOrder transportOrder : transportOrders) {</span>
             try {
-<span class="nc bnc" id="L186" title="All 2 branches missed.">                if (LOGGER.isDebugEnabled()) {</span>
-<span class="nc" id="L187">                    LOGGER.debug(&quot;Trying to turn TransportOrder [{}] into state [{}]&quot;, transportOrder.getPk(), targetState);</span>
+<span class="pc bpc" id="L196" title="1 of 2 branches missed.">                if (LOGGER.isDebugEnabled()) {</span>
+<span class="fc" id="L197">                    LOGGER.debug(&quot;Trying to turn TransportOrder [{}] into state [{}]&quot;, transportOrder.getPk(), targetState);</span>
                 }
-<span class="nc" id="L189">                transportOrder.changeState(targetState);</span>
-<span class="nc bnc" id="L190" title="All 2 branches missed.">                if (message != null) {</span>
-<span class="nc" id="L191">                    transportOrder.setProblem(message);</span>
+<span class="fc" id="L199">                transportOrder.changeState(targetState);</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">                if (message != null) {</span>
+<span class="nc" id="L201">                    transportOrder.setProblem(message);</span>
                 }
-<span class="nc" id="L193">                ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.of(targetState)));</span>
-<span class="nc" id="L194">            } catch (StateChangeException sce) {</span>
-<span class="nc" id="L195">                LOGGER.error(&quot;Could not turn TransportOrder: [{}] into [{}], because of [{}]&quot;, transportOrder.getPk(), targetState, sce.getMessage());</span>
-<span class="nc" id="L196">                Message problem = new Message.Builder().withMessage(sce.getMessage()).build();</span>
-<span class="nc" id="L197">                transportOrder.setProblem(problem);</span>
-<span class="nc" id="L198">                failure.add(transportOrder.getPk().toString());</span>
+<span class="fc" id="L203">                ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.of(targetState)));</span>
+<span class="fc" id="L204">            } catch (StateChangeException sce) {</span>
+<span class="fc" id="L205">                LOGGER.error(&quot;Could not turn TransportOrder: [{}] into [{}], because of [{}]&quot;, transportOrder.getPk(), targetState, sce.getMessage());</span>
+<span class="fc" id="L206">                Message problem = new Message.Builder().withMessage(sce.getMessage()).build();</span>
+<span class="fc" id="L207">                transportOrder.setProblem(problem);</span>
+<span class="fc" id="L208">                failure.add(transportOrder.getPk().toString());</span>
             }
         }
-<span class="nc" id="L201">        return failure;</span>
+<span class="fc" id="L211">        return failure;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

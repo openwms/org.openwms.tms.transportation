@@ -1,9 +1,11 @@
 org.openwms.common
+org.openwms.common.location
 org.openwms.common.transport
 org.openwms.common.transport.events
 org.openwms.tms
 org.openwms.tms.api
 org.openwms.tms.api.messages
+org.openwms.tms.api.requests.state
 org.openwms.tms.app
 org.openwms.tms.commands
 org.openwms.tms.events

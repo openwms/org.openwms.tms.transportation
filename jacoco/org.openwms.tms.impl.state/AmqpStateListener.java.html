@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AmqpStateListener.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.impl.state</a> &gt; <span class="el_source">AmqpStateListener.java</span></div><h1>AmqpStateListener.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2005-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.openwms.tms.impl.state;
+
+import org.ameba.annotation.Measured;
+import org.ameba.exception.ServiceLayerException;
+import org.openwms.core.SpringProfiles;
+import org.openwms.tms.Message;
+import org.openwms.tms.StateChangeException;
+import org.openwms.tms.TransportOrder;
+import org.openwms.tms.TransportOrderState;
+import org.openwms.tms.TransportationService;
+import org.openwms.tms.api.requests.state.StateChangeResponse;
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+
+/**
+ * An AmqpStateListener listens on a start response from remote services as a reply to a former start request, validates the response and
+ * delegates to the {@link Startable} instance for final starting of the {@code TransportOrder}.
+ *
+ * @author Heiko Scherrer
+ */
+@Profile({SpringProfiles.ASYNCHRONOUS_PROFILE})
+@Component
+class AmqpStateListener {
+
+    private final Startable starter;
+    private final TransportationService&lt;TransportOrder&gt; service;
+
+<span class="fc" id="L45">    AmqpStateListener(Startable starter, TransportationService&lt;TransportOrder&gt; service) {</span>
+<span class="fc" id="L46">        this.starter = starter;</span>
+<span class="fc" id="L47">        this.service = service;</span>
+<span class="fc" id="L48">    }</span>
+
+    /**
+     * Listen and validate {@link StateChangeResponse}s.
+     *
+     * @param response The response
+     */
+    @Measured
+    @RabbitListener(queues = &quot;${owms.requests.tms.to.queue-name}&quot;)
+    public void onResponse(StateChangeResponse response) {
+
+        try {
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">            if (!response.hasRequest()) {</span>
+<span class="nc" id="L61">                throw new ServiceLayerException(&quot;Got a response that is assigned to a request: &quot; + response);</span>
+            }
+
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">            if (response.hasError()) {</span>
+<span class="nc" id="L65">                TransportOrder to = service.findByPKey(response.getRequest().getTransportOrderPkey());</span>
+<span class="nc" id="L66">                to.setProblem(new Message.Builder()</span>
+<span class="nc" id="L67">                        .withMessage(response.getError().getMessage())</span>
+<span class="nc" id="L68">                        .withOccurred(response.getError().getOccurred())</span>
+<span class="nc" id="L69">                        .build());</span>
+<span class="nc" id="L70">                service.update(to);</span>
+<span class="nc" id="L71">                return;</span>
+            }
+
+            // We only know about the states declared in TransportOrderState!
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">            if (TransportOrderState.STARTED.name().equals(response.getAcceptedState())) {</span>
+
+                // Okay the one and only voter accepted to start the TO. We could also have more than one voter but then the implementation
+                // needs to be adjusted.
+<span class="fc" id="L79">                this.starter.start(response.getRequest().getTransportOrderPkey());</span>
+<span class="fc" id="L80">            } else {</span>
+<span class="nc" id="L81">                throw new ServiceLayerException(&quot;Got a StateChangeResponse that is not supported: &quot; + response);</span>
+            }
+<span class="nc" id="L83">        } catch (StateChangeException sce) {</span>
+            // fine here
+<span class="fc" id="L85">        } catch (Exception ex) {</span>
+<span class="fc" id="L86">            throw new AmqpRejectAndDontRequeueException(ex.getMessage(), ex);</span>
+        }
+<span class="fc" id="L88">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

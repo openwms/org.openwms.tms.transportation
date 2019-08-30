@@ -121,5 +121,23 @@ import static org.ameba.LoggingCategories.BOOT;
 <span class="fc" id="L121">                .to(tmsCommandsExchange)</span>
 <span class="fc" id="L122">                .with(routingKey);</span>
     }
+
+    @Bean
+    TopicExchange tmsRequestsExchange(@Value(&quot;${owms.requests.tms.to.exchange-name}&quot;) String exchangeName) {
+<span class="fc" id="L127">        return new TopicExchange(exchangeName, true, false);</span>
+    }
+
+    @Bean
+    Queue tmsRequestsQueue(@Value(&quot;${owms.requests.tms.to.queue-name}&quot;) String queueName) {
+<span class="fc" id="L132">        return new Queue(queueName, true);</span>
+    }
+
+    @Bean
+    Binding tmsRequestsBinding(TopicExchange tmsRequestsExchange, Queue tmsRequestsQueue, @Value(&quot;${owms.requests.tms.to.routing-key}&quot;) String routingKey) {
+<span class="fc" id="L137">        return BindingBuilder</span>
+<span class="fc" id="L138">                .bind(tmsRequestsQueue)</span>
+<span class="fc" id="L139">                .to(tmsRequestsExchange)</span>
+<span class="fc" id="L140">                .with(routingKey);</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

@@ -28,29 +28,29 @@ public class TOCommand implements Serializable {
     private UpdateTransportOrderVO updateTransportOrder;
     private Type type;
 
-<span class="nc" id="L31">    private TOCommand(Builder builder) {</span>
-<span class="nc" id="L32">        setCreateTransportOrder(builder.createTransportOrder);</span>
-<span class="nc" id="L33">        setUpdateTransportOrder(builder.updateTransportOrder);</span>
-<span class="nc" id="L34">        setType(builder.type);</span>
-<span class="nc" id="L35">    }</span>
+<span class="nc" id="L31">    protected TOCommand() {</span>
+<span class="nc" id="L32">    }</span>
+
+<span class="nc" id="L34">    private TOCommand(Builder builder) {</span>
+<span class="nc" id="L35">        setCreateTransportOrder(builder.createTransportOrder);</span>
+<span class="nc" id="L36">        setUpdateTransportOrder(builder.updateTransportOrder);</span>
+<span class="nc" id="L37">        setType(builder.type);</span>
+<span class="nc" id="L38">    }</span>
 
     public static Builder newBuilder() {
-<span class="nc" id="L38">        return new Builder();</span>
+<span class="nc" id="L41">        return new Builder();</span>
     }
 
-<span class="nc" id="L41">    public enum Type {</span>
-<span class="nc" id="L42">        /** Create a new order. */</span>
-<span class="nc" id="L43">        CREATE,</span>
-<span class="nc" id="L44">        /** Change the target of the order. */</span>
-<span class="nc" id="L45">        CHANGE_TARGET,</span>
-<span class="nc" id="L46">        /** Finish started order. */</span>
-<span class="nc" id="L47">        FINISH,</span>
-<span class="nc" id="L48">        /** Cancel started order and cancel initialized ones. */</span>
-<span class="nc" id="L49">        CANCEL_ALL</span>
+<span class="nc" id="L44">    public enum Type {</span>
+<span class="nc" id="L45">        /** Create a new order. */</span>
+<span class="nc" id="L46">        CREATE,</span>
+<span class="nc" id="L47">        /** Change the target of the order. */</span>
+<span class="nc" id="L48">        CHANGE_TARGET,</span>
+<span class="nc" id="L49">        /** Finish started order. */</span>
+<span class="nc" id="L50">        FINISH,</span>
+<span class="nc" id="L51">        /** Cancel started order and cancel initialized ones. */</span>
+<span class="nc" id="L52">        CANCEL_ALL</span>
     }
-
-<span class="nc" id="L52">    protected TOCommand() {</span>
-<span class="nc" id="L53">    }</span>
 
     public CreateTransportOrderVO getCreateTransportOrder() {
 <span class="nc" id="L56">        return createTransportOrder;</span>
