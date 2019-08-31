@@ -11,7 +11,7 @@
     <custom>
         <fluidoSkin>
             <gitHub>
-                <projectId>openwms/org.openwms.common.service</projectId>
+                <projectId>openwms/org.openwms.tms.transportation</projectId>
                 <ribbonOrientation>right</ribbonOrientation>
                 <ribbonColor>black</ribbonColor>
             </gitHub>
