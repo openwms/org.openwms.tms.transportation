@@ -15,7 +15,7 @@
  */
 package org.openwms.tms;
 
-import org.springframework.amqp.core.AmqpTemplate;
+import org.openwms.core.SpringProfiles;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -30,14 +30,9 @@ import org.springframework.context.annotation.Profile;
  *
  * @author Heiko Scherrer
  */
-@Profile({"ASYNCHRONOUS && !DISTRIBUTED"})
+@Profile({SpringProfiles.ASYNCHRONOUS_PROFILE})
 @Configuration
 class TestConfiguration {
-
-    @Bean
-    TestStateAcceptor testStateAcceptor(AmqpTemplate amqpTemplate) {
-        return new TestStateAcceptor(amqpTemplate);
-    }
 
     @Bean
     Queue tmsRequestsTestQueue(@Value("test-tms-requests-queue") String queueName) {

@@ -228,7 +228,6 @@ class ChangeStateDocumentation extends TransportationTestBase {
         ;
     }
 
-    @Disabled
     @Test
     void finishingAnStartedOne() throws Exception {
         // setup ...
@@ -251,7 +250,6 @@ class ChangeStateDocumentation extends TransportationTestBase {
     }
 
     /* ----------------- FINISHED -------------------*/
-    @Disabled
     @Test
     void changingAnFinishedOne() throws Exception {
         // setup ...
