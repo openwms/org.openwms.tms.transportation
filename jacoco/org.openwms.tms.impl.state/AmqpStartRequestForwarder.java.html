@@ -15,12 +15,10 @@
  */
 package org.openwms.tms.impl.state;
 
-import org.openwms.core.SpringProfiles;
 import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.api.requests.state.StateChangeRequest;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -29,26 +27,25 @@ import org.springframework.stereotype.Component;
  *
  * @author Heiko Scherrer
  */
-@Profile({SpringProfiles.ASYNCHRONOUS_PROFILE})
-@Lazy
+@Profile({&quot;DISTRIBUTED&quot;})
 @Component
 class AmqpStartRequestForwarder implements ExternalStarter {
 
     private final String exchangeName;
     private final AmqpTemplate amqpTemplate;
 
-<span class="fc" id="L40">    AmqpStartRequestForwarder(@Value(&quot;${owms.requests.tms.to.exchange-name}&quot;) String exchangeName, AmqpTemplate amqpTemplate) {</span>
-<span class="fc" id="L41">        this.exchangeName = exchangeName;</span>
-<span class="fc" id="L42">        this.amqpTemplate = amqpTemplate;</span>
-<span class="fc" id="L43">    }</span>
+<span class="nc" id="L37">    AmqpStartRequestForwarder(@Value(&quot;${owms.requests.tms.to.exchange-name}&quot;) String exchangeName, AmqpTemplate amqpTemplate) {</span>
+<span class="nc" id="L38">        this.exchangeName = exchangeName;</span>
+<span class="nc" id="L39">        this.amqpTemplate = amqpTemplate;</span>
+<span class="nc" id="L40">    }</span>
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void request(String pKey) {
-<span class="fc" id="L50">        StateChangeRequest req = new StateChangeRequest(pKey, TransportOrderState.STARTED.name());</span>
-<span class="fc" id="L51">        amqpTemplate.convertAndSend(exchangeName, &quot;request.state.change&quot;, req);</span>
-<span class="fc" id="L52">    }</span>
+<span class="nc" id="L47">        StateChangeRequest req = new StateChangeRequest(pKey, TransportOrderState.STARTED.name());</span>
+<span class="nc" id="L48">        amqpTemplate.convertAndSend(exchangeName, &quot;request.state.change&quot;, req);</span>
+<span class="nc" id="L49">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

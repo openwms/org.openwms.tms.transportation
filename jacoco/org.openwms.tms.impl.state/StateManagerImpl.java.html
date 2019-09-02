@@ -63,9 +63,9 @@ class StateManagerImpl implements StateManager {
 <span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if (newState == null) {</span>
 <span class="nc" id="L64">            throw new StateChangeException(translator.translate(TMSMessageCodes.TO_STATE_CHANGE_NULL_STATE), TMSMessageCodes.TO_STATE_CHANGE_NULL_STATE, transportOrder.getPersistentKey());</span>
         }
-<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        if (state.compareTo(newState) &gt; 0) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">        if (state.compareTo(newState) &gt; 0) {</span>
             // Don't allow to turn back the state!
-<span class="nc" id="L68">            throw new StateChangeException(translator.translate(TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED, transportOrder.getPersistentKey()), TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED, transportOrder.getPersistentKey());</span>
+<span class="fc" id="L68">            throw new StateChangeException(translator.translate(TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED, transportOrder.getPersistentKey()), TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED, transportOrder.getPersistentKey());</span>
         }
 <span class="pc bpc" id="L70" title="1 of 5 branches missed.">        switch (state) {</span>
             case CREATED:

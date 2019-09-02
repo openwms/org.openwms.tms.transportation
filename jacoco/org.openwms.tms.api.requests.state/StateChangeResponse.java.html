@@ -35,22 +35,22 @@ public final class StateChangeResponse implements Serializable {
     private MessageVO error;
 
     @ConstructorProperties({&quot;request&quot;, &quot;acceptedState&quot;, &quot;error&quot;})
-<span class="fc" id="L38">    public StateChangeResponse(StateChangeRequest request, String acceptedState, MessageVO error) {</span>
+<span class="nc" id="L38">    public StateChangeResponse(StateChangeRequest request, String acceptedState, MessageVO error) {</span>
         // Client API shall be framework neutral!
-<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        if (request == null) {</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        if (request == null) {</span>
 <span class="nc" id="L41">            throw new IllegalArgumentException(&quot;Argument request is null when creating a StateChangeResponse&quot;);</span>
         }
-<span class="fc" id="L43">        this.request = request;</span>
-<span class="fc" id="L44">        this.acceptedState = acceptedState;</span>
-<span class="fc" id="L45">        this.error = error;</span>
-<span class="fc" id="L46">    }</span>
+<span class="nc" id="L43">        this.request = request;</span>
+<span class="nc" id="L44">        this.acceptedState = acceptedState;</span>
+<span class="nc" id="L45">        this.error = error;</span>
+<span class="nc" id="L46">    }</span>
 
     public StateChangeRequest getRequest() {
-<span class="fc" id="L49">        return request;</span>
+<span class="nc" id="L49">        return request;</span>
     }
 
     public boolean hasRequest() {
-<span class="pc bpc" id="L53" title="1 of 2 branches missed.">        return this.request != null;</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        return this.request != null;</span>
     }
 
     public void setRequest(StateChangeRequest request) {
@@ -58,7 +58,7 @@ public final class StateChangeResponse implements Serializable {
 <span class="nc" id="L58">    }</span>
 
     public String getAcceptedState() {
-<span class="fc" id="L61">        return acceptedState;</span>
+<span class="nc" id="L61">        return acceptedState;</span>
     }
 
     public void setAcceptedState(String acceptedState) {
@@ -66,11 +66,11 @@ public final class StateChangeResponse implements Serializable {
 <span class="nc" id="L66">    }</span>
 
     public MessageVO getError() {
-<span class="fc" id="L69">        return error;</span>
+<span class="nc" id="L69">        return error;</span>
     }
 
     public boolean hasError() {
-<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        return this.error != null;</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        return this.error != null;</span>
     }
 
     public void setError(MessageVO error) {

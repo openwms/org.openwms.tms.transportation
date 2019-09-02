@@ -71,14 +71,14 @@ class Starter implements Startable {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = StateChangeException.class)
 <span class="fc" id="L73">    public void start(String pKey) {</span>
-<span class="fc" id="L74">        this.startInternal(repository.findByPKey(pKey).orElseThrow(() -&gt; new NotFoundException(format(&quot;No TransportOrder with pKey [%s] found&quot;, pKey))));</span>
+<span class="nc" id="L74">        this.startInternal(repository.findByPKey(pKey).orElseThrow(() -&gt; new NotFoundException(format(&quot;No TransportOrder with pKey [%s] found&quot;, pKey))));</span>
     }
 
     @Override
     public void startNext(String barcode) {
 <span class="fc" id="L79">        List&lt;TransportOrder&gt; transportOrders = repository.findByTransportUnitBKAndStates(barcode, TransportOrderState.INITIALIZED);</span>
-<span class="fc bfc" id="L80" title="All 2 branches covered.">        if (!transportOrders.isEmpty()) {</span>
-<span class="fc" id="L81">            triggerStart(transportOrders.get(0));</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if (!transportOrders.isEmpty()) {</span>
+<span class="nc" id="L81">            triggerStart(transportOrders.get(0));</span>
         }
 <span class="fc" id="L83">    }</span>
 
@@ -127,8 +127,8 @@ class Starter implements Startable {
         }
 
 <span class="fc" id="L129">        List&lt;TransportOrder&gt; others = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.STARTED);</span>
-<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if (!others.isEmpty()) {</span>
-<span class="nc" id="L131">            throw new StateChangeException(format(&quot;Cannot start TransportOrder for TransportUnit [%s] because [%s] TransportOrders already started [%s]&quot;, to.getTransportUnitBK(), others.size(), others.get(0).getPersistentKey()));</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        if (!others.isEmpty()) {</span>
+<span class="fc" id="L131">            throw new StateChangeException(format(&quot;Cannot start TransportOrder for TransportUnit [%s] because [%s] TransportOrders already started [%s]&quot;, to.getTransportUnitBK(), others.size(), others.get(0).getPersistentKey()));</span>
         }
 <span class="fc" id="L133">        to.changeState(TransportOrderState.STARTED);</span>
 <span class="fc" id="L134">        repository.save(to);</span>

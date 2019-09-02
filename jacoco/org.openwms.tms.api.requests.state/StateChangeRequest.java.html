@@ -31,13 +31,13 @@ public final class StateChangeRequest implements Serializable {
     private String requestedState;
 
     @ConstructorProperties({&quot;transportOrderPkey&quot;, &quot;requestedState&quot;})
-<span class="fc" id="L34">    public StateChangeRequest(String transportOrderPkey, String requestedState) {</span>
-<span class="fc" id="L35">        this.transportOrderPkey = transportOrderPkey;</span>
-<span class="fc" id="L36">        this.requestedState = requestedState;</span>
-<span class="fc" id="L37">    }</span>
+<span class="nc" id="L34">    public StateChangeRequest(String transportOrderPkey, String requestedState) {</span>
+<span class="nc" id="L35">        this.transportOrderPkey = transportOrderPkey;</span>
+<span class="nc" id="L36">        this.requestedState = requestedState;</span>
+<span class="nc" id="L37">    }</span>
 
     public String getTransportOrderPkey() {
-<span class="fc" id="L40">        return transportOrderPkey;</span>
+<span class="nc" id="L40">        return transportOrderPkey;</span>
     }
 
     public void setTransportOrderPkey(String transportOrderPkey) {
@@ -45,7 +45,7 @@ public final class StateChangeRequest implements Serializable {
 <span class="nc" id="L45">    }</span>
 
     public String getRequestedState() {
-<span class="fc" id="L48">        return requestedState;</span>
+<span class="nc" id="L48">        return requestedState;</span>
     }
 
     public void setRequestedState(String requestedState) {
