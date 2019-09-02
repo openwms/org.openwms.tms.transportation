@@ -17,7 +17,6 @@ package org.openwms.tms.impl.state;
 
 import org.ameba.annotation.Measured;
 import org.ameba.exception.ServiceLayerException;
-import org.openwms.core.SpringProfiles;
 import org.openwms.tms.Message;
 import org.openwms.tms.StateChangeException;
 import org.openwms.tms.TransportOrder;
@@ -35,7 +34,7 @@ import org.springframework.stereotype.Component;
  *
  * @author Heiko Scherrer
  */
-@Profile({SpringProfiles.ASYNCHRONOUS_PROFILE})
+@Profile({"DISTRIBUTED"})
 @Component
 class AmqpStateListener {
 

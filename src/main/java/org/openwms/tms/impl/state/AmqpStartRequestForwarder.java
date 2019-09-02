@@ -15,12 +15,10 @@
  */
 package org.openwms.tms.impl.state;
 
-import org.openwms.core.SpringProfiles;
 import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.api.requests.state.StateChangeRequest;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -29,8 +27,7 @@ import org.springframework.stereotype.Component;
  *
  * @author Heiko Scherrer
  */
-@Profile({SpringProfiles.ASYNCHRONOUS_PROFILE})
-@Lazy
+@Profile({"DISTRIBUTED"})
 @Component
 class AmqpStartRequestForwarder implements ExternalStarter {
 

@@ -15,7 +15,6 @@
  */
 package org.openwms.tms;
 
-import org.openwms.core.SpringProfiles;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -31,7 +30,7 @@ import org.springframework.context.annotation.Profile;
  *
  * @author Heiko Scherrer
  */
-@Profile({SpringProfiles.ASYNCHRONOUS_PROFILE})
+@Profile({"ASYNCHRONOUS && !DISTRIBUTED"})
 @Configuration
 class TestConfiguration {
 
