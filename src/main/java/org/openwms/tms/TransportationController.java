@@ -16,9 +16,7 @@
 package org.openwms.tms;
 
 import org.ameba.annotation.Measured;
-import org.ameba.exception.BehaviorAwareException;
-import org.ameba.exception.BusinessRuntimeException;
-import org.ameba.http.Response;
+import org.openwms.core.http.AbstractWebController;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.openwms.tms.api.TMSApi;
 import org.openwms.tms.api.TransportOrderVO;
@@ -29,7 +27,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,7 +48,7 @@ import java.util.List;
  */
 @Profile("!INMEM")
 @RestController
-class TransportationController {
+class TransportationController extends AbstractWebController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationController.class);
     private final TransportationService<TransportOrder> service;
@@ -112,42 +109,6 @@ class TransportationController {
         } catch (Exception ex) {
             return ResponseEntity.badRequest().build();
         }
-    }
-
-    @ExceptionHandler(BusinessRuntimeException.class)
-    public ResponseEntity<Response> handleNotFound(BusinessRuntimeException ex) {
-        if (ex instanceof BehaviorAwareException) {
-            BehaviorAwareException bae = (BehaviorAwareException) ex;
-            return new ResponseEntity<>(
-                    Response.newBuilder()
-                            .withMessage(ex.getMessage())
-                            .withMessageKey(bae.getMessageKey())
-                            .withHttpStatus(bae.getStatus().toString())
-                            .withObj(bae.getData())
-                            .build(),
-                    bae.getStatus()
-            );
-        }
-        return new ResponseEntity<>(
-                Response.newBuilder()
-                        .withMessage(ex.getMessage())
-                        .withMessageKey(ex.getMessageKey())
-                        .withHttpStatus(HttpStatus.INTERNAL_SERVER_ERROR.toString())
-                        .withObj(new String[]{ex.getMessageKey()})
-                        .build(),
-                HttpStatus.INTERNAL_SERVER_ERROR
-        );
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Response> handleBadRequests(IllegalArgumentException ex) {
-        return new ResponseEntity<>(
-                Response.newBuilder()
-                        .withMessage(ex.getMessage())
-                        .withHttpStatus(HttpStatus.BAD_REQUEST.toString())
-                        .build(),
-                HttpStatus.BAD_REQUEST
-        );
     }
 
     private String getCreatedResourceURI(HttpServletRequest req, String objId) {
