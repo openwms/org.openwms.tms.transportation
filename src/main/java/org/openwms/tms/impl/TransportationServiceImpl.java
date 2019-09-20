@@ -172,7 +172,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
                     LOGGER.debug("Trying to turn TransportOrder [{}] into state [{}]", transportOrder.getPk(), state);
                 }
                 transportOrder.changeState(state);
-                ctx.publishEvent(new TransportServiceEvent(transportOrder.getPk(), TransportServiceEvent.TYPE.of(state)));
+                ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.of(state)));
             } catch (StateChangeException sce) {
                 LOGGER.error("Could not turn TransportOrder: [{}] into [{}], because of [{}]", transportOrder.getPk(), state, sce.getMessage());
                 Message problem = new Message.Builder().withMessage(sce.getMessage()).build();

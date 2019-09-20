@@ -35,6 +35,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import javax.validation.ConstraintViolation;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
+import java.util.Arrays;
 import java.util.Set;
 
 import static java.lang.String.format;
@@ -73,7 +74,7 @@ class TransportOrderCommandHandler {
                     break;
                 case FINISH:
                     validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);
-                    service.update(mapper.map(command.getUpdateTransportOrder(), TransportOrder.class));
+                    service.change(TransportOrderState.FINISHED, Arrays.asList(command.getUpdateTransportOrder().getpKey()));
                     break;
                 case CANCEL_ALL:
                     UpdateTransportOrderVO vo = command.getUpdateTransportOrder();
