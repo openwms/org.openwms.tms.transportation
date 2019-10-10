@@ -68,7 +68,7 @@ public interface TransportOrderApi {
      * @param barcode The business identifier of the TransportUnit
      * @param target Either a Location of a LocationGroup
      */
-    @PostMapping(TMSApi.TRANSPORT_ORDERS)
+    @PostMapping(value = TMSApi.TRANSPORT_ORDERS, params = {"barcode", "target"})
     @ResponseStatus(HttpStatus.CREATED)
     void createTO(
             @RequestParam(value = "barcode") String barcode,
@@ -83,7 +83,7 @@ public interface TransportOrderApi {
      * @param target Either a Location of a LocationGroup
      * @param priority The priority of the TransportOrder
      */
-    @PostMapping(TMSApi.TRANSPORT_ORDERS)
+    @PostMapping(value = TMSApi.TRANSPORT_ORDERS, params = {"barcode", "target"})
     @ResponseStatus(HttpStatus.CREATED)
     void createTO(
             @RequestParam(value = "barcode") String barcode,
