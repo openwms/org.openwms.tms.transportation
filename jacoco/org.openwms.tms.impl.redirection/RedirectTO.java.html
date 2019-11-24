@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.redirection;
 
+import org.openwms.tms.DeniedException;
 import org.openwms.tms.Message;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.impl.AddProblem;
@@ -35,15 +36,15 @@ import java.util.List;
 @Component
 class RedirectTO implements UpdateFunction {
 
-<span class="fc" id="L38">    private static final Logger LOGGER = LoggerFactory.getLogger(RedirectTO.class);</span>
+<span class="fc" id="L39">    private static final Logger LOGGER = LoggerFactory.getLogger(RedirectTO.class);</span>
     /** 0..* voters, can be overridden and extended with XML configuration. So far we define only one (default) voter directly. */
     private final List&lt;DecisionVoter&lt;RedirectVote&gt;&gt; redirectVoters;
     private final AddProblem addProblem;
 
-<span class="fc" id="L43">    public RedirectTO(@Autowired(required = false) List&lt;DecisionVoter&lt;RedirectVote&gt;&gt; redirectVoters, AddProblem addProblem) {</span>
-<span class="fc" id="L44">        this.redirectVoters = redirectVoters;</span>
-<span class="fc" id="L45">        this.addProblem = addProblem;</span>
-<span class="fc" id="L46">    }</span>
+<span class="fc" id="L44">    public RedirectTO(@Autowired(required = false) List&lt;DecisionVoter&lt;RedirectVote&gt;&gt; redirectVoters, AddProblem addProblem) {</span>
+<span class="fc" id="L45">        this.redirectVoters = redirectVoters;</span>
+<span class="fc" id="L46">        this.addProblem = addProblem;</span>
+<span class="fc" id="L47">    }</span>
 
     /**
      * {@inheritDoc}
@@ -51,33 +52,33 @@ class RedirectTO implements UpdateFunction {
     @Override
     public void update(TransportOrder saved, TransportOrder toUpdate) {
 
-<span class="pc bpc" id="L54" title="2 of 4 branches missed.">        if (null != redirectVoters &amp;&amp; differentTarget(saved, toUpdate)) {</span>
-<span class="pc bpc" id="L55" title="1 of 2 branches missed.">            if (LOGGER.isDebugEnabled()) {</span>
-<span class="fc" id="L56">                LOGGER.debug(&quot;Redirecting TO with pKey [{}] to targetLocation [{}] and targetLocationGroup [{}]&quot;, saved.getPersistentKey(), toUpdate.getTargetLocation(), toUpdate.getTargetLocationGroup());</span>
+<span class="pc bpc" id="L55" title="2 of 4 branches missed.">        if (null != redirectVoters &amp;&amp; differentTarget(saved, toUpdate)) {</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">            if (LOGGER.isDebugEnabled()) {</span>
+<span class="fc" id="L57">                LOGGER.debug(&quot;Redirecting TO with pKey [{}] to targetLocation [{}] and targetLocationGroup [{}]&quot;, saved.getPersistentKey(), toUpdate.getTargetLocation(), toUpdate.getTargetLocationGroup());</span>
             }
-<span class="fc" id="L58">            RedirectVote rv = new RedirectVote(toUpdate.getTargetLocation(), toUpdate.getTargetLocationGroup(), saved);</span>
+<span class="fc" id="L59">            RedirectVote rv = new RedirectVote(toUpdate.getTargetLocation(), toUpdate.getTargetLocationGroup(), saved);</span>
             // CHECK [openwms]: 13/07/16 the concept of a voter is misused in that a voter changes the state of a TO
-<span class="fc bfc" id="L60" title="All 2 branches covered.">            for (DecisionVoter&lt;RedirectVote&gt; voter : redirectVoters) {</span>
-<span class="fc" id="L61">                voter.voteFor(rv);</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">            for (DecisionVoter&lt;RedirectVote&gt; voter : redirectVoters) {</span>
+<span class="fc" id="L62">                voter.voteFor(rv);</span>
             }
 
-<span class="fc bfc" id="L64" title="All 2 branches covered.">            if (rv.hasMessages()) {</span>
-<span class="fc" id="L65">                rv.getMessages().forEach(m -&gt; addProblem.add(new Message.Builder().withMessage(m.getMessage()).build(), saved));</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">            if (rv.hasMessages()) {</span>
+<span class="fc" id="L66">                rv.getMessages().forEach(m -&gt; addProblem.add(new Message.Builder().withMessage(m.getMessage()).build(), saved));</span>
             }
 
-<span class="fc bfc" id="L68" title="All 2 branches covered.">            if (!rv.completed()) {</span>
-<span class="fc" id="L69">                throw new DeniedException(&quot;TransportOrder couldn't be redirected to a new Target&quot;);</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            if (!rv.completed()) {</span>
+<span class="fc" id="L70">                throw DeniedException.with(&quot;TransportOrder couldn't be redirected to a new Target&quot;);</span>
             }
         }
-<span class="fc" id="L72">    }</span>
+<span class="fc" id="L73">    }</span>
 
     private boolean differentTarget(TransportOrder saved, TransportOrder toUpdate) {
-<span class="pc" id="L75">        return (</span>
-<span class="pc bpc" id="L76" title="5 of 6 branches missed.">            saved.hasTargetLocationGroup() &amp;&amp; !saved.getTargetLocationGroup().equals(toUpdate.getTargetLocationGroup()) &amp;&amp; toUpdate.getTargetLocationGroup() != null ||</span>
-<span class="pc bpc" id="L77" title="2 of 4 branches missed.">            !saved.hasTargetLocationGroup() &amp;&amp; toUpdate.hasTargetLocationGroup() ||</span>
-<span class="nc bnc" id="L78" title="All 6 branches missed.">            saved.hasTargetLocation() &amp;&amp; !saved.getTargetLocation().equals(toUpdate.getTargetLocation()) &amp;&amp; toUpdate.getTargetLocation() != null ||</span>
-<span class="nc bnc" id="L79" title="All 4 branches missed.">            !saved.hasTargetLocation() &amp;&amp; toUpdate.hasTargetLocation()</span>
+<span class="pc" id="L76">        return (</span>
+<span class="pc bpc" id="L77" title="5 of 6 branches missed.">            saved.hasTargetLocationGroup() &amp;&amp; !saved.getTargetLocationGroup().equals(toUpdate.getTargetLocationGroup()) &amp;&amp; toUpdate.getTargetLocationGroup() != null ||</span>
+<span class="pc bpc" id="L78" title="2 of 4 branches missed.">            !saved.hasTargetLocationGroup() &amp;&amp; toUpdate.hasTargetLocationGroup() ||</span>
+<span class="nc bnc" id="L79" title="All 6 branches missed.">            saved.hasTargetLocation() &amp;&amp; !saved.getTargetLocation().equals(toUpdate.getTargetLocation()) &amp;&amp; toUpdate.getTargetLocation() != null ||</span>
+<span class="nc bnc" id="L80" title="All 4 branches missed.">            !saved.hasTargetLocation() &amp;&amp; toUpdate.hasTargetLocation()</span>
         );
     }
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

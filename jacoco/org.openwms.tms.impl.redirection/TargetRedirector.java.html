@@ -17,6 +17,7 @@ package org.openwms.tms.impl.redirection;
 
 import org.ameba.i18n.Translator;
 import org.openwms.common.location.api.TargetVO;
+import org.openwms.tms.DeniedException;
 import org.openwms.tms.Message;
 import org.openwms.tms.TMSMessageCodes;
 import org.slf4j.Logger;
@@ -30,11 +31,11 @@ import java.util.Optional;
  *
  * @author &lt;a href=&quot;mailto:scherrer@openwms.org&quot;&gt;Heiko Scherrer&lt;/a&gt;
  */
-<span class="fc" id="L33">abstract class TargetRedirector&lt;T extends TargetVO&gt; implements DecisionVoter&lt;RedirectVote&gt; {</span>
+<span class="fc" id="L34">abstract class TargetRedirector&lt;T extends TargetVO&gt; implements DecisionVoter&lt;RedirectVote&gt; {</span>
 
     @Autowired
     private Translator translator;
-<span class="fc" id="L37">    private static final Logger LOGGER = LoggerFactory.getLogger(TargetRedirector.class);</span>
+<span class="fc" id="L38">    private static final Logger LOGGER = LoggerFactory.getLogger(TargetRedirector.class);</span>
 
     /**
      * The implementation has to vote for a certain vote on particular rules that are implemented by the voter.
@@ -44,18 +45,18 @@ import java.util.Optional;
      */
     @Override
     public void voteFor(RedirectVote vote) throws DeniedException {
-<span class="fc" id="L47">        Optional&lt;T&gt; optionalTarget = resolveTarget(vote);</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">        if (optionalTarget.isPresent()) {</span>
-<span class="fc bfc" id="L49" title="All 2 branches covered.">            if (isTargetAvailable(optionalTarget.get())) {</span>
-<span class="fc" id="L50">                assignTarget(vote);</span>
-<span class="fc" id="L51">                vote.complete();</span>
-<span class="fc" id="L52">            } else {</span>
-<span class="fc" id="L53">                String msg = translator.translate(TMSMessageCodes.TARGET_BLOCKED_MSG, vote.getTargetLocation(), vote.getTargetLocationGroup(), vote.getTransportOrder().getPersistentKey());</span>
-<span class="fc" id="L54">                vote.addMessage(new Message.Builder().withMessage(msg).withMessageNo(TMSMessageCodes.TARGET_BLOCKED_MSG).build());</span>
-<span class="fc" id="L55">                LOGGER.info(msg);</span>
+<span class="fc" id="L48">        Optional&lt;T&gt; optionalTarget = resolveTarget(vote);</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">        if (optionalTarget.isPresent()) {</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">            if (isTargetAvailable(optionalTarget.get())) {</span>
+<span class="fc" id="L51">                assignTarget(vote);</span>
+<span class="fc" id="L52">                vote.complete();</span>
+<span class="fc" id="L53">            } else {</span>
+<span class="fc" id="L54">                String msg = translator.translate(TMSMessageCodes.TARGET_BLOCKED_MSG, vote.getTargetLocation(), vote.getTargetLocationGroup(), vote.getTransportOrder().getPersistentKey());</span>
+<span class="fc" id="L55">                vote.addMessage(new Message.Builder().withMessage(msg).withMessageNo(TMSMessageCodes.TARGET_BLOCKED_MSG).build());</span>
+<span class="fc" id="L56">                LOGGER.info(msg);</span>
             }
         }
-<span class="fc" id="L58">    }</span>
+<span class="fc" id="L59">    }</span>
 
     protected abstract boolean isTargetAvailable(T target);
 
@@ -63,4 +64,4 @@ import java.util.Optional;
 
     protected abstract void assignTarget(RedirectVote vote);
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
