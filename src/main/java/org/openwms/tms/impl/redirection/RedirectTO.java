@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.redirection;
 
+import org.openwms.tms.DeniedException;
 import org.openwms.tms.Message;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.impl.AddProblem;
@@ -66,7 +67,7 @@ class RedirectTO implements UpdateFunction {
             }
 
             if (!rv.completed()) {
-                throw new DeniedException("TransportOrder couldn't be redirected to a new Target");
+                throw DeniedException.with("TransportOrder couldn't be redirected to a new Target");
             }
         }
     }

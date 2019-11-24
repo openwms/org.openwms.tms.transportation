@@ -16,6 +16,7 @@
 package org.openwms.tms;
 
 import org.ameba.annotation.Measured;
+import org.ameba.http.Response;
 import org.openwms.core.http.AbstractWebController;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.openwms.tms.api.TMSApi;
@@ -27,6 +28,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,6 +80,7 @@ class TransportationController extends AbstractWebController {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create TransportOrder with Barcode [{}] and Target [{}] and Priority [{}]", barcode, target, priority);
         }
+        PriorityLevel.of(priority); // validate early here!
         TransportOrder to = service.create(barcode, target, priority);
         resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
     }
@@ -89,6 +92,7 @@ class TransportationController extends AbstractWebController {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create TransportOrder [{}]", vo);
         }
+        PriorityLevel.of(vo.getPriority()); // validate early here!
         TransportOrder to = service.create(vo.getBarcode(), vo.getTarget(), vo.getPriority());
         resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
     }
@@ -109,6 +113,18 @@ class TransportationController extends AbstractWebController {
         } catch (Exception ex) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @ExceptionHandler(DeniedException.class)
+    protected ResponseEntity<Response> handleDeniedException(DeniedException bae) {
+        return new ResponseEntity<>(Response.newBuilder()
+                .withMessage(bae.getMessage())
+                .withMessageKey(bae.getMessageKey())
+                .withHttpStatus(String.valueOf(HttpStatus.CONFLICT.value()))
+                .withObj(bae.getData())
+                .build(),
+                HttpStatus.CONFLICT
+        );
     }
 
     private String getCreatedResourceURI(HttpServletRequest req, String objId) {

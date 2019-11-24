@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.openwms</groupId>
         <artifactId>org.openwms.parent</artifactId>
-        <version>10</version>
+        <version>14</version>
         <relativePath/>
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
@@ -64,9 +64,10 @@
     </ciManagement>
 
     <properties>
-        <common-service.version>1.4.0-SNAPSHOT</common-service.version>
-        <postgresql.version>42.2.5</postgresql.version> <!-- Keep in sync with Boot -->
+        <common-service.version>1.5.0</common-service.version>
+        <core.version>1.6.0</core.version>
         <skipTests>false</skipTests>
+        <spring-cloud-dependencies.version>Hoxton.RC2</spring-cloud-dependencies.version>
     </properties>
 
     <reporting>
@@ -100,7 +101,7 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>io.starter</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
             </plugin>
             <plugin>
@@ -137,81 +138,13 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>schemagen</id>
-            <properties>
-                <schemaspy-maven-plugin.version>5.1.0</schemaspy-maven-plugin.version>
-            </properties>
-            <reporting>
-                <plugins>
-                    <plugin>
-                        <groupId>nl.geodienstencentrum.maven</groupId>
-                        <artifactId>schemaspy-maven-plugin</artifactId>
-                        <configuration>
-                            <databaseType>pgsql</databaseType>
-                            <database>testdb</database>
-                            <host>localhost</host>
-                            <port>5432</port>
-                            <user>karl</user>
-                            <schema>public</schema>
-                            <password>karl</password>
-                            <pathToDrivers>/home/travis/.m2/repository/org/postgresql/postgresql/${postgresql.version}/postgresql-${postgresql.version}.jar</pathToDrivers>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </reporting>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <artifactId>maven-surefire-report-plugin</artifactId>
-                            <version>${maven-surefire-report-plugin.version}</version>
-                            <configuration>
-                                <aggregate>false</aggregate>
-                            </configuration>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>org.postgresql</groupId>
-                                    <artifactId>postgresql</artifactId>
-                                    <version>${postgresql.version}</version>
-                                </dependency>
-                            </dependencies>
-                        </plugin>
-                        <plugin>
-                            <groupId>nl.geodienstencentrum.maven</groupId>
-                            <artifactId>schemaspy-maven-plugin</artifactId>
-                            <version>${schemaspy-maven-plugin.version}</version>
-                            <dependencies>
-                                <dependency>
-                                    <groupId>org.postgresql</groupId>
-                                    <artifactId>postgresql</artifactId>
-                                    <version>${postgresql.version}</version>
-                                </dependency>
-                            </dependencies>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-                <plugins>
-                    <plugin>
-                        <groupId>nl.geodienstencentrum.maven</groupId>
-                        <artifactId>schemaspy-maven-plugin</artifactId>
-                        <version>${schemaspy-maven-plugin.version}</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.postgresql</groupId>
-                                <artifactId>postgresql</artifactId>
-                                <version>${postgresql.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.openwms</groupId>
+                <artifactId>org.openwms.core.util</artifactId>
+                <version>${core.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.openwms</groupId>
                 <artifactId>org.openwms.common.service</artifactId>
@@ -244,46 +177,61 @@
         <!-- Project Dependencies -->
         <dependency>
             <groupId>org.openwms</groupId>
+            <artifactId>org.openwms.core.util</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.openwms</groupId>
             <artifactId>org.openwms.common.service</artifactId>
             <classifier>client</classifier>
+            <optional>true</optional>
         </dependency>
 
         <!-- Spring Dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-hateoas</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <!-- Several versions of Guava used internally, exclude all -->
@@ -295,6 +243,7 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <!-- Take the newer patch from actuator -->
@@ -308,71 +257,106 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aspects</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- 3rd party dependencies -->
         <dependency>
             <groupId>io.interface21</groupId>
             <artifactId>ameba-lib</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.jsonpath</groupId>
+            <artifactId>json-path</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <!-- Required to use PATCH -->
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-httpclient</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jdk8</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.jolokia</groupId>
             <artifactId>jolokia-core</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <!-- Required by eureka-client -->
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.hystrix</groupId>
+            <artifactId>hystrix-javanica</artifactId>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hdrhistogram</groupId>
+                    <artifactId>HdrHistogram</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
             <scope>runtime</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>net.sf.dozer</groupId>
             <artifactId>dozer</artifactId>
             <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
 
         <!-- Test dependencies -->
@@ -403,11 +387,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test</artifactId>
             <scope>test</scope>
@@ -427,26 +406,12 @@
             <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
             <!-- We use the server for tests -->
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.tngtech.archunit</groupId>
-            <artifactId>archunit-junit5-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.tngtech.archunit</groupId>
-            <artifactId>archunit-junit5-engine</artifactId>
-            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.woodstox</groupId>
+                    <artifactId>woodstox-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
@@ -461,6 +426,25 @@
             <releases>
                 <enabled>false</enabled>
             </releases>
+        </repository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Staging Repository</name>
+            <url>https://oss.sonatype.org/content/groups/staging/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/libs-milestone-local</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
 </project>

@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -326,7 +325,7 @@ class ChangeStateDocumentation extends TransportationTestBase {
         // test ...
 //        vo.setState(TransportOrderState.ONFAILURE.toString());
         mockMvc.perform(
-                patch(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
+                post(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
                         .param("state", TransportOrderState.ONFAILURE.toString())        )
                 .andExpect(status().isBadRequest())
                 .andDo(document("to-patch-state-change-a-canceled"))
