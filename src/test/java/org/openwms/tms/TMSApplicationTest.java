@@ -18,6 +18,7 @@ package org.openwms.tms;
 import org.ameba.test.categories.SpringTestSupport;
 import org.openwms.tms.app.AllConfigurations;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -34,12 +35,14 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@EnableSpringConfigured
 @Inherited
 @SpringTestSupport
 @SpringBootTest(classes = {TransportationRunner.class, AllConfigurations.class}, properties = {
         "spring.jpa.show-sql=false",
         "spring.main.banner-mode=OFF",
-        "spring.jackson.serialization.INDENT_OUTPUT=true"
+        "spring.jackson.serialization.INDENT_OUTPUT=true",
+        "spring.main.allow-bean-definition-overriding=true"
 })
 public @interface TMSApplicationTest {
 }

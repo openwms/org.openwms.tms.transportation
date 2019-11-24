@@ -16,14 +16,28 @@ spring:
       name: user
   jpa:
     show-sql: false
-    open-in-view: true
+    open-in-view: false
     database: h2
     properties:
       hibernate:
         hbm2ddl:
           import_files: transportation.sql
+      org:
+        hibernate:
+          envers:
+            audit_strategy: org.hibernate.envers.strategy.DefaultAuditStrategy
+            audit_table_suffix: _LOG
+            revision_field_name: C_REV
+            revision_type_field_name: C_REV_TYPE
+            audit_strategy_validity_end_rev_field_name: C_REV_END
+            audit_strategy_validity_revend_timestamp_field_name: C_REVEND_TSTMP
   jackson:
     date-format: yyyy-MM-dd'T'HH:mm:ss.SSSZ
+  main:
+    allow-bean-definition-overriding: true
+  zipkin:
+    sender:
+      type: web
 
 feign:
   httpclient:
@@ -71,7 +85,9 @@ management:
       enabled: false
 
 logging:
-  file: "/tmp/owms/BOOT-TMS-Transportation.log"
+  file:
+    name: BOOT-TMS-Transportation.log
+    path: "/tmp/owms"
 
 ---
 spring:
@@ -119,5 +135,5 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql:testdb
-    username: karl
-    password: karl
+    username: KARL
+    password: KARL

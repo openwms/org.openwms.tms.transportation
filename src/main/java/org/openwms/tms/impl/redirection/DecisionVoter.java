@@ -15,6 +15,8 @@
  */
 package org.openwms.tms.impl.redirection;
 
+import org.openwms.tms.DeniedException;
+
 /**
  * A DecisionVoter is asked to vote for a business action.
  *

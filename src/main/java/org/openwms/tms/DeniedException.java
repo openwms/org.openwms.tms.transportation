@@ -13,46 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openwms.tms.impl.redirection;
-
+package org.openwms.tms;
 
 import org.ameba.exception.ServiceLayerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * A DeniedException is thrown by a {@link DecisionVoter}s in case a business action is not allowed to be executed.
+ * A DeniedException is thrown by a {@code DecisionVoter}s in case a business action is not allowed to be executed.
  * 
- * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
+ * @author Heiko Scherrer
  */
 @SuppressWarnings("serial")
 @ResponseStatus(HttpStatus.CONFLICT)
 public class DeniedException extends ServiceLayerException {
 
-    /**
-     * Create a new DeniedException.
-     * 
-     * @param message
-     *            Detail message
-     */
-    public DeniedException(String message) {
+    private DeniedException(String message) {
         super(message);
     }
 
     /**
      * Create a new DeniedException.
      * 
-     * @param message
-     *            Detail message
-     * @param cause
-     *            Root cause
+     * @param message Detail message
+     * @param cause Root cause
      */
     public DeniedException(String message, Throwable cause) {
         super(message, cause);
     }
 
-
-    public static final DeniedException with(String msg) {
-        return new DeniedException(msg);
+    /**
+     * Factory method to create one with a message text.
+     *
+     * @param message Detail message
+     * @return A new instance
+     */
+    public static final DeniedException with(String message) {
+        return new DeniedException(message);
     }
 }
