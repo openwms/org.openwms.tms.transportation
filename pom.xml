@@ -10,7 +10,7 @@
         <relativePath/>
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.0</version>
     <name>OpenWMS.org TMS: Transportation Services</name>
     <url>https://openwms.github.io/org.openwms.tms.transportation/index.html</url>
 
@@ -22,7 +22,7 @@
     <distributionManagement>
         <site>
             <id>site</id>
-            <url>scm:git:git@github.com:openwms/${project.artifactId}.git</url>
+            <url>scm:git:git@github.com:openwms/org.openwms.tms.transportation.git</url>
         </site>
     </distributionManagement>
 
