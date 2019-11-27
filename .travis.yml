@@ -1,11 +1,12 @@
 language: java
 
+dist: trusty
+
 jdk:
   - openjdk11
 
-dist: trusty
-
-sudo: true
+env:
+  - MAVEN_OPTS=-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
 cache:
   directories:
@@ -19,6 +20,8 @@ services:
 
 before_install:
   - "sudo apt-get install graphviz"
+
+install: true
 
 before_script:
   - psql -c "CREATE DATABASE testdb;" -U postgres
