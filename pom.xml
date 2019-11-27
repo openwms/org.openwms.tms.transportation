@@ -415,6 +415,16 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>schemagen</id>
+            <properties>
+                <surefireArgs>-Dspring.profiles.active=ASYNCHRONOUS,TEST,TESTPG</surefireArgs>
+                <schemagen.outputDirectory>${project.build.directory}/site/${project.version}</schemagen.outputDirectory>
+            </properties>
+        </profile>
+    </profiles>
+
     <repositories>
         <repository>
             <id>sonatype-nexus-snapshots</id>
