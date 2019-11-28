@@ -65,7 +65,7 @@
         <common-service.version>1.5.0</common-service.version>
         <core.version>1.6.0</core.version>
         <skipTests>false</skipTests>
-        <spring-cloud-dependencies.version>Hoxton.RC2</spring-cloud-dependencies.version>
+        <spring-cloud-dependencies.version>Hoxton.RELEASE</spring-cloud-dependencies.version>
     </properties>
 
     <reporting>
@@ -445,14 +445,6 @@
             <releases>
                 <enabled>true</enabled>
             </releases>
-        </repository>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/libs-milestone-local</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
         </repository>
     </repositories>
 </project>
