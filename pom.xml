@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0-SNAPSHOT</version>
     <name>OpenWMS.org TMS: Transportation Services</name>
     <url>https://openwms.github.io/org.openwms.tms.transportation/index.html</url>
 
@@ -62,8 +62,8 @@
     </ciManagement>
 
     <properties>
-        <common-service.version>1.5.0</common-service.version>
-        <core.version>1.6.0</core.version>
+        <common-service.version>1.6.0-SNAPSHOT</common-service.version>
+        <core.version>1.7.0-SNAPSHOT</core.version>
         <skipTests>false</skipTests>
         <spring-cloud-dependencies.version>Hoxton.RELEASE</spring-cloud-dependencies.version>
     </properties>
