@@ -10,6 +10,8 @@ spring:
       fail-fast: true # true means retry
       retry:
         max-attempts: 120
+    discovery:
+      enabled: false
   security:
     user:
       password: sa
@@ -91,7 +93,7 @@ logging:
 
 ---
 spring:
-  profiles: CLOUD
+  profiles: HEROKU
   main:
     banner-mode: "OFF"
   cloud:
@@ -112,6 +114,23 @@ eureka:
     statusPageUrl: ${owms.srv.protocol}://${owms.srv.hostname}:${server.port}/actuator/info
     healthCheckUrl: ${owms.srv.protocol}://${owms.srv.hostname}:${server.port}/actuator/health
     homePageUrl: ${owms.srv.protocol}://${owms.srv.hostname}:${server.port}/actuator/
+
+---
+spring:
+  profiles: ASYNCHRONOUS
+  cloud:
+    config:
+      discovery:
+        enabled: true
+      enabled: true
+      fail-fast: true # true means retry
+    discovery:
+      enabled: true
+
+management:
+  health:
+    rabbit:
+      enabled: true
 
 ---
 spring:

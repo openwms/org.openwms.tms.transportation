@@ -63,7 +63,9 @@ class TransportationController extends AbstractWebController {
 
     @Measured
     @GetMapping(value = TMSApi.TRANSPORT_ORDERS, params = {"barcode", "state"})
-    public List<TransportOrderVO> findBy(@RequestParam String barcode, @RequestParam String state) {
+    public List<TransportOrderVO> findBy(
+            @RequestParam String barcode,
+            @RequestParam String state) {
         return transportationFacade.findBy(barcode, state);
     }
 
@@ -76,11 +78,17 @@ class TransportationController extends AbstractWebController {
     @Measured
     @PostMapping(value = TMSApi.TRANSPORT_ORDERS, params = {"barcode", "target"})
     @ResponseStatus(HttpStatus.CREATED)
-    public void createTO(@RequestParam(value = "barcode") String barcode, @RequestParam(value = "target") String target, @RequestParam(value = "priority", required = false) String priority, HttpServletRequest req, HttpServletResponse resp) {
+    public void createTO(
+            @RequestParam(value = "barcode") String barcode,
+            @RequestParam(value = "target") String target,
+            @RequestParam(value = "priority", required = false) String priority,
+            HttpServletRequest req, HttpServletResponse resp) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create TransportOrder with Barcode [{}] and Target [{}] and Priority [{}]", barcode, target, priority);
         }
-        PriorityLevel.of(priority); // validate early here!
+        if (priority != null && !priority.isEmpty()) {
+            PriorityLevel.of(priority); // validate early here!
+        }
         TransportOrder to = service.create(barcode, target, priority);
         resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
     }
@@ -100,13 +108,17 @@ class TransportationController extends AbstractWebController {
     @Measured
     @PatchMapping(TMSApi.TRANSPORT_ORDERS + "/{pKey}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateTO(@PathVariable(value = "pKey") String pKey, @RequestBody UpdateTransportOrderVO vo) {
+    public void updateTO(
+            @PathVariable(value = "pKey") String pKey,
+            @RequestBody UpdateTransportOrderVO vo) {
         transportationFacade.updateTO(pKey, vo);
     }
 
     @Measured
     @PostMapping(value = TMSApi.TRANSPORT_ORDERS + "/{pKey}", params = {"state"})
-    public ResponseEntity<Void> changeState(@PathVariable(value = "pKey") String pKey, @RequestParam(value = "state") String state) {
+    public ResponseEntity<Void> changeState(
+            @PathVariable(value = "pKey") String pKey,
+            @RequestParam(value = "state") String state) {
         try {
             transportationFacade.changeState(pKey, state);
             return ResponseEntity.noContent().build();
