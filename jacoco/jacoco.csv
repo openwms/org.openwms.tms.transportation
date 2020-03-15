@@ -58,7 +58,7 @@ OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,AllConfigurations,0
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationModuleConfiguration.new AbstractTranslator() {...},0,10,0,0,0,2,0,2,0,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationStandaloneConfiguration,0,3,0,0,0,1,0,1,0,1
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationFeignConfiguration,0,3,0,0,0,1,0,1,0,1
-OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationModuleConfiguration,0,91,0,0,0,23,0,9,0,9
+OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationModuleConfiguration,0,108,0,0,0,24,0,11,0,11
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationAsyncConfiguration,9,110,0,0,3,32,1,14,1,14
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationSecurityConfiguration,0,14,0,0,0,6,0,2,0,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.events,TransportOrderEventPropagator,0,35,0,2,0,10,0,3,0,2
