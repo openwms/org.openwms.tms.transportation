@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Heiko Scherrer
+ * Copyright 2005-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.ameba.IDGenerator;
 import org.ameba.JdkIDGenerator;
 import org.ameba.annotation.EnableAspects;
@@ -29,6 +30,8 @@ import org.ameba.i18n.Translator;
 import org.ameba.mapping.BeanMapper;
 import org.ameba.mapping.DozerMapperImpl;
 import org.openwms.tms.impl.TransportOrderRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.MessageSource;
@@ -49,7 +52,7 @@ import java.util.Locale;
 /**
  * A TransportationModuleConfiguration.
  *
- * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
+ * @author Heiko Scherrer
  */
 @Configuration
 @EnableCaching
@@ -128,5 +131,10 @@ class TransportationModuleConfiguration {
         FilterRegistrationBean frb = new FilterRegistrationBean(new RequestIDFilter(uuidGenerator));
         frb.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
         return frb;
+    }
+
+    @Bean
+    MeterRegistryCustomizer<MeterRegistry> metricsCommonTags(@Value("${spring.application.name}") String applicationName) {
+        return registry -> registry.config().commonTags("application", applicationName);
     }
 }
