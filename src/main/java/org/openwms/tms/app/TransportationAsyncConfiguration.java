@@ -15,12 +15,9 @@
  */
 package org.openwms.tms.app;
 
-import org.ameba.mapping.BeanMapper;
-import org.openwms.common.transport.TransportUnitEventPropagator;
 import org.openwms.core.SpringProfiles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -83,11 +80,7 @@ class TransportationAsyncConfiguration {
         return rabbitTemplate;
     }
 
-    @Bean
-    TransportUnitEventPropagator transportUnitEventPropagator(AmqpTemplate amqpTemplate, @Value("${owms.events.common.tu.exchange-name}") String exchangeName, BeanMapper beanMapper) {
-        return new TransportUnitEventPropagator(amqpTemplate, exchangeName, beanMapper);
-    }
-
+    /* Commands TMS -> COMMON */
     @Bean
     TopicExchange commonCommandsExchange(@Value("${owms.commands.common.tu.exchange-name}") String exchangeName) {
         return new TopicExchange(exchangeName);

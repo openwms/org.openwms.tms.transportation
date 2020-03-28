@@ -17,6 +17,7 @@ package org.openwms.common.transport;
 
 import org.ameba.exception.ServiceLayerException;
 import org.ameba.mapping.BeanMapper;
+import org.openwms.common.transport.api.commands.TUCommand;
 import org.openwms.common.transport.api.messages.TransportUnitMO;
 import org.openwms.core.SpringProfiles;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -29,7 +30,7 @@ import static java.lang.String.format;
 /**
  * A TransportUnitEventPropagator.
  *
- * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
+ * @author Heiko Scherrer
  */
 @Profile(SpringProfiles.ASYNCHRONOUS_PROFILE)
 public class TransportUnitEventPropagator {
@@ -38,7 +39,10 @@ public class TransportUnitEventPropagator {
     private final String exchangeName;
     private final BeanMapper mapper;
 
-    public TransportUnitEventPropagator(AmqpTemplate amqpTemplate, @Value("${owms.events.common.tu.exchange-name}") String exchangeName, BeanMapper mapper) {
+    public TransportUnitEventPropagator(
+            AmqpTemplate amqpTemplate,
+            @Value("${owms.commands.common.tu.exchange-name}") String exchangeName,
+            BeanMapper mapper) {
         this.amqpTemplate = amqpTemplate;
         this.exchangeName = exchangeName;
         this.mapper = mapper;
@@ -48,7 +52,9 @@ public class TransportUnitEventPropagator {
     public void onEvent(TransportUnitEvent event) {
         switch (event.getType()) {
             case CHANGE_TARGET:
-                amqpTemplate.convertAndSend(exchangeName, "tu.event.change.target", mapper.map(event.getSource(), TransportUnitMO.class));
+                amqpTemplate.convertAndSend(exchangeName, "common.tu.command.in.change-target",
+                        TUCommand.newBuilder(TUCommand.Type.CHANGE_TARGET).withTransportUnit(mapper.map(event.getSource(), TransportUnitMO.class)).build()
+                );
                 break;
             default:
                 throw new ServiceLayerException(format("Eventtype [%s] currently not supported", event.getType()));
