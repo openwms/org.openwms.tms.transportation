@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Heiko Scherrer
+ * Copyright 2005-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * A TransportationFacade is a transactional Spring managed bean that is independent from
- * the used API exporter pattern.
+ * A TransportationFacade is a transactional Spring managed bean that is independent from the used API exporter pattern.
  *
- * @author <a href="mailto:scherrer@openwms.org">Heiko Scherrer</a>
+ * @author Heiko Scherrer
  */
 @Component
 public class TransportationFacade implements TransportOrderApi {
@@ -44,6 +43,7 @@ public class TransportationFacade implements TransportOrderApi {
         this.service = service;
     }
 
+    @Measured
     @Override
     public void createTO(String barcode, String target) {
         if (LOGGER.isDebugEnabled()) {
@@ -52,6 +52,7 @@ public class TransportationFacade implements TransportOrderApi {
         service.create(barcode, target, null);
     }
 
+    @Measured
     @Override
     public void createTO(String barcode, String target, String priority) {
         if (LOGGER.isDebugEnabled()) {
@@ -60,6 +61,7 @@ public class TransportationFacade implements TransportOrderApi {
         service.create(barcode, target, priority);
     }
 
+    @Measured
     @Override
     public void changeState(String pKey, String state) {
         if (LOGGER.isDebugEnabled()) {
@@ -72,6 +74,7 @@ public class TransportationFacade implements TransportOrderApi {
         }
     }
 
+    @Measured
     @Override
     public void updateTO(String pKey, UpdateTransportOrderVO vo) {
         if (vo.getPriority() != null && !vo.getPriority().isEmpty()) {
@@ -83,6 +86,7 @@ public class TransportationFacade implements TransportOrderApi {
         service.update(mapper.map(vo, TransportOrder.class));
     }
 
+    @Measured
     @Override
     public List<TransportOrderVO> findBy(String barcode, String state) {
         List<TransportOrderVO> orders = mapper.map(service.findBy(barcode, state), TransportOrderVO.class);
@@ -92,6 +96,7 @@ public class TransportationFacade implements TransportOrderApi {
         return orders;
     }
 
+    @Measured
     @Override
     public TransportOrderVO findByPKey(String pKey) {
         if (LOGGER.isDebugEnabled()) {
