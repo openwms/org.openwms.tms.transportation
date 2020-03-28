@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransportationAsyncConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.app</a> &gt; <span class="el_source">TransportationAsyncConfiguration.java</span></div><h1>TransportationAsyncConfiguration.java</h1><pre class="source lang-java linenums">/*
- * Copyright 2018 Heiko Scherrer
+ * Copyright 2005-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,9 @@
  */
 package org.openwms.tms.app;
 
-import org.ameba.mapping.BeanMapper;
-import org.openwms.common.transport.TransportUnitEventPropagator;
 import org.openwms.core.SpringProfiles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -44,100 +41,96 @@ import static org.ameba.LoggingCategories.BOOT;
 /**
  * A TransportationAsyncConfiguration.
  *
- * @author &lt;a href=&quot;mailto:scherrer@openwms.org&quot;&gt;Heiko Scherrer&lt;/a&gt;
+ * @author Heiko Scherrer
  */
 @Profile(SpringProfiles.ASYNCHRONOUS_PROFILE)
 @Configuration
 @EnableRabbit
-<span class="fc" id="L52">class TransportationAsyncConfiguration {</span>
+<span class="fc" id="L49">class TransportationAsyncConfiguration {</span>
 
-<span class="fc" id="L54">    private static final Logger BOOT_LOGGER = LoggerFactory.getLogger(BOOT);</span>
+<span class="fc" id="L51">    private static final Logger BOOT_LOGGER = LoggerFactory.getLogger(BOOT);</span>
 
     @ConditionalOnExpression(&quot;'${owms.transportation.serialization}'=='json'&quot;)
     @Bean
     MessageConverter messageConverter() {
-<span class="fc" id="L59">        Jackson2JsonMessageConverter messageConverter = new Jackson2JsonMessageConverter();</span>
-<span class="fc" id="L60">        BOOT_LOGGER.info(&quot;Using JSON serialization over AMQP&quot;);</span>
-<span class="fc" id="L61">        return messageConverter;</span>
+<span class="fc" id="L56">        Jackson2JsonMessageConverter messageConverter = new Jackson2JsonMessageConverter();</span>
+<span class="fc" id="L57">        BOOT_LOGGER.info(&quot;Using JSON serialization over AMQP&quot;);</span>
+<span class="fc" id="L58">        return messageConverter;</span>
     }
 
     @ConditionalOnExpression(&quot;'${owms.transportation.serialization}'=='barray'&quot;)
     @Bean
     MessageConverter serializerMessageConverter() {
-<span class="nc" id="L67">        SerializerMessageConverter messageConverter = new SerializerMessageConverter();</span>
-<span class="nc" id="L68">        BOOT_LOGGER.info(&quot;Using byte array serialization over AMQP&quot;);</span>
-<span class="nc" id="L69">        return messageConverter;</span>
+<span class="nc" id="L64">        SerializerMessageConverter messageConverter = new SerializerMessageConverter();</span>
+<span class="nc" id="L65">        BOOT_LOGGER.info(&quot;Using byte array serialization over AMQP&quot;);</span>
+<span class="nc" id="L66">        return messageConverter;</span>
     }
 
     @Bean
     RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
-<span class="fc" id="L74">        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);</span>
-<span class="fc" id="L75">        ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();</span>
-<span class="fc" id="L76">        backOffPolicy.setMultiplier(2);</span>
-<span class="fc" id="L77">        backOffPolicy.setMaxInterval(15000);</span>
-<span class="fc" id="L78">        backOffPolicy.setInitialInterval(500);</span>
-<span class="fc" id="L79">        RetryTemplate retryTemplate = new RetryTemplate();</span>
-<span class="fc" id="L80">        retryTemplate.setBackOffPolicy(backOffPolicy);</span>
-<span class="fc" id="L81">        rabbitTemplate.setRetryTemplate(retryTemplate);</span>
-<span class="fc" id="L82">        rabbitTemplate.setMessageConverter(messageConverter);</span>
-<span class="fc" id="L83">        return rabbitTemplate;</span>
+<span class="fc" id="L71">        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);</span>
+<span class="fc" id="L72">        ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();</span>
+<span class="fc" id="L73">        backOffPolicy.setMultiplier(2);</span>
+<span class="fc" id="L74">        backOffPolicy.setMaxInterval(15000);</span>
+<span class="fc" id="L75">        backOffPolicy.setInitialInterval(500);</span>
+<span class="fc" id="L76">        RetryTemplate retryTemplate = new RetryTemplate();</span>
+<span class="fc" id="L77">        retryTemplate.setBackOffPolicy(backOffPolicy);</span>
+<span class="fc" id="L78">        rabbitTemplate.setRetryTemplate(retryTemplate);</span>
+<span class="fc" id="L79">        rabbitTemplate.setMessageConverter(messageConverter);</span>
+<span class="fc" id="L80">        return rabbitTemplate;</span>
     }
 
-    @Bean
-    TransportUnitEventPropagator transportUnitEventPropagator(AmqpTemplate amqpTemplate, @Value(&quot;${owms.events.common.tu.exchange-name}&quot;) String exchangeName, BeanMapper beanMapper) {
-<span class="fc" id="L88">        return new TransportUnitEventPropagator(amqpTemplate, exchangeName, beanMapper);</span>
-    }
-
+    /* Commands TMS -&gt; COMMON */
     @Bean
     TopicExchange commonCommandsExchange(@Value(&quot;${owms.commands.common.tu.exchange-name}&quot;) String exchangeName) {
-<span class="fc" id="L93">        return new TopicExchange(exchangeName);</span>
+<span class="fc" id="L86">        return new TopicExchange(exchangeName);</span>
     }
 
     @Bean
     Queue commonCommandsQueue(@Value(&quot;${owms.commands.common.tu.queue-name}&quot;) String queueName) {
-<span class="fc" id="L98">        return new Queue(queueName);</span>
+<span class="fc" id="L91">        return new Queue(queueName);</span>
     }
 
     @Bean
     Binding commonCommandsBinding(TopicExchange commonCommandsExchange, Queue commonCommandsQueue, @Value(&quot;${owms.commands.common.tu.routing-key}&quot;) String routingKey) {
-<span class="fc" id="L103">        return BindingBuilder.bind(commonCommandsQueue)</span>
-<span class="fc" id="L104">                .to(commonCommandsExchange)</span>
-<span class="fc" id="L105">                .with(routingKey);</span>
+<span class="fc" id="L96">        return BindingBuilder.bind(commonCommandsQueue)</span>
+<span class="fc" id="L97">                .to(commonCommandsExchange)</span>
+<span class="fc" id="L98">                .with(routingKey);</span>
     }
 
     @Bean
     TopicExchange tmsCommandsExchange(@Value(&quot;${owms.commands.tms.to.exchange-name}&quot;) String exchangeName) {
-<span class="fc" id="L110">        return new TopicExchange(exchangeName);</span>
+<span class="fc" id="L103">        return new TopicExchange(exchangeName);</span>
     }
 
     @Bean
     Queue tmsCommandsQueue(@Value(&quot;${owms.commands.tms.to.queue-name}&quot;) String queueName) {
-<span class="fc" id="L115">        return new Queue(queueName);</span>
+<span class="fc" id="L108">        return new Queue(queueName);</span>
     }
 
     @Bean
     Binding tmsCommandsBinding(TopicExchange tmsCommandsExchange, Queue tmsCommandsQueue, @Value(&quot;${owms.commands.tms.to.routing-key}&quot;) String routingKey) {
-<span class="fc" id="L120">        return BindingBuilder.bind(tmsCommandsQueue)</span>
-<span class="fc" id="L121">                .to(tmsCommandsExchange)</span>
-<span class="fc" id="L122">                .with(routingKey);</span>
+<span class="fc" id="L113">        return BindingBuilder.bind(tmsCommandsQueue)</span>
+<span class="fc" id="L114">                .to(tmsCommandsExchange)</span>
+<span class="fc" id="L115">                .with(routingKey);</span>
     }
 
     @Bean
     TopicExchange tmsRequestsExchange(@Value(&quot;${owms.requests.tms.to.exchange-name}&quot;) String exchangeName) {
-<span class="fc" id="L127">        return new TopicExchange(exchangeName, true, false);</span>
+<span class="fc" id="L120">        return new TopicExchange(exchangeName, true, false);</span>
     }
 
     @Bean
     Queue tmsRequestsQueue(@Value(&quot;${owms.requests.tms.to.queue-name}&quot;) String queueName) {
-<span class="fc" id="L132">        return new Queue(queueName, true);</span>
+<span class="fc" id="L125">        return new Queue(queueName, true);</span>
     }
 
     @Bean
     Binding tmsRequestsBinding(TopicExchange tmsRequestsExchange, Queue tmsRequestsQueue, @Value(&quot;${owms.requests.tms.to.routing-key}&quot;) String routingKey) {
-<span class="fc" id="L137">        return BindingBuilder</span>
-<span class="fc" id="L138">                .bind(tmsRequestsQueue)</span>
-<span class="fc" id="L139">                .to(tmsRequestsExchange)</span>
-<span class="fc" id="L140">                .with(routingKey);</span>
+<span class="fc" id="L130">        return BindingBuilder</span>
+<span class="fc" id="L131">                .bind(tmsRequestsQueue)</span>
+<span class="fc" id="L132">                .to(tmsRequestsExchange)</span>
+<span class="fc" id="L133">                .with(routingKey);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

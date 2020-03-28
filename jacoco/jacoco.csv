@@ -59,7 +59,7 @@ OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationModul
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationStandaloneConfiguration,0,3,0,0,0,1,0,1,0,1
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationFeignConfiguration,0,3,0,0,0,1,0,1,0,1
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationModuleConfiguration,0,108,0,0,0,24,0,11,0,11
-OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationAsyncConfiguration,9,110,0,0,3,32,1,14,1,14
+OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationAsyncConfiguration,9,103,0,0,3,31,1,13,1,13
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationSecurityConfiguration,0,14,0,0,0,6,0,2,0,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.events,TransportOrderEventPropagator,0,35,0,2,0,10,0,3,0,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.removal,TransportUnitRemovalHandler,302,27,31,1,87,10,25,2,9,2
@@ -73,6 +73,6 @@ OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.redirection,Locati
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.redirection,TargetRedirector,0,64,0,4,0,12,0,5,0,3
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.redirection,Vote,0,37,1,3,0,9,1,7,0,6
 OpenWMS.org TMS: Transportation Services,org.openwms.common.transport,TransportUnitEvent.TransportUnitEventType,0,14,0,0,0,2,0,1,0,1
-OpenWMS.org TMS: Transportation Services,org.openwms.common.transport,TransportUnitEvent,13,16,0,0,4,5,2,3,2,3
-OpenWMS.org TMS: Transportation Services,org.openwms.common.transport,TransportUnitEventPropagator,13,32,1,1,1,9,1,2,0,2
+OpenWMS.org TMS: Transportation Services,org.openwms.common.transport,TransportUnitEvent,16,13,0,0,5,4,3,2,3,2
+OpenWMS.org TMS: Transportation Services,org.openwms.common.transport,TransportUnitEventPropagator,50,0,2,0,11,0,3,0,2,0
 OpenWMS.org TMS: Transportation Services,org.openwms.common.transport,TransportUnitEvent.Builder,0,15,0,0,0,5,0,3,0,3

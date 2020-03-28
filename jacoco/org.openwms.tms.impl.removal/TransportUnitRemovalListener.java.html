@@ -58,7 +58,7 @@ class TransportUnitRemovalListener {
 <span class="nc bnc" id="L58" title="All 2 branches missed.">                if (LOGGER.isDebugEnabled()) {</span>
 <span class="nc" id="L59">                    LOGGER.debug(&quot;Sending command to finally REMOVE the TransportUnit with pKey [{}]&quot;, command.getTransportUnit().getpKey());</span>
                 }
-<span class="nc" id="L61">                amqpTemplate.convertAndSend(exchangeName, &quot;common.tu.command.remove&quot;, command);</span>
+<span class="nc" id="L61">                amqpTemplate.convertAndSend(exchangeName, &quot;common.tu.command.in.remove&quot;, command);</span>
                 break;
             default:
         }
