@@ -89,7 +89,7 @@ public interface TransportationService<T extends TransportOrder> {
      * @param currentState The state of TransportOrders to change
      * @param targetState The state to change all orders to
      * @param message A messages attached to the changed TransportOrder, may be {@literal null}
-     * @return A list of persisted keys of {@link TransportOrder}s that have not been changed
+     * @return A list of Messages according to the {@link TransportOrder}s that have not been changed
      */
-    Collection<String> change(String barcode, TransportOrderState currentState, TransportOrderState targetState, Message message);
+    Collection<Message> change(String barcode, TransportOrderState currentState, TransportOrderState targetState, Message message);
 }

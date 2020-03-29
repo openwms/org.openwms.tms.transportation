@@ -122,6 +122,8 @@ class TransportationController extends AbstractWebController {
         try {
             transportationFacade.changeState(pKey, state);
             return ResponseEntity.noContent().build();
+        } catch (StateChangeException sce) {
+            throw sce;
         } catch (Exception ex) {
             return ResponseEntity.badRequest().build();
         }

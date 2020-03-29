@@ -69,9 +69,11 @@ public class TransportationFacade implements TransportOrderApi {
             LOGGER.debug("Change the state of the TransportOrder with persistent key [{}] to [{}]", pKey, state);
         }
         TransportOrder order = service.findByPKey(pKey);
-        Collection<String> failures = service.change(order.getTransportUnitBK(), order.getState(), TransportOrderState.valueOf(state), null);
+        Collection<Message> failures = service.change(order.getTransportUnitBK(), order.getState(), TransportOrderState.valueOf(state), null);
         if (!failures.isEmpty()) {
-            throw new StateChangeException("Failed to changed TransportOrders", "generic", failures.toArray());
+            LOGGER.error("Failed to changed TransportOrder [{}]", failures.toArray());
+            Message message = failures.iterator().next();
+            throw new StateChangeException(message.getMessage(), message.getMessageNo(), message.getpKey());
         }
     }
 

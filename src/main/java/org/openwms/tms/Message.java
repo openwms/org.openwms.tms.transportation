@@ -46,6 +46,9 @@ public class Message implements Serializable {
     @Column(name = "C_MESSAGE")
     private String message;
 
+    /** The unique key of the domain object in that context the message occurred. */
+    private String pKey;
+
     /* ----------------------------- methods ------------------- */
     /**
      * Dear JPA...
@@ -57,6 +60,7 @@ public class Message implements Serializable {
         occurred = builder.occurred;
         messageNo = builder.messageNo;
         message = builder.message;
+        pKey = builder.pKey;
     }
 
     /**
@@ -87,6 +91,15 @@ public class Message implements Serializable {
     }
 
     /**
+     * Get the pKey.
+     *
+     * @return The pKey.
+     */
+    public String getpKey() {
+        return pKey;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * Use all fields.
@@ -98,7 +111,8 @@ public class Message implements Serializable {
         Message message1 = (Message) o;
         return Objects.equals(occurred, message1.occurred) &&
                 Objects.equals(messageNo, message1.messageNo) &&
-                Objects.equals(message, message1.message);
+                Objects.equals(message, message1.message) &&
+                Objects.equals(pKey, message1.pKey);
     }
 
     /**
@@ -122,7 +136,7 @@ public class Message implements Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(occurred, messageNo, message);
+        return Objects.hash(occurred, messageNo, message, pKey);
     }
 
 
@@ -134,6 +148,7 @@ public class Message implements Serializable {
         private Date occurred;
         private String messageNo;
         private String message;
+        private String pKey;
 
         /**
          * Sets the {@code occurred} and returns a reference to this Builder so that the methods can be chained together.
@@ -165,6 +180,17 @@ public class Message implements Serializable {
          */
         public Builder withMessage(String val) {
             message = val;
+            return this;
+        }
+
+        /**
+         * Sets the {@code pKey} and returns a reference to this Builder so that the methods can be chained together.
+         *
+         * @param val the {@code pKey} to set
+         * @return a reference to this Builder
+         */
+        public Builder withPKey(String val) {
+            pKey = val;
             return this;
         }
 

@@ -73,7 +73,7 @@ class StateManagerImpl implements StateManager {
                     throw new StateChangeException(translator.translate(TMSMessageCodes.TO_STATE_CHANGE_NOT_READY, newState, transportOrder.getPersistentKey()), TMSMessageCodes.TO_STATE_CHANGE_NOT_READY, newState, transportOrder.getPersistentKey());
                 }
                 if (transportOrder.getTransportUnitBK() == null || transportOrder.getTransportUnitBK().isEmpty() || transportOrder.getTargetLocation() == null && transportOrder.getTargetLocationGroup() == null) {
-                    throw new StateChangeException(String.format("Not all properties set to turn TransportOrder into next state! transportunit's barcode [%s], targetLocation [%s], targetLocationGroup [%s]", transportOrder.getTransportUnitBK(), transportOrder.getTargetLocation(), transportOrder.getTargetLocationGroup()));
+                    throw new StateChangeException(String.format("Not all properties set to turn TransportOrder into next state! TransportUnit's barcode [%s], targetLocation [%s], targetLocationGroup [%s]", transportOrder.getTransportUnitBK(), transportOrder.getTargetLocation(), transportOrder.getTargetLocationGroup()));
                 }
                 break;
             case INITIALIZED:
@@ -92,7 +92,11 @@ class StateManagerImpl implements StateManager {
             case FINISHED:
             case ONFAILURE:
             case CANCELED:
-                throw new StateChangeException("Not allowed to change the state of a TransportOrder that has already been completed. Current state is CANCELED");
+                throw new StateChangeException(
+                        translator.translate(TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED, transportOrder.getPersistentKey()),
+                        TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED,
+                        transportOrder.getPersistentKey()
+                );
             default:
                 throw new IllegalStateException("State not managed: " + state);
         }

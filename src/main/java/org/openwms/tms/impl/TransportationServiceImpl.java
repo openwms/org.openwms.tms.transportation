@@ -188,9 +188,9 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
      */
     @Override
     @Measured
-    public Collection<String> change(String barcode, TransportOrderState currentState, TransportOrderState targetState, Message message) {
+    public Collection<Message> change(String barcode, TransportOrderState currentState, TransportOrderState targetState, Message message) {
         List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(barcode, currentState);
-        List<String> failure = new ArrayList<>();
+        List<Message> failure = new ArrayList<>();
         for (TransportOrder transportOrder : transportOrders) {
             try {
                 if (LOGGER.isDebugEnabled()) {
@@ -203,9 +203,13 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
                 ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.of(targetState)));
             } catch (StateChangeException sce) {
                 LOGGER.error("Could not turn TransportOrder: [{}] into [{}], because of [{}]", transportOrder.getPk(), targetState, sce.getMessage());
-                Message problem = new Message.Builder().withMessage(sce.getMessage()).build();
+                Message problem = new Message.Builder()
+                        .withMessage(sce.getMessage())
+                        .withMessageNo(sce.getMessageKey())
+                        .withPKey(transportOrder.getPersistentKey())
+                        .build();
                 transportOrder.setProblem(problem);
-                failure.add(transportOrder.getPk().toString());
+                failure.add(problem);
             }
         }
         return failure;

@@ -26,7 +26,7 @@ import java.util.StringJoiner;
 /**
  * A MessageVO.
  *
- * @author <a href="mailto:hscherrer@interface21.io">Heiko Scherrer</a>
+ * @author Heiko Scherrer
  */
 public class MessageVO implements Serializable {
 

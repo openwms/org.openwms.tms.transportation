@@ -15,7 +15,6 @@
  */
 package org.openwms.tms;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openwms.TransportationTestBase;
 import org.openwms.common.location.api.LocationVO;
@@ -45,7 +44,7 @@ class ChangeStateDocumentation extends TransportationTestBase {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-//        vo.setState(TransportOrderState.INITIALIZED.toString());
+        vo.setState(TransportOrderState.INITIALIZED.toString());
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
@@ -58,13 +57,13 @@ class ChangeStateDocumentation extends TransportationTestBase {
                         .param("state", TransportOrderState.INITIALIZED.toString())
         )
                 .andExpect(status().isBadRequest())
-//                .andExpect(jsonPath("messageKey", is(TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED)))
+                .andExpect(jsonPath("messageKey", is(TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED)))
                 .andDo(document("to-patch-state-change-back"))
         ;
     }
 
     /* ----------------- INITIALIZED -------------------*/
-    @Disabled("Test runs on OSX and Jenkins@Linux but not on TravisCI. Needs further investigation")
+    //@Disabled("Test runs on OSX and Jenkins@Linux but not on TravisCI. Needs further investigation")
     @Test
     void createAnNewOneWhenOneIsAlreadyStarted() throws Exception {
         // setup ...
@@ -157,6 +156,7 @@ class ChangeStateDocumentation extends TransportationTestBase {
                 post(TMSApi.TRANSPORT_ORDERS +"/"+vo2.getpKey())
                         .param("state", TransportOrderState.FINISHED.toString())        )
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("messageKey", is(TMSMessageCodes.STATE_CHANGE_ERROR_FOR_INITIALIZED_TO)))
                 .andDo(document("to-patch-state-finish-an-initialized"))
         ;
     }
@@ -272,6 +272,7 @@ class ChangeStateDocumentation extends TransportationTestBase {
                 post(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
                         .param("state", TransportOrderState.CANCELED.toString())        )
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("messageKey", is(TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED)))
                 .andDo(document("to-patch-state-change-a-finished"))
         ;
     }
@@ -300,6 +301,7 @@ class ChangeStateDocumentation extends TransportationTestBase {
                 post(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
                         .param("state", TransportOrderState.CANCELED.toString())        )
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("messageKey", is(TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED)))
                 .andDo(document("to-patch-state-change-an-onfailure"))
         ;
     }
@@ -328,6 +330,7 @@ class ChangeStateDocumentation extends TransportationTestBase {
                 post(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
                         .param("state", TransportOrderState.ONFAILURE.toString())        )
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("messageKey", is(TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED)))
                 .andDo(document("to-patch-state-change-a-canceled"))
         ;
     }
