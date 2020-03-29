@@ -69,41 +69,43 @@ public class TransportationFacade implements TransportOrderApi {
 <span class="fc" id="L69">            LOGGER.debug(&quot;Change the state of the TransportOrder with persistent key [{}] to [{}]&quot;, pKey, state);</span>
         }
 <span class="fc" id="L71">        TransportOrder order = service.findByPKey(pKey);</span>
-<span class="fc" id="L72">        Collection&lt;String&gt; failures = service.change(order.getTransportUnitBK(), order.getState(), TransportOrderState.valueOf(state), null);</span>
+<span class="fc" id="L72">        Collection&lt;Message&gt; failures = service.change(order.getTransportUnitBK(), order.getState(), TransportOrderState.valueOf(state), null);</span>
 <span class="fc bfc" id="L73" title="All 2 branches covered.">        if (!failures.isEmpty()) {</span>
-<span class="fc" id="L74">            throw new StateChangeException(&quot;Failed to changed TransportOrders&quot;, &quot;generic&quot;, failures.toArray());</span>
+<span class="fc" id="L74">            LOGGER.error(&quot;Failed to changed TransportOrder [{}]&quot;, failures.toArray());</span>
+<span class="fc" id="L75">            Message message = failures.iterator().next();</span>
+<span class="fc" id="L76">            throw new StateChangeException(message.getMessage(), message.getMessageNo(), message.getpKey());</span>
         }
-<span class="fc" id="L76">    }</span>
+<span class="fc" id="L78">    }</span>
 
     @Measured
     @Override
     public void updateTO(String pKey, UpdateTransportOrderVO vo) {
-<span class="pc bpc" id="L81" title="1 of 4 branches missed.">        if (vo.getPriority() != null &amp;&amp; !vo.getPriority().isEmpty()) {</span>
-<span class="fc" id="L82">            PriorityLevel.of(vo.getPriority());</span>
+<span class="pc bpc" id="L83" title="1 of 4 branches missed.">        if (vo.getPriority() != null &amp;&amp; !vo.getPriority().isEmpty()) {</span>
+<span class="fc" id="L84">            PriorityLevel.of(vo.getPriority());</span>
         }
-<span class="pc bpc" id="L84" title="2 of 4 branches missed.">        if (vo.getpKey() == null || !pKey.equals(vo.getpKey())) {</span>
-<span class="nc" id="L85">            vo.setpKey(pKey);</span>
+<span class="pc bpc" id="L86" title="2 of 4 branches missed.">        if (vo.getpKey() == null || !pKey.equals(vo.getpKey())) {</span>
+<span class="nc" id="L87">            vo.setpKey(pKey);</span>
         }
-<span class="fc" id="L87">        service.update(mapper.map(vo, TransportOrder.class));</span>
-<span class="fc" id="L88">    }</span>
+<span class="fc" id="L89">        service.update(mapper.map(vo, TransportOrder.class));</span>
+<span class="fc" id="L90">    }</span>
 
     @Measured
     @Override
     public List&lt;TransportOrderVO&gt; findBy(String barcode, String state) {
-<span class="nc" id="L93">        List&lt;TransportOrderVO&gt; orders = mapper.map(service.findBy(barcode, state), TransportOrderVO.class);</span>
-<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
-<span class="nc" id="L95">            LOGGER.debug(&quot;Found [{}] TransportOrders with barcode [{}] in state [{}]&quot;, orders.size(), barcode, state);</span>
+<span class="nc" id="L95">        List&lt;TransportOrderVO&gt; orders = mapper.map(service.findBy(barcode, state), TransportOrderVO.class);</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L97">            LOGGER.debug(&quot;Found [{}] TransportOrders with barcode [{}] in state [{}]&quot;, orders.size(), barcode, state);</span>
         }
-<span class="nc" id="L97">        return orders;</span>
+<span class="nc" id="L99">        return orders;</span>
     }
 
     @Measured
     @Override
     public TransportOrderVO findByPKey(String pKey) {
-<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
-<span class="fc" id="L104">            LOGGER.debug(&quot;Find TransportOrder with persistent key [{}]&quot;, pKey);</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
+<span class="fc" id="L106">            LOGGER.debug(&quot;Find TransportOrder with persistent key [{}]&quot;, pKey);</span>
         }
-<span class="fc" id="L106">        return mapper.map(service.findByPKey(pKey), TransportOrderVO.class);</span>
+<span class="fc" id="L108">        return mapper.map(service.findByPKey(pKey), TransportOrderVO.class);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

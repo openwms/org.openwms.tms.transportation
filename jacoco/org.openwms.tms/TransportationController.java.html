@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransportationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms</a> &gt; <span class="el_source">TransportationController.java</span></div><h1>TransportationController.java</h1><pre class="source lang-java linenums">/*
- * Copyright 2018 Heiko Scherrer
+ * Copyright 2005-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ import java.util.List;
 /**
  * A TransportationController.
  *
- * @author &lt;a href=&quot;mailto:scherrer@openwms.org&quot;&gt;Heiko Scherrer&lt;/a&gt;
+ * @author Heiko Scherrer
  */
 @Profile(&quot;!INMEM&quot;)
 @RestController
@@ -122,27 +122,29 @@ class TransportationController extends AbstractWebController {
         try {
 <span class="fc" id="L123">            transportationFacade.changeState(pKey, state);</span>
 <span class="fc" id="L124">            return ResponseEntity.noContent().build();</span>
-<span class="fc" id="L125">        } catch (Exception ex) {</span>
-<span class="fc" id="L126">            return ResponseEntity.badRequest().build();</span>
+<span class="fc" id="L125">        } catch (StateChangeException sce) {</span>
+<span class="fc" id="L126">            throw sce;</span>
+<span class="nc" id="L127">        } catch (Exception ex) {</span>
+<span class="nc" id="L128">            return ResponseEntity.badRequest().build();</span>
         }
     }
 
     @ExceptionHandler(DeniedException.class)
     protected ResponseEntity&lt;Response&gt; handleDeniedException(DeniedException bae) {
-<span class="fc" id="L132">        return new ResponseEntity&lt;&gt;(Response.newBuilder()</span>
-<span class="fc" id="L133">                .withMessage(bae.getMessage())</span>
-<span class="fc" id="L134">                .withMessageKey(bae.getMessageKey())</span>
-<span class="fc" id="L135">                .withHttpStatus(String.valueOf(HttpStatus.CONFLICT.value()))</span>
-<span class="fc" id="L136">                .withObj(bae.getData())</span>
-<span class="fc" id="L137">                .build(),</span>
-<span class="fc" id="L138">                HttpStatus.CONFLICT</span>
+<span class="fc" id="L134">        return new ResponseEntity&lt;&gt;(Response.newBuilder()</span>
+<span class="fc" id="L135">                .withMessage(bae.getMessage())</span>
+<span class="fc" id="L136">                .withMessageKey(bae.getMessageKey())</span>
+<span class="fc" id="L137">                .withHttpStatus(String.valueOf(HttpStatus.CONFLICT.value()))</span>
+<span class="fc" id="L138">                .withObj(bae.getData())</span>
+<span class="fc" id="L139">                .build(),</span>
+<span class="fc" id="L140">                HttpStatus.CONFLICT</span>
         );
     }
 
     private String getCreatedResourceURI(HttpServletRequest req, String objId) {
-<span class="fc" id="L143">        StringBuffer url = req.getRequestURL();</span>
-<span class="fc" id="L144">        UriTemplate template = new UriTemplate(url.append(&quot;/{objId}/&quot;).toString());</span>
-<span class="fc" id="L145">        return template.expand(objId).toASCIIString();</span>
+<span class="fc" id="L145">        StringBuffer url = req.getRequestURL();</span>
+<span class="fc" id="L146">        UriTemplate template = new UriTemplate(url.append(&quot;/{objId}/&quot;).toString());</span>
+<span class="fc" id="L147">        return template.expand(objId).toASCIIString();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

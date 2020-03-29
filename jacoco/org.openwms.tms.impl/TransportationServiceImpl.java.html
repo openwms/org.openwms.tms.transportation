@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransportationServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.impl</a> &gt; <span class="el_source">TransportationServiceImpl.java</span></div><h1>TransportationServiceImpl.java</h1><pre class="source lang-java linenums"><span class="fc" id="L1">/*</span>
- * Copyright 2018 Heiko Scherrer
+ * Copyright 2005-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ import java.util.stream.Stream;
 /**
  * A TransportationServiceImpl is a Spring managed transactional service.
  *
- * @author &lt;a href=&quot;mailto:scherrer@openwms.org&quot;&gt;Heiko Scherrer&lt;/a&gt;
+ * @author Heiko Scherrer
  */
 @TxService
 class TransportationServiceImpl implements TransportationService&lt;TransportOrder&gt; {
@@ -188,9 +188,9 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
      */
     @Override
     @Measured
-    public Collection&lt;String&gt; change(String barcode, TransportOrderState currentState, TransportOrderState targetState, Message message) {
+    public Collection&lt;Message&gt; change(String barcode, TransportOrderState currentState, TransportOrderState targetState, Message message) {
 <span class="fc" id="L192">        List&lt;TransportOrder&gt; transportOrders = repository.findByTransportUnitBKAndStates(barcode, currentState);</span>
-<span class="fc" id="L193">        List&lt;String&gt; failure = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L193">        List&lt;Message&gt; failure = new ArrayList&lt;&gt;();</span>
 <span class="fc bfc" id="L194" title="All 2 branches covered.">        for (TransportOrder transportOrder : transportOrders) {</span>
             try {
 <span class="pc bpc" id="L196" title="1 of 2 branches missed.">                if (LOGGER.isDebugEnabled()) {</span>
@@ -203,12 +203,16 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
 <span class="fc" id="L203">                ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.of(targetState)));</span>
 <span class="fc" id="L204">            } catch (StateChangeException sce) {</span>
 <span class="fc" id="L205">                LOGGER.error(&quot;Could not turn TransportOrder: [{}] into [{}], because of [{}]&quot;, transportOrder.getPk(), targetState, sce.getMessage());</span>
-<span class="fc" id="L206">                Message problem = new Message.Builder().withMessage(sce.getMessage()).build();</span>
-<span class="fc" id="L207">                transportOrder.setProblem(problem);</span>
-<span class="fc" id="L208">                failure.add(transportOrder.getPk().toString());</span>
+<span class="fc" id="L206">                Message problem = new Message.Builder()</span>
+<span class="fc" id="L207">                        .withMessage(sce.getMessage())</span>
+<span class="fc" id="L208">                        .withMessageNo(sce.getMessageKey())</span>
+<span class="fc" id="L209">                        .withPKey(transportOrder.getPersistentKey())</span>
+<span class="fc" id="L210">                        .build();</span>
+<span class="fc" id="L211">                transportOrder.setProblem(problem);</span>
+<span class="fc" id="L212">                failure.add(problem);</span>
             }
         }
-<span class="fc" id="L211">        return failure;</span>
+<span class="fc" id="L215">        return failure;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

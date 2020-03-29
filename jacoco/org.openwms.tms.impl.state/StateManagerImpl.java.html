@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StateManagerImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.impl.state</a> &gt; <span class="el_source">StateManagerImpl.java</span></div><h1>StateManagerImpl.java</h1><pre class="source lang-java linenums">/*
- * Copyright 2018 Heiko Scherrer
+ * Copyright 2005-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import static org.openwms.tms.TransportOrderState.STARTED;
 /**
  * A StateManagerImpl.
  *
- * @author &lt;a href=&quot;mailto:scherrer@openwms.org&quot;&gt;Heiko Scherrer&lt;/a&gt;
+ * @author Heiko Scherrer
  */
 //@Transactional(propagation = Propagation.MANDATORY) don't because it is called within a Hibernate generation
 @Component
@@ -73,15 +73,15 @@ class StateManagerImpl implements StateManager {
 <span class="nc" id="L73">                    throw new StateChangeException(translator.translate(TMSMessageCodes.TO_STATE_CHANGE_NOT_READY, newState, transportOrder.getPersistentKey()), TMSMessageCodes.TO_STATE_CHANGE_NOT_READY, newState, transportOrder.getPersistentKey());</span>
                 }
 <span class="pc bpc" id="L75" title="3 of 8 branches missed.">                if (transportOrder.getTransportUnitBK() == null || transportOrder.getTransportUnitBK().isEmpty() || transportOrder.getTargetLocation() == null &amp;&amp; transportOrder.getTargetLocationGroup() == null) {</span>
-<span class="nc" id="L76">                    throw new StateChangeException(String.format(&quot;Not all properties set to turn TransportOrder into next state! transportunit's barcode [%s], targetLocation [%s], targetLocationGroup [%s]&quot;, transportOrder.getTransportUnitBK(), transportOrder.getTargetLocation(), transportOrder.getTargetLocationGroup()));</span>
+<span class="nc" id="L76">                    throw new StateChangeException(String.format(&quot;Not all properties set to turn TransportOrder into next state! TransportUnit's barcode [%s], targetLocation [%s], targetLocationGroup [%s]&quot;, transportOrder.getTransportUnitBK(), transportOrder.getTargetLocation(), transportOrder.getTargetLocationGroup()));</span>
                 }
                 break;
             case INITIALIZED:
 <span class="fc bfc" id="L80" title="All 6 branches covered.">                if (newState != STARTED &amp;&amp; newState != CANCELED &amp;&amp; newState != ONFAILURE) {</span>
 <span class="fc" id="L81">                    throw new StateChangeException(translator.translate(TMSMessageCodes.STATE_CHANGE_ERROR_FOR_INITIALIZED_TO, transportOrder.getPersistentKey()), TMSMessageCodes.STATE_CHANGE_ERROR_FOR_INITIALIZED_TO, transportOrder.getPersistentKey());</span>
                 }
-<span class="pc bpc" id="L83" title="1 of 4 branches missed.">                if (newState == STARTED &amp;&amp; !repo.findByTransportUnitBKAndStates(transportOrder.getTransportUnitBK(), STARTED).isEmpty()) {</span>
-<span class="nc" id="L84">                    throw new StateChangeException(translator.translate(TMSMessageCodes.START_TO_NOT_ALLOWED_ALREADY_STARTED_ONE, transportOrder.getTransportUnitBK(), transportOrder.getPersistentKey()), TMSMessageCodes.START_TO_NOT_ALLOWED_ALREADY_STARTED_ONE, transportOrder.getTransportUnitBK(), transportOrder.getPersistentKey());</span>
+<span class="fc bfc" id="L83" title="All 4 branches covered.">                if (newState == STARTED &amp;&amp; !repo.findByTransportUnitBKAndStates(transportOrder.getTransportUnitBK(), STARTED).isEmpty()) {</span>
+<span class="fc" id="L84">                    throw new StateChangeException(translator.translate(TMSMessageCodes.START_TO_NOT_ALLOWED_ALREADY_STARTED_ONE, transportOrder.getTransportUnitBK(), transportOrder.getPersistentKey()), TMSMessageCodes.START_TO_NOT_ALLOWED_ALREADY_STARTED_ONE, transportOrder.getTransportUnitBK(), transportOrder.getPersistentKey());</span>
                 }
 <span class="fc" id="L86">                repo.findByTransportUnitBKAndStates(transportOrder.getTransportUnitBK(), STARTED);</span>
 <span class="fc" id="L87">                LOGGER.debug(&quot;Current State is [{}], new state is [{}], # of started is [{}]&quot;, state, newState, repo.numberOfTransportOrders(transportOrder.getTransportUnitBK(), STARTED));</span>
@@ -92,23 +92,27 @@ class StateManagerImpl implements StateManager {
             case FINISHED:
             case ONFAILURE:
             case CANCELED:
-<span class="fc" id="L95">                throw new StateChangeException(&quot;Not allowed to change the state of a TransportOrder that has already been completed. Current state is CANCELED&quot;);</span>
+<span class="fc" id="L95">                throw new StateChangeException(</span>
+<span class="fc" id="L96">                        translator.translate(TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED, transportOrder.getPersistentKey()),</span>
+<span class="fc" id="L97">                        TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED,</span>
+<span class="fc" id="L98">                        transportOrder.getPersistentKey()</span>
+                );
             default:
-<span class="nc" id="L97">                throw new IllegalStateException(&quot;State not managed: &quot; + state);</span>
+<span class="nc" id="L101">                throw new IllegalStateException(&quot;State not managed: &quot; + state);</span>
         }
-<span class="fc bfc" id="L99" title="All 3 branches covered.">        switch (newState) {</span>
+<span class="fc bfc" id="L103" title="All 3 branches covered.">        switch (newState) {</span>
             case STARTED:
-<span class="fc" id="L101">                transportOrder.setStartDate(new Date());</span>
-<span class="fc" id="L102">                break;</span>
+<span class="fc" id="L105">                transportOrder.setStartDate(new Date());</span>
+<span class="fc" id="L106">                break;</span>
             case FINISHED:
             case ONFAILURE:
             case CANCELED:
-<span class="fc" id="L106">                transportOrder.setEndDate(new Date());</span>
+<span class="fc" id="L110">                transportOrder.setEndDate(new Date());</span>
                 break;
             default:
                 // OK for all others
         }
-<span class="fc" id="L111">        LOGGER.debug(&quot;Request processed, order is now [{}]&quot;, newState);</span>
-<span class="fc" id="L112">    }</span>
+<span class="fc" id="L115">        LOGGER.debug(&quot;Request processed, order is now [{}]&quot;, newState);</span>
+<span class="fc" id="L116">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
