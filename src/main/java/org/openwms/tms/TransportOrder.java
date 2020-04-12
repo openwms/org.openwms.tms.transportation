@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -29,6 +30,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -68,7 +70,7 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
     /**
      * Last reported problem on the {@code TransportOrder}.
      */
-    @Column(name = "C_PROBLEM")
+    @Embedded
     private Message problem;
 
     /**
@@ -101,7 +103,7 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
      * A {@code LocationGroup} can also be set as target. At least one target must be set when the {@code TransportOrder} is being started.
      */
     @Column(name = "C_TARGET_LOCATION_GROUP")
-    @Min(value = 1, groups = ValidationGroups.ValidateBKAndTarget.class)
+    @NotEmpty(groups = ValidationGroups.ValidateBKAndTarget.class)
     private String targetLocationGroup;
 
     @Transient
