@@ -27,96 +27,95 @@ import java.io.Serializable;
  */
 public class CreateTransportOrderVO implements Serializable {
 
-    @NotEmpty
     private String pKey;
-    @NotEmpty
+    @NotEmpty(groups = ValidationGroups.OrderCreation.class)
     private String barcode;
     private String priority;
     @JsonProperty
     private MessageVO problem;
     private String state;
-    @NotEmpty
+    @NotEmpty(groups = ValidationGroups.OrderCreation.class)
     @JsonProperty(&quot;targetLocation&quot;)
     private String target;
 
     @JsonProperty(&quot;targetLocationGroup&quot;)
     public String getTargetLocationGroup() {
-<span class="fc" id="L44">        return target;</span>
+<span class="fc" id="L43">        return target;</span>
     }
-<span class="fc" id="L46">    public CreateTransportOrderVO() {</span>
+<span class="fc" id="L45">    public CreateTransportOrderVO() {</span>
 
-<span class="fc" id="L48">    }</span>
-<span class="fc" id="L49">    private CreateTransportOrderVO(Builder builder) {</span>
-<span class="fc" id="L50">        setpKey(builder.pKey);</span>
-<span class="fc" id="L51">        setBarcode(builder.barcode);</span>
-<span class="fc" id="L52">        setPriority(builder.priority);</span>
-<span class="fc" id="L53">        setProblem(builder.problem);</span>
-<span class="fc" id="L54">        setState(builder.state);</span>
-<span class="fc" id="L55">        setTarget(builder.target);</span>
-<span class="fc" id="L56">    }</span>
+<span class="fc" id="L47">    }</span>
+<span class="fc" id="L48">    private CreateTransportOrderVO(Builder builder) {</span>
+<span class="fc" id="L49">        setpKey(builder.pKey);</span>
+<span class="fc" id="L50">        setBarcode(builder.barcode);</span>
+<span class="fc" id="L51">        setPriority(builder.priority);</span>
+<span class="fc" id="L52">        setProblem(builder.problem);</span>
+<span class="fc" id="L53">        setState(builder.state);</span>
+<span class="fc" id="L54">        setTarget(builder.target);</span>
+<span class="fc" id="L55">    }</span>
 
     public static Builder newBuilder() {
-<span class="fc" id="L59">        return new Builder();</span>
+<span class="fc" id="L58">        return new Builder();</span>
     }
 
     public String getpKey() {
-<span class="fc" id="L63">        return pKey;</span>
+<span class="fc" id="L62">        return pKey;</span>
     }
 
     public void setpKey(String pKey) {
-<span class="fc" id="L67">        this.pKey = pKey;</span>
-<span class="fc" id="L68">    }</span>
+<span class="fc" id="L66">        this.pKey = pKey;</span>
+<span class="fc" id="L67">    }</span>
 
     public String getBarcode() {
-<span class="fc" id="L71">        return barcode;</span>
+<span class="fc" id="L70">        return barcode;</span>
     }
 
     public void setBarcode(String barcode) {
-<span class="fc" id="L75">        this.barcode = barcode;</span>
-<span class="fc" id="L76">    }</span>
+<span class="fc" id="L74">        this.barcode = barcode;</span>
+<span class="fc" id="L75">    }</span>
 
     public String getPriority() {
-<span class="fc" id="L79">        return priority;</span>
+<span class="fc" id="L78">        return priority;</span>
     }
 
     public void setPriority(String priority) {
-<span class="fc" id="L83">        this.priority = priority;</span>
-<span class="fc" id="L84">    }</span>
+<span class="fc" id="L82">        this.priority = priority;</span>
+<span class="fc" id="L83">    }</span>
 
     public MessageVO getProblem() {
-<span class="fc" id="L87">        return problem;</span>
+<span class="fc" id="L86">        return problem;</span>
     }
 
     public void setProblem(MessageVO problem) {
-<span class="fc" id="L91">        this.problem = problem;</span>
-<span class="fc" id="L92">    }</span>
+<span class="fc" id="L90">        this.problem = problem;</span>
+<span class="fc" id="L91">    }</span>
 
     public String getState() {
-<span class="fc" id="L95">        return state;</span>
+<span class="fc" id="L94">        return state;</span>
     }
 
     public void setState(String state) {
-<span class="fc" id="L99">        this.state = state;</span>
-<span class="fc" id="L100">    }</span>
+<span class="fc" id="L98">        this.state = state;</span>
+<span class="fc" id="L99">    }</span>
 
     public String getTarget() {
-<span class="fc" id="L103">        return target;</span>
+<span class="fc" id="L102">        return target;</span>
     }
 
     public void setTarget(String target) {
-<span class="fc" id="L107">        this.target = target;</span>
-<span class="fc" id="L108">    }</span>
+<span class="fc" id="L106">        this.target = target;</span>
+<span class="fc" id="L107">    }</span>
 
     @Override
     public String toString() {
-<span class="fc" id="L112">        return &quot;CreateTransportOrderVO{&quot; +</span>
-<span class="fc" id="L113">                &quot;pKey='&quot; + pKey + '\'' +</span>
-<span class="fc" id="L114">                &quot;, barcode='&quot; + barcode + '\'' +</span>
-<span class="fc" id="L115">                &quot;, priority='&quot; + priority + '\'' +</span>
-<span class="fc" id="L116">                &quot;, problem=&quot; + problem +</span>
-<span class="fc" id="L117">                &quot;, state='&quot; + state + '\'' +</span>
-<span class="fc" id="L118">                &quot;, target='&quot; + target + '\'' +</span>
-<span class="fc" id="L119">                '}';</span>
+<span class="fc" id="L111">        return &quot;CreateTransportOrderVO{&quot; +</span>
+<span class="fc" id="L112">                &quot;pKey='&quot; + pKey + '\'' +</span>
+<span class="fc" id="L113">                &quot;, barcode='&quot; + barcode + '\'' +</span>
+<span class="fc" id="L114">                &quot;, priority='&quot; + priority + '\'' +</span>
+<span class="fc" id="L115">                &quot;, problem=&quot; + problem +</span>
+<span class="fc" id="L116">                &quot;, state='&quot; + state + '\'' +</span>
+<span class="fc" id="L117">                &quot;, target='&quot; + target + '\'' +</span>
+<span class="fc" id="L118">                '}';</span>
     }
 
 
@@ -132,37 +131,37 @@ public class CreateTransportOrderVO implements Serializable {
         }
 
         public Builder withPKey(@NotEmpty String val) {
-<span class="nc" id="L135">            pKey = val;</span>
-<span class="nc" id="L136">            return this;</span>
+<span class="nc" id="L134">            pKey = val;</span>
+<span class="nc" id="L135">            return this;</span>
         }
 
         public Builder withBarcode(@NotEmpty String val) {
-<span class="fc" id="L140">            barcode = val;</span>
-<span class="fc" id="L141">            return this;</span>
+<span class="fc" id="L139">            barcode = val;</span>
+<span class="fc" id="L140">            return this;</span>
         }
 
         public Builder withPriority(String val) {
-<span class="fc" id="L145">            priority = val;</span>
-<span class="fc" id="L146">            return this;</span>
+<span class="fc" id="L144">            priority = val;</span>
+<span class="fc" id="L145">            return this;</span>
         }
 
         public Builder withProblem(MessageVO val) {
-<span class="nc" id="L150">            problem = val;</span>
-<span class="nc" id="L151">            return this;</span>
+<span class="nc" id="L149">            problem = val;</span>
+<span class="nc" id="L150">            return this;</span>
         }
 
         public Builder withState(String val) {
-<span class="nc" id="L155">            state = val;</span>
-<span class="nc" id="L156">            return this;</span>
+<span class="nc" id="L154">            state = val;</span>
+<span class="nc" id="L155">            return this;</span>
         }
 
         public Builder withTarget(@NotEmpty String val) {
-<span class="fc" id="L160">            target = val;</span>
-<span class="fc" id="L161">            return this;</span>
+<span class="fc" id="L159">            target = val;</span>
+<span class="fc" id="L160">            return this;</span>
         }
 
         public CreateTransportOrderVO build() {
-<span class="fc" id="L165">            return new CreateTransportOrderVO(this);</span>
+<span class="fc" id="L164">            return new CreateTransportOrderVO(this);</span>
         }
     }
 }
