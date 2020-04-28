@@ -27,15 +27,14 @@ import java.io.Serializable;
  */
 public class CreateTransportOrderVO implements Serializable {
 
-    @NotEmpty
     private String pKey;
-    @NotEmpty
+    @NotEmpty(groups = ValidationGroups.OrderCreation.class)
     private String barcode;
     private String priority;
     @JsonProperty
     private MessageVO problem;
     private String state;
-    @NotEmpty
+    @NotEmpty(groups = ValidationGroups.OrderCreation.class)
     @JsonProperty("targetLocation")
     private String target;
 
