@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * An AmqpStartRequestForwarder requests a remote service instance via an AQMP command whether a TransportOrder might be started or not.
+ * An AmqpStartRequestForwarder requests a remote service instance via an AMQP command whether a TransportOrder might be started or not.
  *
  * @author Heiko Scherrer
  */

@@ -106,6 +106,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>all</id>
                         <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
@@ -124,13 +125,9 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>repackage</id>
                         <goals>
                             <goal>build-info</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-						<id>repackage</id>
-                        <goals>
                             <goal>repackage</goal>
                         </goals>
                         <configuration>
@@ -367,7 +364,6 @@
         <dependency>
             <groupId>net.sf.dozer</groupId>
             <artifactId>dozer</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>

@@ -112,7 +112,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
      * {@link TransportOrder} for the {@code TransportUnit} exist.
      *
      * @throws NotFoundException when the barcode is {@literal null} or no transportunit with barcode can be found or no target
-     *                           can be found.
+     * can be found.
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW, noRollbackFor = StateChangeException.class)

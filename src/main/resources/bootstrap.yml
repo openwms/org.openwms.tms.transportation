@@ -105,6 +105,23 @@ logging:
 
 ---
 spring:
+  profiles: ASYNCHRONOUS
+  cloud:
+    config:
+      discovery:
+        enabled: true
+      enabled: true
+      fail-fast: true # true means retry
+    discovery:
+      enabled: true
+
+management:
+  health:
+    rabbit:
+      enabled: true
+
+---
+spring:
   profiles: HEROKU
   main:
     banner-mode: "OFF"
@@ -129,29 +146,19 @@ eureka:
 
 ---
 spring:
-  profiles: ASYNCHRONOUS
-  cloud:
-    config:
-      discovery:
-        enabled: true
-      enabled: true
-      fail-fast: true # true means retry
-    discovery:
-      enabled: true
-
-management:
-  health:
-    rabbit:
-      enabled: true
-
----
-spring:
   profiles: TEST
   cloud:
     config:
       fail-fast: false
   main:
     banner-mode: "off"
+  zipkin:
+    enabled: false
+    discovery-client-enabled: false
+    sender:
+      type: rabbit
+  jpa:
+    show-sql: false
 
 ---
 spring:
