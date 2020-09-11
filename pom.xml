@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.openwms</groupId>
         <artifactId>org.openwms.parent</artifactId>
-        <version>14</version>
+        <version>17</version>
         <relativePath />
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
@@ -14,20 +14,20 @@
 
     <issueManagement>
         <system>github</system>
-        <url>https://github.com/openwms/org.openwms.tms.transportation/issues</url>
+        <url>https://github.com/openwms/${project.artifactId}/issues</url>
     </issueManagement>
 
     <distributionManagement>
         <site>
             <id>site</id>
-            <url>scm:git:git@github.com:openwms/org.openwms.tms.transportation.git</url>
+            <url>scm:git:git@github.com:openwms/${project.artifactId}.git</url>
         </site>
     </distributionManagement>
 
     <scm>
-        <url>https://github.com/openwms/org.openwms.tms.transportation</url>
-        <connection>scm:git:https://${scmuser}github.com/openwms/org.openwms.tms.transportation.git</connection>
-        <developerConnection>scm:git:https://${scmuser}github.com/openwms/org.openwms.tms.transportation.git</developerConnection>
+        <url>https://github.com/openwms/${project.artifactId}</url>
+        <connection>scm:git:https://${scmuser}github.com/openwms/${project.artifactId}.git</connection>
+        <developerConnection>scm:git:https://${scmuser}github.com/openwms/${project.artifactId}.git</developerConnection>
     </scm>
 
     <developers>
@@ -50,7 +50,7 @@
 
     <ciManagement>
         <system>travis</system>
-        <url>https://travis-ci.com/openwms/org.openwms.tms.transportation</url>
+        <url>https://travis-ci.com/openwms/${project.artifactId}</url>
         <notifiers>
             <notifier>
                 <type>mail</type>
@@ -64,6 +64,7 @@
     <properties>
         <common-service.version>1.6.0-SNAPSHOT</common-service.version>
         <core.version>1.8.0-SNAPSHOT</core.version>
+        <guava.version>29.0-jre</guava.version>
         <skipTests>false</skipTests>
         <spring-cloud-dependencies.version>Hoxton.RELEASE</spring-cloud-dependencies.version>
     </properties>
@@ -106,7 +107,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>all</id>
+                        <id>client-build</id>
                         <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
@@ -116,6 +117,16 @@
                             <includes>
                                 <include>**/api/**/*.class</include>
                             </includes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>full-build</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>all</classifier>
                         </configuration>
                     </execution>
                 </executions>
@@ -151,6 +162,11 @@
                 <artifactId>org.openwms.common.service</artifactId>
                 <version>${common-service.version}</version>
                 <classifier>client</classifier>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.sf.dozer</groupId>
@@ -226,6 +242,11 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <optional>true</optional>
         </dependency>
@@ -244,6 +265,11 @@
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
                 </exclusion>
+                <exclusion>
+                    <!-- Bites with Guava -->
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -252,22 +278,22 @@
             <optional>true</optional>
             <exclusions>
                 <exclusion>
-                    <!-- Take the newer patch from actuator -->
+                    <!-- Newer version pulled by actuator -->
                     <groupId>org.hdrhistogram</groupId>
                     <artifactId>HdrHistogram</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-sleuth</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-zipkin</artifactId>
-			<optional>true</optional>
-		</dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-zipkin</artifactId>
+            <optional>true</optional>
+        </dependency>
 
         <!-- both for retry -->
         <dependency>
@@ -292,7 +318,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Monitoring -->
+        <!-- Observability: Monitoring -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
@@ -313,6 +339,7 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <!-- Need to upgrade Guava from version 11 because of CVE -->
             <!-- Required by eureka-client -->
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -364,6 +391,7 @@
         <dependency>
             <groupId>net.sf.dozer</groupId>
             <artifactId>dozer</artifactId>
+            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -396,18 +424,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-surefire-provider</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-test</artifactId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -433,16 +451,6 @@
             </exclusions>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>schemagen</id>
-            <properties>
-                <surefireArgs>-Dspring.profiles.active=ASYNCHRONOUS,TEST,TESTPG</surefireArgs>
-                <schemagen.outputDirectory>${project.build.directory}/site/${project.version}</schemagen.outputDirectory>
-            </properties>
-        </profile>
-    </profiles>
 
     <repositories>
         <repository>

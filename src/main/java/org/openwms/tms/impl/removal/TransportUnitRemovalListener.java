@@ -17,6 +17,7 @@ package org.openwms.tms.impl.removal;
 
 import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
+import org.openwms.common.transport.api.ValidationGroups;
 import org.openwms.common.transport.api.commands.TUCommand;
 import org.openwms.core.SpringProfiles;
 import org.slf4j.Logger;
@@ -30,6 +31,10 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.util.Assert;
 
+import javax.validation.Validator;
+
+import static org.ameba.system.ValidationUtil.validate;
+
 /**
  * A TransportUnitRemovalListener is an AMQP listener that listens on commands when a
  * TransportUnit is going to be deleted.
@@ -42,11 +47,13 @@ class TransportUnitRemovalListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportUnitRemovalListener.class);
     private final TransportUnitRemovalHandler handler;
+    private final Validator validator;
     private final AmqpTemplate amqpTemplate;
     private final String exchangeName;
 
-    TransportUnitRemovalListener(TransportUnitRemovalHandler handler, AmqpTemplate amqpTemplate, @Value("${owms.commands.common.tu.exchange-name}") String exchangeName) {
+    TransportUnitRemovalListener(TransportUnitRemovalHandler handler, Validator validator, AmqpTemplate amqpTemplate, @Value("${owms.commands.common.tu.exchange-name}") String exchangeName) {
         this.handler = handler;
+        this.validator = validator;
         this.amqpTemplate = amqpTemplate;
         this.exchangeName = exchangeName;
     }
@@ -55,6 +62,7 @@ class TransportUnitRemovalListener {
     public void onEvent(TUCommand command) {
         switch (command.getType()) {
             case REMOVE:
+                validate(validator, command, ValidationGroups.TransportUnit.Remove.class);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Sending command to finally REMOVE the TransportUnit with pKey [{}]", command.getTransportUnit().getpKey());
                 }

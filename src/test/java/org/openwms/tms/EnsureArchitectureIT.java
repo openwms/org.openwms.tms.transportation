@@ -53,7 +53,7 @@ class EnsureArchitectureIT {
                     .resideInAPackage("..tms.api..")
                     .should()
                     .onlyDependOnClassesThat()
-                    .resideInAnyPackage("..tms.api..", "org.openwms.core..", "org.openwms.common..", "java..", "org.springframework..")
+                    .resideInAnyPackage("..tms.api..", "org.openwms.core..", "org.openwms.common..", "java..", "javax..", "com..", "org.springframework..")
                     .because("The API package is separated and the only package accessible by the client")
             ;
 
