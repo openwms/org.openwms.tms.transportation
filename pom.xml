@@ -261,6 +261,11 @@
             <optional>true</optional>
             <exclusions>
                 <exclusion>
+                    <!-- Bites with Spring Data Envers -->
+                    <groupId>joda-time</groupId>
+                    <artifactId>joda-time</artifactId>
+                </exclusion>
+                <exclusion>
                     <!-- Several versions of Guava used internally, exclude all -->
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
