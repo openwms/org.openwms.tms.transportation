@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Initializer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.impl.state</a> &gt; <span class="el_source">Initializer.java</span></div><h1>Initializer.java</h1><pre class="source lang-java linenums"><span class="fc" id="L1">/*</span>
+ * Copyright 2005-2020 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.openwms.tms.impl.state;
+
+import org.ameba.annotation.TxService;
+import org.ameba.exception.NotFoundException;
+import org.openwms.common.transport.api.TransportUnitApi;
+import org.openwms.tms.StateChangeException;
+import org.openwms.tms.TransportOrder;
+import org.openwms.tms.TransportOrderState;
+import org.openwms.tms.TransportServiceEvent;
+import org.openwms.tms.impl.TransportOrderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static org.springframework.transaction.annotation.Propagation.REQUIRED;
+
+/**
+ * A Initializer.
+ *
+ * @author Heiko Scherrer
+ */
+@TxService(propagation = Propagation.REQUIRED)
+class Initializer {
+
+<span class="fc" id="L45">    private static final Logger LOGGER = LoggerFactory.getLogger(Initializer.class);</span>
+    private final TransportOrderRepository repository;
+    private final TransportUnitApi transportUnitApi;
+    private final ApplicationContext ctx;
+
+<span class="fc" id="L50">    Initializer(TransportOrderRepository repository, TransportUnitApi transportUnitApi, ApplicationContext ctx) {</span>
+<span class="fc" id="L51">        this.repository = repository;</span>
+<span class="fc" id="L52">        this.transportUnitApi = transportUnitApi;</span>
+<span class="fc" id="L53">        this.ctx = ctx;</span>
+<span class="fc" id="L54">    }</span>
+
+    /**
+     * Handle an application event.
+     *
+     * @param event the event to respond to
+     */
+    @EventListener
+    @Transactional(propagation = REQUIRED, noRollbackFor = StateChangeException.class)
+<span class="fc" id="L63">    public void onEvent(final TransportServiceEvent event) {</span>
+        if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_CREATED) {
+            TransportOrder to = repository.findById(((TransportOrder) event.getSource()).getPk()).orElseThrow(NotFoundException::new);
+            List&lt;TransportOrder&gt; transportOrders = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.CREATED);
+            transportOrders.sort(new TransportStartComparator());
+            for (TransportOrder transportOrder : transportOrders) {
+                try {
+                    transportOrder
+                            .changeState(TransportOrderState.INITIALIZED)
+                            .setSourceLocation(transportUnitApi.findTransportUnit(transportOrder.getTransportUnitBK()).getActualLocation().getLocationId());
+                    transportOrder = repository.save(transportOrder);
+                    LOGGER.debug(&quot;TransportOrder with PK [{}] INITIALIZED&quot;, transportOrder.getPk());
+                } catch (StateChangeException sce) {
+                    LOGGER.warn(&quot;Could not initialize TransportOrder with PK [{}]. Message: [{}]&quot;, transportOrder.getPk(), sce.getMessage());
+                    continue;
+                }
+                try {
+                    ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.INITIALIZED));
+                } catch (StateChangeException sce) {
+                    LOGGER.warn(&quot;Post-processing of TransportOrder with PK [{}] failed with message: [{}]&quot;, transportOrder.getPk(), sce.getMessage());
+                }
+            }
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
