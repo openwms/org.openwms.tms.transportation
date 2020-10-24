@@ -62,8 +62,8 @@
     </ciManagement>
 
     <properties>
-        <common-service.version>1.6.0-SNAPSHOT</common-service.version>
-        <core.version>1.8.0-SNAPSHOT</core.version>
+        <common-service.version>1.7.0-SNAPSHOT</common-service.version>
+        <core.version>1.9.0-SNAPSHOT</core.version>
         <guava.version>29.0-jre</guava.version>
         <skipTests>false</skipTests>
         <spring-cloud-dependencies.version>Hoxton.RELEASE</spring-cloud-dependencies.version>
