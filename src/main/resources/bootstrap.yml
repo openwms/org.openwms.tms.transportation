@@ -33,10 +33,19 @@ spring:
             revision_type_field_name: C_REV_TYPE
             audit_strategy_validity_end_rev_field_name: C_REV_END
             audit_strategy_validity_revend_timestamp_field_name: C_REVEND_TSTMP
+            store_data_at_delete: true
   jackson:
     date-format: yyyy-MM-dd'T'HH:mm:ss.SSSZ
   main:
     allow-bean-definition-overriding: true
+  rabbitmq:
+    listener:
+      simple:
+        retry:
+          max-attempts: 3
+          enabled: true
+          initial-interval: 1s
+          max-interval: 1s
   zipkin:
     sender:
       type: web

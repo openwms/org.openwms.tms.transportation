@@ -20,7 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -80,6 +82,22 @@ class TransportationAsyncConfiguration {
         return rabbitTemplate;
     }
 
+    @Bean
+    DirectExchange dlExchange(@Value("${owms.transportation.dead-letter.exchange-name}") String exchangeName) {
+        return new DirectExchange(exchangeName);
+    }
+
+    @Bean
+    Queue dlq(@Value("${owms.transportation.dead-letter.queue-name}") String queueName) {
+        return QueueBuilder.durable(queueName).build();
+    }
+
+    @Bean
+    Binding dlBinding(@Value("${owms.transportation.dead-letter.queue-name}") String queueName,
+            @Value("${owms.transportation.dead-letter.exchange-name}") String exchangeName) {
+        return BindingBuilder.bind(dlq(queueName)).to(dlExchange(exchangeName)).with("poison-message");
+    }
+
     /* Commands TMS -> COMMON */
     @Bean
     TopicExchange commonCommandsExchange(@Value("${owms.commands.common.tu.exchange-name}") String exchangeName) {
@@ -87,8 +105,12 @@ class TransportationAsyncConfiguration {
     }
 
     @Bean
-    Queue commonCommandsQueue(@Value("${owms.commands.common.tu.queue-name}") String queueName) {
-        return new Queue(queueName);
+    Queue commonCommandsQueue(@Value("${owms.commands.common.tu.queue-name}") String queueName,
+            @Value("${owms.transportation.dead-letter.exchange-name}") String exchangeName) {
+        return QueueBuilder.durable(queueName)
+                .withArgument("x-dead-letter-exchange", exchangeName)
+                .withArgument("x-dead-letter-routing-key", "poison-message")
+                .build();
     }
 
     @Bean
@@ -104,8 +126,12 @@ class TransportationAsyncConfiguration {
     }
 
     @Bean
-    Queue tmsCommandsQueue(@Value("${owms.commands.tms.to.queue-name}") String queueName) {
-        return new Queue(queueName);
+    Queue tmsCommandsQueue(@Value("${owms.commands.tms.to.queue-name}") String queueName,
+            @Value("${owms.transportation.dead-letter.exchange-name}") String exchangeName) {
+        return QueueBuilder.durable(queueName)
+                .withArgument("x-dead-letter-exchange", exchangeName)
+                .withArgument("x-dead-letter-routing-key", "poison-message")
+                .build();
     }
 
     @Bean
@@ -121,8 +147,12 @@ class TransportationAsyncConfiguration {
     }
 
     @Bean
-    Queue tmsRequestsQueue(@Value("${owms.requests.tms.to.queue-name}") String queueName) {
-        return new Queue(queueName, true);
+    Queue tmsRequestsQueue(@Value("${owms.requests.tms.to.queue-name}") String queueName,
+            @Value("${owms.transportation.dead-letter.exchange-name}") String exchangeName) {
+        return QueueBuilder.durable(queueName)
+                .withArgument("x-dead-letter-exchange", exchangeName)
+                .withArgument("x-dead-letter-routing-key", "poison-message")
+                .build();
     }
 
     @Bean

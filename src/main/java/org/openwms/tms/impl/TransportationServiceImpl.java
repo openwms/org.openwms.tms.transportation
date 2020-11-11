@@ -86,7 +86,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     }
 
     private TransportOrder findBy(String pKey) {
-        return repository.findByPKey(pKey).orElseThrow(() -> new NotFoundException(translator, TMSMessageCodes.TO_WITH_PKEY_NOT_FOUND, new String[]{pKey}, pKey));
+        return repository.findBypKey(pKey).orElseThrow(() -> new NotFoundException(translator, TMSMessageCodes.TO_WITH_PKEY_NOT_FOUND, new String[]{pKey}, pKey));
     }
 
     /**
@@ -140,7 +140,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
             LOGGER.debug("TransportOrder for Barcode [{}] created. PKey is [{}], PK is [{}]", barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
         }
         ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.TRANSPORT_CREATED));
-        transportOrder = repository.findByPKey(transportOrder.getPersistentKey()).orElseThrow(NotFoundException::new);
+        transportOrder = repository.findBypKey(transportOrder.getPersistentKey()).orElseThrow(NotFoundException::new);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("TransportOrder for Barcode [{}] persisted. PKey is [{}], PK is [{}]", barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
         }
@@ -165,7 +165,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     @Measured
     public Collection<String> change(TransportOrderState state, Collection<String> pKeys) {
         List<String> failure = new ArrayList<>(pKeys.size());
-        List<TransportOrder> transportOrders = repository.findByPKey(new ArrayList<>(pKeys));
+        List<TransportOrder> transportOrders = repository.findBypKeys(new ArrayList<>(pKeys));
         for (TransportOrder transportOrder : transportOrders) {
             try {
                 if (LOGGER.isDebugEnabled()) {

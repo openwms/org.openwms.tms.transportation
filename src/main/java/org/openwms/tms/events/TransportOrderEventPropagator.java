@@ -51,5 +51,20 @@ class TransportOrderEventPropagator {
             mo.setEventType(TransportOrderMO.EventType.STARTED);
             amqpTemplate.convertAndSend(exchangeName, "to.event.started", mo);
         }
+        if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_FINISHED) {
+            TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);
+            mo.setEventType(TransportOrderMO.EventType.FINISHED);
+            amqpTemplate.convertAndSend(exchangeName, "to.event.finished", mo);
+        }
+        if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_CANCELED) {
+            TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);
+            mo.setEventType(TransportOrderMO.EventType.CANCELED);
+            amqpTemplate.convertAndSend(exchangeName, "to.event.canceled", mo);
+        }
+        if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_CREATED) {
+            TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);
+            mo.setEventType(TransportOrderMO.EventType.CREATED);
+            amqpTemplate.convertAndSend(exchangeName, "to.event.created", mo);
+        }
     }
 }

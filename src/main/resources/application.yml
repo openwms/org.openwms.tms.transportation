@@ -33,4 +33,7 @@ owms:
         routing-key: response.state.change
         queue-name: tms-to-requests
   transportation:
+    dead-letter:
+      exchange-name: dle.transportation
+      queue-name: tms-dl-queue
     serialization: json

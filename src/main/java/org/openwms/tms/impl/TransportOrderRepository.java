@@ -32,7 +32,7 @@ import java.util.Optional;
 public interface TransportOrderRepository extends JpaRepository<TransportOrder, Long> {
 
     @Query("select to from TransportOrder to where to.pKey = ?1")
-    Optional<TransportOrder> findByPKey(String pKey);
+    Optional<TransportOrder> findBypKey(String pKey);
 
     List<TransportOrder> findByTransportUnitBKIsInAndStateOrderByStartDate(List<String> transportUnitBKs, TransportOrderState state);
 
@@ -50,7 +50,7 @@ public interface TransportOrderRepository extends JpaRepository<TransportOrder, 
             @Param("sourceLocations") List<String> sourceLocations);
 
     @Query("select to from TransportOrder to where to.pKey in ?1")
-    List<TransportOrder> findByPKey(List<String> pKeys);
+    List<TransportOrder> findBypKeys(List<String> pKeys);
 
     @Query("select to " +
             "from TransportOrder to " +

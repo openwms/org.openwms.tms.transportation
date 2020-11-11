@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2019 the original author or authors.
+ * Copyright 2005-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.TransportationService;
 import org.openwms.tms.api.requests.state.StateChangeResponse;
-import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -81,8 +80,6 @@ class AmqpStateListener {
             }
         } catch (StateChangeException sce) {
             // fine here
-        } catch (Exception ex) {
-            throw new AmqpRejectAndDontRequeueException(ex.getMessage(), ex);
         }
     }
 }

@@ -27,7 +27,6 @@ import org.openwms.tms.TransportationService;
 import org.openwms.tms.api.TOCommand;
 import org.openwms.tms.api.UpdateTransportOrderVO;
 import org.openwms.tms.api.ValidationGroups;
-import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -62,31 +61,27 @@ class TransportOrderCommandHandler {
     @Measured
     @RabbitListener(queues = "${owms.commands.tms.to.queue-name}")
     void receive(@Payload TOCommand command) {
-        try {
-            switch (command.getType()) {
-                case CREATE:
-                    validate(command.getCreateTransportOrder(), ValidationGroups.OrderCreation.class);
-                    service.create(command.getCreateTransportOrder().getBarcode(), command.getCreateTransportOrder().getTarget(), command.getCreateTransportOrder().getPriority());
-                    break;
-                case CHANGE_TARGET:
-                    validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);
-                    service.update(mapper.map(command.getUpdateTransportOrder(), TransportOrder.class));
-                    break;
-                case FINISH:
-                    validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);
-                    service.change(TransportOrderState.FINISHED, Arrays.asList(command.getUpdateTransportOrder().getpKey()));
-                    break;
-                case CANCEL_ALL:
-                    UpdateTransportOrderVO vo = command.getUpdateTransportOrder();
-                    Message msg = mapper.map(vo.getProblem(), Message.class);
-                    service.change(vo.getBarcode(), TransportOrderState.INITIALIZED, TransportOrderState.CANCELED, msg);
-                    service.change(vo.getBarcode(), TransportOrderState.STARTED, TransportOrderState.CANCELED, msg);
-                    break;
-                default:
-                    throw new ServiceLayerException(format("Operation [%s] of TOCommand not supported", command.getType()));
-            }
-        } catch (Exception e) {
-            throw new AmqpRejectAndDontRequeueException(e.getMessage(), e);
+        switch (command.getType()) {
+            case CREATE:
+                validate(command.getCreateTransportOrder(), ValidationGroups.OrderCreation.class);
+                service.create(command.getCreateTransportOrder().getBarcode(), command.getCreateTransportOrder().getTarget(), command.getCreateTransportOrder().getPriority());
+                break;
+            case CHANGE_TARGET:
+                validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);
+                service.update(mapper.map(command.getUpdateTransportOrder(), TransportOrder.class));
+                break;
+            case FINISH:
+                validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);
+                service.change(TransportOrderState.FINISHED, Arrays.asList(command.getUpdateTransportOrder().getpKey()));
+                break;
+            case CANCEL_ALL:
+                UpdateTransportOrderVO vo = command.getUpdateTransportOrder();
+                Message msg = mapper.map(vo.getProblem(), Message.class);
+                service.change(vo.getBarcode(), TransportOrderState.INITIALIZED, TransportOrderState.CANCELED, msg);
+                service.change(vo.getBarcode(), TransportOrderState.STARTED, TransportOrderState.CANCELED, msg);
+                break;
+            default:
+                throw new ServiceLayerException(format("Operation [%s] of TOCommand not supported", command.getType()));
         }
     }
 
