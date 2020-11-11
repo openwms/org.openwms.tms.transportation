@@ -27,7 +27,6 @@ import org.openwms.tms.TransportationService;
 import org.openwms.tms.api.TOCommand;
 import org.openwms.tms.api.UpdateTransportOrderVO;
 import org.openwms.tms.api.ValidationGroups;
-import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -53,49 +52,45 @@ class TransportOrderCommandHandler {
     private final Validator validator;
     private final BeanMapper mapper;
 
-<span class="fc" id="L56">    TransportOrderCommandHandler(TransportationService service, Validator validator, BeanMapper mapper) {</span>
-<span class="fc" id="L57">        this.service = service;</span>
-<span class="fc" id="L58">        this.validator = validator;</span>
-<span class="fc" id="L59">        this.mapper = mapper;</span>
-<span class="fc" id="L60">    }</span>
+<span class="fc" id="L55">    TransportOrderCommandHandler(TransportationService service, Validator validator, BeanMapper mapper) {</span>
+<span class="fc" id="L56">        this.service = service;</span>
+<span class="fc" id="L57">        this.validator = validator;</span>
+<span class="fc" id="L58">        this.mapper = mapper;</span>
+<span class="fc" id="L59">    }</span>
 
     @Measured
     @RabbitListener(queues = &quot;${owms.commands.tms.to.queue-name}&quot;)
     void receive(@Payload TOCommand command) {
-        try {
-<span class="nc bnc" id="L66" title="All 5 branches missed.">            switch (command.getType()) {</span>
-                case CREATE:
-<span class="nc" id="L68">                    validate(command.getCreateTransportOrder(), ValidationGroups.OrderCreation.class);</span>
-<span class="nc" id="L69">                    service.create(command.getCreateTransportOrder().getBarcode(), command.getCreateTransportOrder().getTarget(), command.getCreateTransportOrder().getPriority());</span>
-<span class="nc" id="L70">                    break;</span>
-                case CHANGE_TARGET:
-<span class="nc" id="L72">                    validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);</span>
-<span class="nc" id="L73">                    service.update(mapper.map(command.getUpdateTransportOrder(), TransportOrder.class));</span>
-<span class="nc" id="L74">                    break;</span>
-                case FINISH:
-<span class="nc" id="L76">                    validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);</span>
-<span class="nc" id="L77">                    service.change(TransportOrderState.FINISHED, Arrays.asList(command.getUpdateTransportOrder().getpKey()));</span>
-<span class="nc" id="L78">                    break;</span>
-                case CANCEL_ALL:
-<span class="nc" id="L80">                    UpdateTransportOrderVO vo = command.getUpdateTransportOrder();</span>
-<span class="nc" id="L81">                    Message msg = mapper.map(vo.getProblem(), Message.class);</span>
-<span class="nc" id="L82">                    service.change(vo.getBarcode(), TransportOrderState.INITIALIZED, TransportOrderState.CANCELED, msg);</span>
-<span class="nc" id="L83">                    service.change(vo.getBarcode(), TransportOrderState.STARTED, TransportOrderState.CANCELED, msg);</span>
-<span class="nc" id="L84">                    break;</span>
-                default:
-<span class="nc" id="L86">                    throw new ServiceLayerException(format(&quot;Operation [%s] of TOCommand not supported&quot;, command.getType()));</span>
-            }
-<span class="nc" id="L88">        } catch (Exception e) {</span>
-<span class="nc" id="L89">            throw new AmqpRejectAndDontRequeueException(e.getMessage(), e);</span>
+<span class="nc bnc" id="L64" title="All 5 branches missed.">        switch (command.getType()) {</span>
+            case CREATE:
+<span class="nc" id="L66">                validate(command.getCreateTransportOrder(), ValidationGroups.OrderCreation.class);</span>
+<span class="nc" id="L67">                service.create(command.getCreateTransportOrder().getBarcode(), command.getCreateTransportOrder().getTarget(), command.getCreateTransportOrder().getPriority());</span>
+<span class="nc" id="L68">                break;</span>
+            case CHANGE_TARGET:
+<span class="nc" id="L70">                validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);</span>
+<span class="nc" id="L71">                service.update(mapper.map(command.getUpdateTransportOrder(), TransportOrder.class));</span>
+<span class="nc" id="L72">                break;</span>
+            case FINISH:
+<span class="nc" id="L74">                validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);</span>
+<span class="nc" id="L75">                service.change(TransportOrderState.FINISHED, Arrays.asList(command.getUpdateTransportOrder().getpKey()));</span>
+<span class="nc" id="L76">                break;</span>
+            case CANCEL_ALL:
+<span class="nc" id="L78">                UpdateTransportOrderVO vo = command.getUpdateTransportOrder();</span>
+<span class="nc" id="L79">                Message msg = mapper.map(vo.getProblem(), Message.class);</span>
+<span class="nc" id="L80">                service.change(vo.getBarcode(), TransportOrderState.INITIALIZED, TransportOrderState.CANCELED, msg);</span>
+<span class="nc" id="L81">                service.change(vo.getBarcode(), TransportOrderState.STARTED, TransportOrderState.CANCELED, msg);</span>
+<span class="nc" id="L82">                break;</span>
+            default:
+<span class="nc" id="L84">                throw new ServiceLayerException(format(&quot;Operation [%s] of TOCommand not supported&quot;, command.getType()));</span>
         }
-<span class="nc" id="L91">    }</span>
+<span class="nc" id="L86">    }</span>
 
     private &lt;T&gt; void validate(T to, Class&lt;?&gt;... clazz) {
-<span class="nc" id="L94">        Set&lt;ConstraintViolation&lt;T&gt;&gt; violations = validator.validate(to, clazz);</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (!violations.isEmpty()) {</span>
-<span class="nc" id="L96">            ConstraintViolation&lt;T&gt; violation = violations.iterator().next();</span>
-<span class="nc" id="L97">            throw new ValidationException(String.format(&quot;Violation error [%s], property [%s]&quot;, violation.getMessage(), violation.getPropertyPath()));</span>
+<span class="nc" id="L89">        Set&lt;ConstraintViolation&lt;T&gt;&gt; violations = validator.validate(to, clazz);</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (!violations.isEmpty()) {</span>
+<span class="nc" id="L91">            ConstraintViolation&lt;T&gt; violation = violations.iterator().next();</span>
+<span class="nc" id="L92">            throw new ValidationException(String.format(&quot;Violation error [%s], property [%s]&quot;, violation.getMessage(), violation.getPropertyPath()));</span>
         }
-<span class="nc" id="L99">    }</span>
+<span class="nc" id="L94">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

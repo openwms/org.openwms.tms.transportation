@@ -51,6 +51,21 @@ class TransportOrderEventPropagator {
 <span class="fc" id="L51">            mo.setEventType(TransportOrderMO.EventType.STARTED);</span>
 <span class="fc" id="L52">            amqpTemplate.convertAndSend(exchangeName, &quot;to.event.started&quot;, mo);</span>
         }
-<span class="fc" id="L54">    }</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_FINISHED) {</span>
+<span class="fc" id="L55">            TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);</span>
+<span class="fc" id="L56">            mo.setEventType(TransportOrderMO.EventType.FINISHED);</span>
+<span class="fc" id="L57">            amqpTemplate.convertAndSend(exchangeName, &quot;to.event.finished&quot;, mo);</span>
+        }
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_CANCELED) {</span>
+<span class="fc" id="L60">            TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);</span>
+<span class="fc" id="L61">            mo.setEventType(TransportOrderMO.EventType.CANCELED);</span>
+<span class="fc" id="L62">            amqpTemplate.convertAndSend(exchangeName, &quot;to.event.canceled&quot;, mo);</span>
+        }
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_CREATED) {</span>
+<span class="fc" id="L65">            TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);</span>
+<span class="fc" id="L66">            mo.setEventType(TransportOrderMO.EventType.CREATED);</span>
+<span class="fc" id="L67">            amqpTemplate.convertAndSend(exchangeName, &quot;to.event.created&quot;, mo);</span>
+        }
+<span class="fc" id="L69">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

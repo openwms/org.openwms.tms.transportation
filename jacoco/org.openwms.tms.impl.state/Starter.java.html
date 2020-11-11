@@ -71,7 +71,7 @@ class Starter implements Startable {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = StateChangeException.class)
 <span class="fc" id="L73">    public void start(String pKey) {</span>
-<span class="nc" id="L74">        this.startInternal(repository.findByPKey(pKey).orElseThrow(() -&gt; new NotFoundException(format(&quot;No TransportOrder with pKey [%s] found&quot;, pKey))));</span>
+<span class="nc" id="L74">        this.startInternal(repository.findBypKey(pKey).orElseThrow(() -&gt; new NotFoundException(format(&quot;No TransportOrder with pKey [%s] found&quot;, pKey))));</span>
     }
 
     @Override

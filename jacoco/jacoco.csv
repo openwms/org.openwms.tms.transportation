@@ -1,6 +1,6 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.api.messages,TransportOrderMO,115,28,0,0,13,10,7,9,7,9
-OpenWMS.org TMS: Transportation Services,org.openwms.tms.api.messages,TransportOrderMO.EventType,0,14,0,0,0,2,0,1,0,1
+OpenWMS.org TMS: Transportation Services,org.openwms.tms.api.messages,TransportOrderMO.EventType,0,44,0,0,0,5,0,1,0,1
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.state,ChangeState,44,0,6,0,10,0,6,0,3,0
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.state,StateManagerImpl,86,246,8,26,4,31,7,15,0,3
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.state,Starter,40,232,7,15,7,34,7,11,1,6
@@ -8,7 +8,7 @@ OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.state,AmqpStartReq
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.state,Starter.AjcClosure1,0,18,0,0,0,1,0,2,0,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.state,Starter.AjcClosure3,0,18,0,0,0,1,0,2,0,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.state,StartListener,0,39,0,3,0,11,0,4,0,2
-OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.state,AmqpStateListener,89,0,6,0,22,0,5,0,2,0
+OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.state,AmqpStateListener,80,0,6,0,20,0,5,0,2,0
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.state,Initializer,0,40,0,0,0,7,0,3,0,3
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.state,InternalStartAcceptor,0,11,0,0,0,5,0,2,0,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.state,TransportStartComparator,40,3,8,0,9,1,5,1,1,1
@@ -52,16 +52,16 @@ OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl,ChangeTU,9,55,1,1,
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl,PrioritizeTO,0,16,0,4,0,4,0,4,0,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl,TransportationServiceImpl,164,177,10,4,22,29,10,9,4,8
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl,TransportationServiceImpl.AjcClosure1,0,25,0,0,0,1,0,2,0,2
-OpenWMS.org TMS: Transportation Services,org.openwms.tms.commands,TransportOrderCommandHandler,162,12,7,0,24,5,7,1,2,1
+OpenWMS.org TMS: Transportation Services,org.openwms.tms.commands,TransportOrderCommandHandler,154,12,7,0,22,5,7,1,2,1
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationWebConfiguration,0,8,0,0,0,3,0,2,0,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,AllConfigurations,0,3,0,0,0,1,0,1,0,1
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationModuleConfiguration.new AbstractTranslator() {...},0,10,0,0,0,2,0,2,0,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationStandaloneConfiguration,0,3,0,0,0,1,0,1,0,1
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationFeignConfiguration,0,3,0,0,0,1,0,1,0,1
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationModuleConfiguration,0,108,0,0,0,24,0,11,0,11
-OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationAsyncConfiguration,9,103,0,0,3,31,1,13,1,13
+OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationAsyncConfiguration,9,137,0,0,3,43,1,16,1,16
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.app,TransportationSecurityConfiguration,0,14,0,0,0,6,0,2,0,2
-OpenWMS.org TMS: Transportation Services,org.openwms.tms.events,TransportOrderEventPropagator,0,35,0,2,0,10,0,3,0,2
+OpenWMS.org TMS: Transportation Services,org.openwms.tms.events,TransportOrderEventPropagator,0,101,0,8,0,22,0,6,0,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.removal,TransportUnitRemovalHandler,302,27,31,1,87,10,25,2,9,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.removal,TransportUnitRemovalListener,57,19,6,0,12,7,5,2,2,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.removal,RemovalNotAllowedException,9,0,0,0,4,0,2,0,2,0

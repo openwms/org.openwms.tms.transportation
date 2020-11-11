@@ -20,7 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -46,91 +48,119 @@ import static org.ameba.LoggingCategories.BOOT;
 @Profile(SpringProfiles.ASYNCHRONOUS_PROFILE)
 @Configuration
 @EnableRabbit
-<span class="fc" id="L49">class TransportationAsyncConfiguration {</span>
+<span class="fc" id="L51">class TransportationAsyncConfiguration {</span>
 
-<span class="fc" id="L51">    private static final Logger BOOT_LOGGER = LoggerFactory.getLogger(BOOT);</span>
+<span class="fc" id="L53">    private static final Logger BOOT_LOGGER = LoggerFactory.getLogger(BOOT);</span>
 
     @ConditionalOnExpression(&quot;'${owms.transportation.serialization}'=='json'&quot;)
     @Bean
     MessageConverter messageConverter() {
-<span class="fc" id="L56">        Jackson2JsonMessageConverter messageConverter = new Jackson2JsonMessageConverter();</span>
-<span class="fc" id="L57">        BOOT_LOGGER.info(&quot;Using JSON serialization over AMQP&quot;);</span>
-<span class="fc" id="L58">        return messageConverter;</span>
+<span class="fc" id="L58">        Jackson2JsonMessageConverter messageConverter = new Jackson2JsonMessageConverter();</span>
+<span class="fc" id="L59">        BOOT_LOGGER.info(&quot;Using JSON serialization over AMQP&quot;);</span>
+<span class="fc" id="L60">        return messageConverter;</span>
     }
 
     @ConditionalOnExpression(&quot;'${owms.transportation.serialization}'=='barray'&quot;)
     @Bean
     MessageConverter serializerMessageConverter() {
-<span class="nc" id="L64">        SerializerMessageConverter messageConverter = new SerializerMessageConverter();</span>
-<span class="nc" id="L65">        BOOT_LOGGER.info(&quot;Using byte array serialization over AMQP&quot;);</span>
-<span class="nc" id="L66">        return messageConverter;</span>
+<span class="nc" id="L66">        SerializerMessageConverter messageConverter = new SerializerMessageConverter();</span>
+<span class="nc" id="L67">        BOOT_LOGGER.info(&quot;Using byte array serialization over AMQP&quot;);</span>
+<span class="nc" id="L68">        return messageConverter;</span>
     }
 
     @Bean
     RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
-<span class="fc" id="L71">        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);</span>
-<span class="fc" id="L72">        ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();</span>
-<span class="fc" id="L73">        backOffPolicy.setMultiplier(2);</span>
-<span class="fc" id="L74">        backOffPolicy.setMaxInterval(15000);</span>
-<span class="fc" id="L75">        backOffPolicy.setInitialInterval(500);</span>
-<span class="fc" id="L76">        RetryTemplate retryTemplate = new RetryTemplate();</span>
-<span class="fc" id="L77">        retryTemplate.setBackOffPolicy(backOffPolicy);</span>
-<span class="fc" id="L78">        rabbitTemplate.setRetryTemplate(retryTemplate);</span>
-<span class="fc" id="L79">        rabbitTemplate.setMessageConverter(messageConverter);</span>
-<span class="fc" id="L80">        return rabbitTemplate;</span>
+<span class="fc" id="L73">        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);</span>
+<span class="fc" id="L74">        ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();</span>
+<span class="fc" id="L75">        backOffPolicy.setMultiplier(2);</span>
+<span class="fc" id="L76">        backOffPolicy.setMaxInterval(15000);</span>
+<span class="fc" id="L77">        backOffPolicy.setInitialInterval(500);</span>
+<span class="fc" id="L78">        RetryTemplate retryTemplate = new RetryTemplate();</span>
+<span class="fc" id="L79">        retryTemplate.setBackOffPolicy(backOffPolicy);</span>
+<span class="fc" id="L80">        rabbitTemplate.setRetryTemplate(retryTemplate);</span>
+<span class="fc" id="L81">        rabbitTemplate.setMessageConverter(messageConverter);</span>
+<span class="fc" id="L82">        return rabbitTemplate;</span>
+    }
+
+    @Bean
+    DirectExchange dlExchange(@Value(&quot;${owms.transportation.dead-letter.exchange-name}&quot;) String exchangeName) {
+<span class="fc" id="L87">        return new DirectExchange(exchangeName);</span>
+    }
+
+    @Bean
+    Queue dlq(@Value(&quot;${owms.transportation.dead-letter.queue-name}&quot;) String queueName) {
+<span class="fc" id="L92">        return QueueBuilder.durable(queueName).build();</span>
+    }
+
+    @Bean
+    Binding dlBinding(@Value(&quot;${owms.transportation.dead-letter.queue-name}&quot;) String queueName,
+            @Value(&quot;${owms.transportation.dead-letter.exchange-name}&quot;) String exchangeName) {
+<span class="fc" id="L98">        return BindingBuilder.bind(dlq(queueName)).to(dlExchange(exchangeName)).with(&quot;poison-message&quot;);</span>
     }
 
     /* Commands TMS -&gt; COMMON */
     @Bean
     TopicExchange commonCommandsExchange(@Value(&quot;${owms.commands.common.tu.exchange-name}&quot;) String exchangeName) {
-<span class="fc" id="L86">        return new TopicExchange(exchangeName);</span>
+<span class="fc" id="L104">        return new TopicExchange(exchangeName);</span>
     }
 
     @Bean
-    Queue commonCommandsQueue(@Value(&quot;${owms.commands.common.tu.queue-name}&quot;) String queueName) {
-<span class="fc" id="L91">        return new Queue(queueName);</span>
+    Queue commonCommandsQueue(@Value(&quot;${owms.commands.common.tu.queue-name}&quot;) String queueName,
+            @Value(&quot;${owms.transportation.dead-letter.exchange-name}&quot;) String exchangeName) {
+<span class="fc" id="L110">        return QueueBuilder.durable(queueName)</span>
+<span class="fc" id="L111">                .withArgument(&quot;x-dead-letter-exchange&quot;, exchangeName)</span>
+<span class="fc" id="L112">                .withArgument(&quot;x-dead-letter-routing-key&quot;, &quot;poison-message&quot;)</span>
+<span class="fc" id="L113">                .build();</span>
     }
 
     @Bean
     Binding commonCommandsBinding(TopicExchange commonCommandsExchange, Queue commonCommandsQueue, @Value(&quot;${owms.commands.common.tu.routing-key}&quot;) String routingKey) {
-<span class="fc" id="L96">        return BindingBuilder.bind(commonCommandsQueue)</span>
-<span class="fc" id="L97">                .to(commonCommandsExchange)</span>
-<span class="fc" id="L98">                .with(routingKey);</span>
+<span class="fc" id="L118">        return BindingBuilder.bind(commonCommandsQueue)</span>
+<span class="fc" id="L119">                .to(commonCommandsExchange)</span>
+<span class="fc" id="L120">                .with(routingKey);</span>
     }
 
     @Bean
     TopicExchange tmsCommandsExchange(@Value(&quot;${owms.commands.tms.to.exchange-name}&quot;) String exchangeName) {
-<span class="fc" id="L103">        return new TopicExchange(exchangeName);</span>
+<span class="fc" id="L125">        return new TopicExchange(exchangeName);</span>
     }
 
     @Bean
-    Queue tmsCommandsQueue(@Value(&quot;${owms.commands.tms.to.queue-name}&quot;) String queueName) {
-<span class="fc" id="L108">        return new Queue(queueName);</span>
+    Queue tmsCommandsQueue(@Value(&quot;${owms.commands.tms.to.queue-name}&quot;) String queueName,
+            @Value(&quot;${owms.transportation.dead-letter.exchange-name}&quot;) String exchangeName) {
+<span class="fc" id="L131">        return QueueBuilder.durable(queueName)</span>
+<span class="fc" id="L132">                .withArgument(&quot;x-dead-letter-exchange&quot;, exchangeName)</span>
+<span class="fc" id="L133">                .withArgument(&quot;x-dead-letter-routing-key&quot;, &quot;poison-message&quot;)</span>
+<span class="fc" id="L134">                .build();</span>
     }
 
     @Bean
     Binding tmsCommandsBinding(TopicExchange tmsCommandsExchange, Queue tmsCommandsQueue, @Value(&quot;${owms.commands.tms.to.routing-key}&quot;) String routingKey) {
-<span class="fc" id="L113">        return BindingBuilder.bind(tmsCommandsQueue)</span>
-<span class="fc" id="L114">                .to(tmsCommandsExchange)</span>
-<span class="fc" id="L115">                .with(routingKey);</span>
+<span class="fc" id="L139">        return BindingBuilder.bind(tmsCommandsQueue)</span>
+<span class="fc" id="L140">                .to(tmsCommandsExchange)</span>
+<span class="fc" id="L141">                .with(routingKey);</span>
     }
 
     @Bean
     TopicExchange tmsRequestsExchange(@Value(&quot;${owms.requests.tms.to.exchange-name}&quot;) String exchangeName) {
-<span class="fc" id="L120">        return new TopicExchange(exchangeName, true, false);</span>
+<span class="fc" id="L146">        return new TopicExchange(exchangeName, true, false);</span>
     }
 
     @Bean
-    Queue tmsRequestsQueue(@Value(&quot;${owms.requests.tms.to.queue-name}&quot;) String queueName) {
-<span class="fc" id="L125">        return new Queue(queueName, true);</span>
+    Queue tmsRequestsQueue(@Value(&quot;${owms.requests.tms.to.queue-name}&quot;) String queueName,
+            @Value(&quot;${owms.transportation.dead-letter.exchange-name}&quot;) String exchangeName) {
+<span class="fc" id="L152">        return QueueBuilder.durable(queueName)</span>
+<span class="fc" id="L153">                .withArgument(&quot;x-dead-letter-exchange&quot;, exchangeName)</span>
+<span class="fc" id="L154">                .withArgument(&quot;x-dead-letter-routing-key&quot;, &quot;poison-message&quot;)</span>
+<span class="fc" id="L155">                .build();</span>
     }
 
     @Bean
     Binding tmsRequestsBinding(TopicExchange tmsRequestsExchange, Queue tmsRequestsQueue, @Value(&quot;${owms.requests.tms.to.routing-key}&quot;) String routingKey) {
-<span class="fc" id="L130">        return BindingBuilder</span>
-<span class="fc" id="L131">                .bind(tmsRequestsQueue)</span>
-<span class="fc" id="L132">                .to(tmsRequestsExchange)</span>
-<span class="fc" id="L133">                .with(routingKey);</span>
+<span class="fc" id="L160">        return BindingBuilder</span>
+<span class="fc" id="L161">                .bind(tmsRequestsQueue)</span>
+<span class="fc" id="L162">                .to(tmsRequestsExchange)</span>
+<span class="fc" id="L163">                .with(routingKey);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -86,7 +86,7 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
     }
 
     private TransportOrder findBy(String pKey) {
-<span class="pc" id="L89">        return repository.findByPKey(pKey).orElseThrow(() -&gt; new NotFoundException(translator, TMSMessageCodes.TO_WITH_PKEY_NOT_FOUND, new String[]{pKey}, pKey));</span>
+<span class="pc" id="L89">        return repository.findBypKey(pKey).orElseThrow(() -&gt; new NotFoundException(translator, TMSMessageCodes.TO_WITH_PKEY_NOT_FOUND, new String[]{pKey}, pKey));</span>
     }
 
     /**
@@ -140,7 +140,7 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
             LOGGER.debug(&quot;TransportOrder for Barcode [{}] created. PKey is [{}], PK is [{}]&quot;, barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
         }
         ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.TRANSPORT_CREATED));
-        transportOrder = repository.findByPKey(transportOrder.getPersistentKey()).orElseThrow(NotFoundException::new);
+        transportOrder = repository.findBypKey(transportOrder.getPersistentKey()).orElseThrow(NotFoundException::new);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(&quot;TransportOrder for Barcode [{}] persisted. PKey is [{}], PK is [{}]&quot;, barcode, transportOrder.getPersistentKey(), transportOrder.getPk());
         }
@@ -165,7 +165,7 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
     @Measured
     public Collection&lt;String&gt; change(TransportOrderState state, Collection&lt;String&gt; pKeys) {
 <span class="nc" id="L167">        List&lt;String&gt; failure = new ArrayList&lt;&gt;(pKeys.size());</span>
-<span class="nc" id="L168">        List&lt;TransportOrder&gt; transportOrders = repository.findByPKey(new ArrayList&lt;&gt;(pKeys));</span>
+<span class="nc" id="L168">        List&lt;TransportOrder&gt; transportOrders = repository.findBypKeys(new ArrayList&lt;&gt;(pKeys));</span>
 <span class="nc bnc" id="L169" title="All 2 branches missed.">        for (TransportOrder transportOrder : transportOrders) {</span>
             try {
 <span class="nc bnc" id="L171" title="All 2 branches missed.">                if (LOGGER.isDebugEnabled()) {</span>
