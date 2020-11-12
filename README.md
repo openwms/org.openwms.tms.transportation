@@ -1,5 +1,6 @@
-# Intention
-This service provides the essential functionality of the Transport Order Management (TMS). Some example functions are the ability to create
+# Purpose
+This service provides the essential functionality of the Transport Order Management (TMS) or somehow called Material Flow Controller (MFC).
+Some example functions are the ability to create
 _automated_ `TransportOrder`s or to finish already existing `TransportOrders`. Basically the service cares about the transport order
 management in _automated_ warehouses.
 

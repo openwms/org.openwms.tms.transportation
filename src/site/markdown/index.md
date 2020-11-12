@@ -1,12 +1,10 @@
 ## Purpose
-**TMS Transportation** allows to create Transport Orders in automated warehouses. A
-Transport Order is used to transport pallets, boxes, cartons or other types of Transport
-Units between warehouse Locations. Usually more then one Transport Order are created
-when a customer order is received or when a lorry of goods arrives at the warehouse.
+**TMS Transportation** allows to create `TransportOrders` in automated warehouses. A `TransportOrder` is used to transport pallets, boxes,
+cartons or other types of `TransportUnits` between warehouse `Locations`. Usually more than one `TransportOrder` is created when a customer
+order is received or when a lorry of goods arrives at the warehouse.
  
-This kind of Transport Orders are meant to be used in automated warehouses only. Other
-concepts with other types of transports, like Movements, do better apply for manual
-warehouses.
+These kinds of `TransportOrders`s are meant to be used in automated warehouses only. Other concepts with other types of transports, like
+`Movements`, do better apply for manual warehouses (see the Movements Service for manual warehouses).
 
 ## Deployment
 This component is a crucial part of the TMS (Transport Management System) and is required
