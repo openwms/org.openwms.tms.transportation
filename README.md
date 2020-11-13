@@ -1,8 +1,7 @@
 # Purpose
-This service provides the essential functionality of the Transport Order Management (TMS) or somehow called Material Flow Controller (MFC).
-Some example functions are the ability to create
-_automated_ `TransportOrder`s or to finish already existing `TransportOrders`. Basically the service cares about the transport order
-management in _automated_ warehouses.
+The TMS Transportation Service offers the essential functionality of the Transport Order Management (TMS) in automatic warehouses. This is 
+often referred to as Material Flow Controller (MFC). Some examples are the ability to create _automated_ `TransportOrders` or to finish
+already existing `TransportOrders`. Basically the service cares about the transport order management in _automated_ warehouses.
 
 # Resources
 [![Build status](https://img.shields.io/travis/openwms/org.openwms.tms.transportation.svg?style=flat-square)](https://travis-ci.com/openwms/org.openwms.tms.transportation)
