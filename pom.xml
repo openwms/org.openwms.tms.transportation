@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.openwms</groupId>
         <artifactId>org.openwms.parent</artifactId>
-        <version>17</version>
+        <version>18</version>
         <relativePath />
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
@@ -64,9 +64,10 @@
     <properties>
         <common-service.version>1.7.0-SNAPSHOT</common-service.version>
         <core.version>1.9.0-SNAPSHOT</core.version>
-        <guava.version>29.0-jre</guava.version>
+        <guava.version>30.0-jre</guava.version>
+        <servo-core.version>0.12.21</servo-core.version>
         <skipTests>false</skipTests>
-        <spring-cloud-dependencies.version>Hoxton.RELEASE</spring-cloud-dependencies.version>
+        <spring-cloud-dependencies.version>2020.0.0-SNAPSHOT</spring-cloud-dependencies.version>
     </properties>
 
     <reporting>
@@ -169,16 +170,9 @@
                 <version>${guava.version}</version>
             </dependency>
             <dependency>
-                <groupId>net.sf.dozer</groupId>
-                <artifactId>dozer</artifactId>
-                <version>${dozer.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <!-- bites with netflix-ribbon -->
-                        <groupId>commons-collections</groupId>
-                        <artifactId>commons-collections</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>com.netflix.servo</groupId>
+                <artifactId>servo-core</artifactId>
+                <version>${servo-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
@@ -266,14 +260,9 @@
                     <artifactId>joda-time</artifactId>
                 </exclusion>
                 <exclusion>
-                    <!-- Several versions of Guava used internally, exclude all -->
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-                <exclusion>
-                    <!-- Bites with Guava -->
-                    <groupId>com.google.code.findbugs</groupId>
-                    <artifactId>jsr305</artifactId>
+                    <!-- Internal MAJOR clash -->
+                    <groupId>com.netflix.servo</groupId>
+                    <artifactId>servo-core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -281,13 +270,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
             <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <!-- Newer version pulled by actuator -->
-                    <groupId>org.hdrhistogram</groupId>
-                    <artifactId>HdrHistogram</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -331,6 +313,13 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Fix Exclusions -->
+        <dependency>
+            <groupId>com.netflix.servo</groupId>
+            <artifactId>servo-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- 3rd party dependencies -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -360,21 +349,6 @@
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.netflix.hystrix</groupId>
-            <artifactId>hystrix-javanica</artifactId>
-            <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.code.findbugs</groupId>
-                    <artifactId>jsr305</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.hdrhistogram</groupId>
-                    <artifactId>HdrHistogram</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <!-- Required to use PATCH -->
@@ -453,6 +427,10 @@
                     <groupId>com.fasterxml.woodstox</groupId>
                     <artifactId>woodstox-core</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.codehaus.woodstox</groupId>
+                    <artifactId>stax2-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
     </dependencies>
@@ -480,5 +458,31 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 </project>
