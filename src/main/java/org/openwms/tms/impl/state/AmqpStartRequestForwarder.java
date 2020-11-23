@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.state;
 
+import org.openwms.core.SpringProfiles;
 import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.api.requests.state.StateChangeRequest;
 import org.springframework.amqp.core.AmqpTemplate;
@@ -27,7 +28,7 @@ import org.springframework.stereotype.Component;
  *
  * @author Heiko Scherrer
  */
-@Profile({"DISTRIBUTED"})
+@Profile(SpringProfiles.ASYNCHRONOUS_PROFILE)
 @Component
 class AmqpStartRequestForwarder implements ExternalStarter {
 

@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.state;
 
+import org.openwms.core.SpringProfiles;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Component;
  *
  * @author Heiko Scherrer
  */
-@Profile({"!DISTRIBUTED"})
+@Profile(SpringProfiles.NOT_ASYNCHRONOUS)
 @Lazy
 @Component
 class InternalStartAcceptor implements ExternalStarter {
