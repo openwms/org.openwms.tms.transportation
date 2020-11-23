@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.state;
 
+import org.openwms.core.SpringProfiles;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -24,20 +25,20 @@ import org.springframework.stereotype.Component;
  *
  * @author Heiko Scherrer
  */
-@Profile({&quot;!DISTRIBUTED&quot;})
+@Profile(SpringProfiles.NOT_ASYNCHRONOUS)
 @Lazy
 @Component
 class InternalStartAcceptor implements ExternalStarter {
 
     private final Startable startable;
 
-<span class="fc" id="L34">    InternalStartAcceptor(Startable startable) {</span>
-<span class="fc" id="L35">        this.startable = startable;</span>
-<span class="fc" id="L36">    }</span>
+<span class="nc" id="L35">    InternalStartAcceptor(Startable startable) {</span>
+<span class="nc" id="L36">        this.startable = startable;</span>
+<span class="nc" id="L37">    }</span>
 
     @Override
     public void request(String pKey) {
-<span class="nc" id="L40">        startable.start(pKey);</span>
-<span class="nc" id="L41">    }</span>
+<span class="nc" id="L41">        startable.start(pKey);</span>
+<span class="nc" id="L42">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

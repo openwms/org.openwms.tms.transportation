@@ -17,6 +17,7 @@ package org.openwms.tms.impl.state;
 
 import org.ameba.annotation.Measured;
 import org.ameba.exception.ServiceLayerException;
+import org.openwms.core.SpringProfiles;
 import org.openwms.tms.Message;
 import org.openwms.tms.StateChangeException;
 import org.openwms.tms.TransportOrder;
@@ -33,17 +34,17 @@ import org.springframework.stereotype.Component;
  *
  * @author Heiko Scherrer
  */
-@Profile({&quot;DISTRIBUTED&quot;})
+@Profile(SpringProfiles.ASYNCHRONOUS_PROFILE)
 @Component
 class AmqpStateListener {
 
     private final Startable starter;
     private final TransportationService&lt;TransportOrder&gt; service;
 
-<span class="nc" id="L43">    AmqpStateListener(Startable starter, TransportationService&lt;TransportOrder&gt; service) {</span>
-<span class="nc" id="L44">        this.starter = starter;</span>
-<span class="nc" id="L45">        this.service = service;</span>
-<span class="nc" id="L46">    }</span>
+<span class="fc" id="L44">    AmqpStateListener(Startable starter, TransportationService&lt;TransportOrder&gt; service) {</span>
+<span class="fc" id="L45">        this.starter = starter;</span>
+<span class="fc" id="L46">        this.service = service;</span>
+<span class="fc" id="L47">    }</span>
 
     /**
      * Listen and validate {@link StateChangeResponse}s.
@@ -55,32 +56,32 @@ class AmqpStateListener {
     public void onResponse(StateChangeResponse response) {
 
         try {
-<span class="nc bnc" id="L58" title="All 2 branches missed.">            if (!response.hasRequest()) {</span>
-<span class="nc" id="L59">                throw new ServiceLayerException(&quot;Got a response that is assigned to a request: &quot; + response);</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">            if (!response.hasRequest()) {</span>
+<span class="nc" id="L60">                throw new ServiceLayerException(&quot;Got a response that is assigned to a request: &quot; + response);</span>
             }
 
-<span class="nc bnc" id="L62" title="All 2 branches missed.">            if (response.hasError()) {</span>
-<span class="nc" id="L63">                TransportOrder to = service.findByPKey(response.getRequest().getTransportOrderPkey());</span>
-<span class="nc" id="L64">                to.setProblem(new Message.Builder()</span>
-<span class="nc" id="L65">                        .withMessage(response.getError().getMessage())</span>
-<span class="nc" id="L66">                        .withOccurred(response.getError().getOccurred())</span>
-<span class="nc" id="L67">                        .build());</span>
-<span class="nc" id="L68">                service.update(to);</span>
-<span class="nc" id="L69">                return;</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">            if (response.hasError()) {</span>
+<span class="nc" id="L64">                TransportOrder to = service.findByPKey(response.getRequest().getTransportOrderPkey());</span>
+<span class="nc" id="L65">                to.setProblem(new Message.Builder()</span>
+<span class="nc" id="L66">                        .withMessage(response.getError().getMessage())</span>
+<span class="nc" id="L67">                        .withOccurred(response.getError().getOccurred())</span>
+<span class="nc" id="L68">                        .build());</span>
+<span class="nc" id="L69">                service.update(to);</span>
+<span class="nc" id="L70">                return;</span>
             }
 
             // We only know about the states declared in TransportOrderState!
-<span class="nc bnc" id="L73" title="All 2 branches missed.">            if (TransportOrderState.STARTED.name().equals(response.getAcceptedState())) {</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">            if (TransportOrderState.STARTED.name().equals(response.getAcceptedState())) {</span>
 
                 // Okay the one and only voter accepted to start the TO. We could also have more than one voter but then the implementation
                 // needs to be adjusted.
-<span class="nc" id="L77">                this.starter.start(response.getRequest().getTransportOrderPkey());</span>
-<span class="nc" id="L78">            } else {</span>
-<span class="nc" id="L79">                throw new ServiceLayerException(&quot;Got a StateChangeResponse that is not supported: &quot; + response);</span>
+<span class="nc" id="L78">                this.starter.start(response.getRequest().getTransportOrderPkey());</span>
+<span class="nc" id="L79">            } else {</span>
+<span class="nc" id="L80">                throw new ServiceLayerException(&quot;Got a StateChangeResponse that is not supported: &quot; + response);</span>
             }
-<span class="nc" id="L81">        } catch (StateChangeException sce) {</span>
+<span class="nc" id="L82">        } catch (StateChangeException sce) {</span>
             // fine here
         }
-<span class="nc" id="L84">    }</span>
+<span class="nc" id="L85">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
