@@ -10,7 +10,7 @@
     <artifactId>org.openwms.tms.transportation</artifactId>
     <version>1.4.0-SNAPSHOT</version>
     <name>OpenWMS.org TMS: Transportation Services</name>
-    <url>https://openwms.github.io/org.openwms.tms.transportation/index.html</url>
+    <url>https://openwms.github.io/${project.artifactId}/index.html</url>
 
     <issueManagement>
         <system>github</system>
@@ -296,7 +296,6 @@
             <artifactId>spring-retry</artifactId>
             <optional>true</optional>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aspects</artifactId>
