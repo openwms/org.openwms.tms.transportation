@@ -3,7 +3,7 @@
 cartons or other types of `TransportUnits` between warehouse `Locations`. Usually more than one `TransportOrder` is created when a customer
 order is received or when a lorry of goods arrives at the warehouse.
  
-These kinds of `TransportOrders`s are meant to be used in automated warehouses only. Other concepts with other types of transports, like
+These kinds of `TransportOrders` are meant to be used in automated warehouses only. Other concepts with other types of transports, like
 `Movements`, do better apply for manual warehouses (see the Movements Service for manual warehouses).
 
 ## Deployment
@@ -13,8 +13,8 @@ across projects - perhaps in different flavor. The microservice is deployed as R
 
 | endpoints | billed | SLA |
 | --------- | ------ | --- |
-| https://openwms-tms-transportation.herokuapp.com
-  https://openwms.org/tms/transportation | no | Heroku SLA for Europe region depends on AWS Europe region |
+| https://openwms-tms-transportation.herokuapp.com | no | Heroku SLA for Europe region depends on AWS Europe region | 
+  https://openwms.org/tms/transportation | no | No SLA |
 
 ## Release
 
