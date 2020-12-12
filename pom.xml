@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.openwms</groupId>
         <artifactId>org.openwms.parent</artifactId>
-        <version>18</version>
+        <version>19</version>
         <relativePath />
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
@@ -62,13 +62,16 @@
     </ciManagement>
 
     <properties>
+        <commons-configuration.version>1.10</commons-configuration.version>
         <common-service.version>1.7.0-SNAPSHOT</common-service.version>
         <core.version>1.9.0-SNAPSHOT</core.version>
         <guava.version>30.0-jre</guava.version>
-        <servo-core.version>0.12.21</servo-core.version>
+        <HdrHistogram.version>2.1.12</HdrHistogram.version>
+        <jersey.version>1.19.4</jersey.version>
+        <jsr305.version>3.0.2</jsr305.version>
         <skipTests>false</skipTests>
-        <spring-cloud-dependencies.version>2020.0.0-SNAPSHOT</spring-cloud-dependencies.version>
-        <spring-cloud-sleuth-dependencies.version>3.0.0-SNAPSHOT</spring-cloud-sleuth-dependencies.version>
+        <spring-cloud-dependencies.version>Hoxton.SR9</spring-cloud-dependencies.version>
+        <stax2-api.version>4.2.1</stax2-api.version>
     </properties>
 
     <reporting>
@@ -166,26 +169,49 @@
                 <classifier>client</classifier>
             </dependency>
             <dependency>
+                <groupId>org.codehaus.woodstox</groupId>
+                <artifactId>stax2-api</artifactId>
+                <version>${stax2-api.version}</version>
+            </dependency>
+            <dependency>
+                <!-- Bites with Guava -->
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>${jsr305.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.netflix.servo</groupId>
-                <artifactId>servo-core</artifactId>
-                <version>${servo-core.version}</version>
+                <!-- com.netflix.eureka:eureka has an internal clash -->
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>${jersey.version}</version>
+            </dependency>
+            <dependency>
+                <!-- com.netflix.eureka:eureka has an internal clash -->
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-core</artifactId>
+                <version>${jersey.version}</version>
+            </dependency>
+            <dependency>
+                <!-- com.netflix.eureka:eureka has an internal clash -->
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>${commons-configuration.version}</version>
+            </dependency>
+            <dependency>
+                <!-- com.netflix.eureka:eureka has an internal clash -->
+                <groupId>org.hdrhistogram</groupId>
+                <artifactId>HdrHistogram</artifactId>
+                <version>${HdrHistogram.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring-cloud-dependencies.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-sleuth-dependencies</artifactId>
-                <version>${spring-cloud-sleuth-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -261,18 +287,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
             <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <!-- Bites with Spring Data Envers -->
-                    <groupId>joda-time</groupId>
-                    <artifactId>joda-time</artifactId>
-                </exclusion>
-                <exclusion>
-                    <!-- Internal MAJOR clash -->
-                    <groupId>com.netflix.servo</groupId>
-                    <artifactId>servo-core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -286,7 +300,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-sleuth-zipkin</artifactId>
+            <artifactId>spring-cloud-starter-zipkin</artifactId>
             <optional>true</optional>
         </dependency>
 
@@ -320,13 +334,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Fix Exclusions -->
-        <dependency>
-            <groupId>com.netflix.servo</groupId>
-            <artifactId>servo-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-
         <!-- 3rd party dependencies -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -355,6 +362,11 @@
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.hystrix</groupId>
+            <artifactId>hystrix-javanica</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -433,10 +445,6 @@
                 <exclusion>
                     <groupId>com.fasterxml.woodstox</groupId>
                     <artifactId>woodstox-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.codehaus.woodstox</groupId>
-                    <artifactId>stax2-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

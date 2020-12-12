@@ -100,7 +100,9 @@ class TransportationController extends AbstractWebController {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create TransportOrder [{}]", vo);
         }
-        PriorityLevel.of(vo.getPriority()); // validate early here!
+        if (vo.getPriority() != null && !vo.getPriority().isEmpty()) {
+            PriorityLevel.of(vo.getPriority()); // validate early here!
+        }
         TransportOrder to = service.create(vo.getBarcode(), vo.getTarget(), vo.getPriority());
         resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
     }
