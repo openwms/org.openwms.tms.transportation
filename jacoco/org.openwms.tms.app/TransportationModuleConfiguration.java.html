@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransportationModuleConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.app</a> &gt; <span class="el_source">TransportationModuleConfiguration.java</span></div><h1>TransportationModuleConfiguration.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2005-2020 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.openwms.tms.app;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import io.micrometer.core.instrument.MeterRegistry;
+import org.ameba.IDGenerator;
+import org.ameba.JdkIDGenerator;
+import org.ameba.annotation.EnableAspects;
+import org.ameba.http.EnableMultiTenancy;
+import org.ameba.http.RequestIDFilter;
+import org.ameba.i18n.AbstractTranslator;
+import org.ameba.i18n.Translator;
+import org.ameba.mapping.BeanMapper;
+import org.ameba.mapping.DozerMapperImpl;
+import org.openwms.tms.impl.TransportOrderRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.Ordered;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+
+import java.util.Locale;
+
+/**
+ * A TransportationModuleConfiguration.
+ *
+ * @author Heiko Scherrer
+ */
+@Configuration
+@EnableCaching
+@EnableSpringConfigured
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableJpaAuditing
+@EnableJpaRepositories(basePackageClasses = TransportOrderRepository.class)
+@EnableAspects(propagateRootCause = true)
+@EnableMultiTenancy
+<span class="fc" id="L66">class TransportationModuleConfiguration {</span>
+
+    public
+    @Bean
+    BeanMapper beanMapper() {
+<span class="fc" id="L71">        return new DozerMapperImpl(&quot;META-INF/dozer/tms-bean-mappings.xml&quot;);</span>
+    }
+
+    public
+    @Primary
+    @Bean(name = &quot;jacksonOM&quot;)
+    ObjectMapper jackson2ObjectMapper() {
+<span class="fc" id="L78">        ObjectMapper om = new ObjectMapper();</span>
+<span class="fc" id="L79">        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);</span>
+<span class="fc" id="L80">        om.configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false);</span>
+<span class="fc" id="L81">        om.configure(SerializationFeature.INDENT_OUTPUT, true);</span>
+<span class="fc" id="L82">        om.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);</span>
+<span class="fc" id="L83">        om.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);</span>
+<span class="fc" id="L84">        return om;</span>
+    }
+
+    /*~ ------------- i18n handling ----------- */
+    public
+    @Bean
+    LocaleResolver localeResolver() {
+<span class="fc" id="L91">        SessionLocaleResolver slr = new SessionLocaleResolver();</span>
+<span class="fc" id="L92">        slr.setDefaultLocale(Locale.US);</span>
+<span class="fc" id="L93">        return slr;</span>
+    }
+
+    public
+    @Bean
+    LocaleChangeInterceptor localeChangeInterceptor() {
+<span class="fc" id="L99">        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();</span>
+<span class="fc" id="L100">        lci.setParamName(&quot;lang&quot;);</span>
+<span class="fc" id="L101">        return lci;</span>
+    }
+
+    public
+    @Bean
+    Translator translator() {
+<span class="fc" id="L107">        return new AbstractTranslator() {</span>
+            @Override
+            protected MessageSource getMessageSource() {
+<span class="fc" id="L110">                return messageSource();</span>
+            }
+        };
+    }
+
+    public
+    @Bean
+    MessageSource messageSource() {
+<span class="fc" id="L118">        ResourceBundleMessageSource nrrbm = new ResourceBundleMessageSource();</span>
+<span class="fc" id="L119">        nrrbm.setBasename(&quot;i18n&quot;);</span>
+<span class="fc" id="L120">        return nrrbm;</span>
+    }
+
+    /*~ ------------- Request ID handling ----------- */
+    public
+    @Bean
+    IDGenerator&lt;String&gt; uuidGenerator() {
+<span class="fc" id="L127">        return new JdkIDGenerator();</span>
+    }
+
+    public
+    @Bean
+    FilterRegistrationBean requestIDFilter(IDGenerator&lt;String&gt; uuidGenerator) {
+<span class="fc" id="L133">        FilterRegistrationBean frb = new FilterRegistrationBean(new RequestIDFilter(uuidGenerator));</span>
+<span class="fc" id="L134">        frb.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);</span>
+<span class="fc" id="L135">        return frb;</span>
+    }
+
+    @Bean
+    MeterRegistryCustomizer&lt;MeterRegistry&gt; metricsCommonTags(@Value(&quot;${spring.application.name}&quot;) String applicationName) {
+<span class="fc" id="L140">        return registry -&gt; registry.config().commonTags(&quot;application&quot;, applicationName);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
