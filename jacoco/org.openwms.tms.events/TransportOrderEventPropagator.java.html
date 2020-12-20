@@ -51,10 +51,10 @@ class TransportOrderEventPropagator {
 <span class="fc" id="L51">            mo.setEventType(TransportOrderMO.EventType.STARTED);</span>
 <span class="fc" id="L52">            amqpTemplate.convertAndSend(exchangeName, &quot;to.event.started&quot;, mo);</span>
         }
-<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_FINISHED) {</span>
-<span class="fc" id="L55">            TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);</span>
-<span class="fc" id="L56">            mo.setEventType(TransportOrderMO.EventType.FINISHED);</span>
-<span class="fc" id="L57">            amqpTemplate.convertAndSend(exchangeName, &quot;to.event.finished&quot;, mo);</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_FINISHED) {</span>
+<span class="nc" id="L55">            TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);</span>
+<span class="nc" id="L56">            mo.setEventType(TransportOrderMO.EventType.FINISHED);</span>
+<span class="nc" id="L57">            amqpTemplate.convertAndSend(exchangeName, &quot;to.event.finished&quot;, mo);</span>
         }
 <span class="fc bfc" id="L59" title="All 2 branches covered.">        if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_CANCELED) {</span>
 <span class="fc" id="L60">            TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);</span>

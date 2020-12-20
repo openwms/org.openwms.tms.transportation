@@ -66,7 +66,7 @@ public class TransportationFacade implements TransportOrderApi {
     @Override
     public void changeState(String pKey, String state) {
 <span class="pc bpc" id="L68" title="1 of 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
-<span class="nc" id="L69">            LOGGER.debug(&quot;Change the state of the TransportOrder with persistent key [{}] to [{}]&quot;, pKey, state);</span>
+<span class="fc" id="L69">            LOGGER.debug(&quot;Change the state of the TransportOrder with persistent key [{}] to [{}]&quot;, pKey, state);</span>
         }
 <span class="fc" id="L71">        TransportOrder order = service.findByPKey(pKey);</span>
 <span class="fc" id="L72">        Collection&lt;Message&gt; failures = service.change(order.getTransportUnitBK(), order.getState(), TransportOrderState.valueOf(state), null);</span>
@@ -103,7 +103,7 @@ public class TransportationFacade implements TransportOrderApi {
     @Override
     public TransportOrderVO findByPKey(String pKey) {
 <span class="pc bpc" id="L105" title="1 of 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
-<span class="nc" id="L106">            LOGGER.debug(&quot;Find TransportOrder with persistent key [{}]&quot;, pKey);</span>
+<span class="fc" id="L106">            LOGGER.debug(&quot;Find TransportOrder with persistent key [{}]&quot;, pKey);</span>
         }
 <span class="fc" id="L108">        return mapper.map(service.findByPKey(pKey), TransportOrderVO.class);</span>
     }

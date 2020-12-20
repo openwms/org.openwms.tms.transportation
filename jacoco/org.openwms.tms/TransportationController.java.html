@@ -81,31 +81,32 @@ class TransportationController extends AbstractWebController {
     public void createTO(
             @RequestParam(value = &quot;barcode&quot;) String barcode,
             @RequestParam(value = &quot;target&quot;) String target,
-            @RequestParam(value = &quot;priority&quot;, required = false) String priority,
+            @RequestParam(value = &quot;priority&quot;, required = false) String priorityParam,
             HttpServletRequest req, HttpServletResponse resp) {
-<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
-<span class="nc" id="L87">            LOGGER.debug(&quot;Create TransportOrder with Barcode [{}] and Target [{}] and Priority [{}]&quot;, barcode, target, priority);</span>
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
+<span class="fc" id="L87">            LOGGER.debug(&quot;Create TransportOrder with Barcode [{}] and Target [{}] and Priority [{}]&quot;, barcode, target, priorityParam);</span>
         }
-<span class="nc bnc" id="L89" title="All 4 branches missed.">        if (priority != null &amp;&amp; !priority.isEmpty()) {</span>
-<span class="nc" id="L90">            PriorityLevel.of(priority); // validate early here!</span>
+<span class="fc" id="L89">        String priority = PriorityLevel.NORMAL.name();</span>
+<span class="pc bpc" id="L90" title="3 of 4 branches missed.">        if (priorityParam != null &amp;&amp; !priorityParam.isEmpty()) {</span>
+<span class="nc" id="L91">            priority = PriorityLevel.of(priorityParam).name(); // validate early here!</span>
         }
-<span class="nc" id="L92">        TransportOrder to = service.create(barcode, target, priority);</span>
-<span class="nc" id="L93">        resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));</span>
-<span class="nc" id="L94">    }</span>
+<span class="fc" id="L93">        TransportOrder to = service.create(barcode, target, priority);</span>
+<span class="fc" id="L94">        resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));</span>
+<span class="fc" id="L95">    }</span>
 
     @Measured
     @PostMapping(TMSApi.TRANSPORT_ORDERS)
     @ResponseStatus(HttpStatus.CREATED)
     public void createTO(@RequestBody CreateTransportOrderVO vo, HttpServletRequest req, HttpServletResponse resp) {
-<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
-<span class="nc" id="L101">            LOGGER.debug(&quot;Create TransportOrder [{}]&quot;, vo);</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
+<span class="fc" id="L102">            LOGGER.debug(&quot;Create TransportOrder [{}]&quot;, vo);</span>
         }
-<span class="pc bpc" id="L103" title="2 of 4 branches missed.">        if (vo.getPriority() != null &amp;&amp; !vo.getPriority().isEmpty()) {</span>
-<span class="fc" id="L104">            PriorityLevel.of(vo.getPriority()); // validate early here!</span>
+<span class="pc bpc" id="L104" title="2 of 4 branches missed.">        if (vo.getPriority() != null &amp;&amp; !vo.getPriority().isEmpty()) {</span>
+<span class="fc" id="L105">            PriorityLevel.of(vo.getPriority()); // validate early here!</span>
         }
-<span class="fc" id="L106">        TransportOrder to = service.create(vo.getBarcode(), vo.getTarget(), vo.getPriority());</span>
-<span class="fc" id="L107">        resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));</span>
-<span class="fc" id="L108">    }</span>
+<span class="fc" id="L107">        TransportOrder to = service.create(vo.getBarcode(), vo.getTarget(), vo.getPriority());</span>
+<span class="fc" id="L108">        resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));</span>
+<span class="fc" id="L109">    }</span>
 
     @Measured
     @PatchMapping(TMSApi.TRANSPORT_ORDERS + &quot;/{pKey}&quot;)
@@ -113,8 +114,8 @@ class TransportationController extends AbstractWebController {
     public void updateTO(
             @PathVariable(value = &quot;pKey&quot;) String pKey,
             @RequestBody UpdateTransportOrderVO vo) {
-<span class="fc" id="L116">        transportationFacade.updateTO(pKey, vo);</span>
-<span class="fc" id="L117">    }</span>
+<span class="fc" id="L117">        transportationFacade.updateTO(pKey, vo);</span>
+<span class="fc" id="L118">    }</span>
 
     @Measured
     @PostMapping(value = TMSApi.TRANSPORT_ORDERS + &quot;/{pKey}&quot;, params = {&quot;state&quot;})
@@ -122,31 +123,31 @@ class TransportationController extends AbstractWebController {
             @PathVariable(value = &quot;pKey&quot;) String pKey,
             @RequestParam(value = &quot;state&quot;) String state) {
         try {
-<span class="fc" id="L125">            transportationFacade.changeState(pKey, state);</span>
-<span class="fc" id="L126">            return ResponseEntity.noContent().build();</span>
-<span class="fc" id="L127">        } catch (StateChangeException sce) {</span>
-<span class="fc" id="L128">            throw sce;</span>
-<span class="nc" id="L129">        } catch (Exception ex) {</span>
-<span class="nc" id="L130">            return ResponseEntity.badRequest().build();</span>
+<span class="fc" id="L126">            transportationFacade.changeState(pKey, state);</span>
+<span class="fc" id="L127">            return ResponseEntity.noContent().build();</span>
+<span class="fc" id="L128">        } catch (StateChangeException sce) {</span>
+<span class="fc" id="L129">            throw sce;</span>
+<span class="nc" id="L130">        } catch (Exception ex) {</span>
+<span class="nc" id="L131">            return ResponseEntity.badRequest().build();</span>
         }
     }
 
     @ExceptionHandler(DeniedException.class)
     protected ResponseEntity&lt;Response&gt; handleDeniedException(DeniedException bae) {
-<span class="fc" id="L136">        return new ResponseEntity&lt;&gt;(Response.newBuilder()</span>
-<span class="fc" id="L137">                .withMessage(bae.getMessage())</span>
-<span class="fc" id="L138">                .withMessageKey(bae.getMessageKey())</span>
-<span class="fc" id="L139">                .withHttpStatus(String.valueOf(HttpStatus.CONFLICT.value()))</span>
-<span class="fc" id="L140">                .withObj(bae.getData())</span>
-<span class="fc" id="L141">                .build(),</span>
-<span class="fc" id="L142">                HttpStatus.CONFLICT</span>
+<span class="fc" id="L137">        return new ResponseEntity&lt;&gt;(Response.newBuilder()</span>
+<span class="fc" id="L138">                .withMessage(bae.getMessage())</span>
+<span class="fc" id="L139">                .withMessageKey(bae.getMessageKey())</span>
+<span class="fc" id="L140">                .withHttpStatus(String.valueOf(HttpStatus.CONFLICT.value()))</span>
+<span class="fc" id="L141">                .withObj(bae.getData())</span>
+<span class="fc" id="L142">                .build(),</span>
+<span class="fc" id="L143">                HttpStatus.CONFLICT</span>
         );
     }
 
     private String getCreatedResourceURI(HttpServletRequest req, String objId) {
-<span class="fc" id="L147">        StringBuffer url = req.getRequestURL();</span>
-<span class="fc" id="L148">        UriTemplate template = new UriTemplate(url.append(&quot;/{objId}/&quot;).toString());</span>
-<span class="fc" id="L149">        return template.expand(objId).toASCIIString();</span>
+<span class="fc" id="L148">        StringBuffer url = req.getRequestURL();</span>
+<span class="fc" id="L149">        UriTemplate template = new UriTemplate(url.append(&quot;/{objId}/&quot;).toString());</span>
+<span class="fc" id="L150">        return template.expand(objId).toASCIIString();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

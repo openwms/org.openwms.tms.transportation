@@ -77,8 +77,8 @@ class Starter implements Startable {
     @Override
     public void startNext(String barcode) {
 <span class="fc" id="L79">        List&lt;TransportOrder&gt; transportOrders = repository.findByTransportUnitBKAndStates(barcode, TransportOrderState.INITIALIZED);</span>
-<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if (!transportOrders.isEmpty()) {</span>
-<span class="nc" id="L81">            triggerStart(transportOrders.get(0));</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if (!transportOrders.isEmpty()) {</span>
+<span class="fc" id="L81">            triggerStart(transportOrders.get(0));</span>
         }
 <span class="fc" id="L83">    }</span>
 
@@ -102,7 +102,7 @@ class Starter implements Startable {
     private void startInternal(TransportOrder to) {
 <span class="fc" id="L103">        LOGGER.debug(&quot;&gt; Request to start the TransportOrder with PKey [{}]&quot;, to.getPersistentKey());</span>
 <span class="fc bfc" id="L104" title="All 2 branches covered.">        Optional&lt;LocationGroupVO&gt; lg = to.getTargetLocationGroup() == null ? Optional.empty() : locationGroupApi.findByName(to.getTargetLocationGroup());</span>
-<span class="fc bfc" id="L105" title="All 4 branches covered.">        Optional&lt;LocationVO&gt; loc = to.getTargetLocation() != null &amp;&amp; LocationPK.isValid(to.getTargetLocation())</span>
+<span class="pc bpc" id="L105" title="1 of 4 branches missed.">        Optional&lt;LocationVO&gt; loc = to.getTargetLocation() != null &amp;&amp; LocationPK.isValid(to.getTargetLocation())</span>
 <span class="fc" id="L106">                ? locationApi.findLocationByCoordinate(to.getTargetLocation())</span>
 <span class="fc" id="L107">                : Optional.empty();</span>
 <span class="pc bpc" id="L108" title="1 of 4 branches missed.">        if (!lg.isPresent() &amp;&amp; !loc.isPresent()) {</span>

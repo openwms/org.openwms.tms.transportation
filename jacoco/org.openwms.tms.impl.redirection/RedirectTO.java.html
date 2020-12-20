@@ -54,7 +54,7 @@ class RedirectTO implements UpdateFunction {
 
 <span class="pc bpc" id="L55" title="2 of 4 branches missed.">        if (null != redirectVoters &amp;&amp; differentTarget(saved, toUpdate)) {</span>
 <span class="pc bpc" id="L56" title="1 of 2 branches missed.">            if (LOGGER.isDebugEnabled()) {</span>
-<span class="nc" id="L57">                LOGGER.debug(&quot;Redirecting TO with pKey [{}] to targetLocation [{}] and targetLocationGroup [{}]&quot;, saved.getPersistentKey(), toUpdate.getTargetLocation(), toUpdate.getTargetLocationGroup());</span>
+<span class="fc" id="L57">                LOGGER.debug(&quot;Redirecting TO with pKey [{}] to targetLocation [{}] and targetLocationGroup [{}]&quot;, saved.getPersistentKey(), toUpdate.getTargetLocation(), toUpdate.getTargetLocationGroup());</span>
             }
 <span class="fc" id="L59">            RedirectVote rv = new RedirectVote(toUpdate.getTargetLocation(), toUpdate.getTargetLocationGroup(), saved);</span>
             // CHECK [openwms]: 13/07/16 the concept of a voter is misused in that a voter changes the state of a TO

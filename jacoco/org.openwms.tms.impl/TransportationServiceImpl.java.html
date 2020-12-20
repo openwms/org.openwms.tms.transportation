@@ -194,7 +194,7 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
 <span class="fc bfc" id="L194" title="All 2 branches covered.">        for (TransportOrder transportOrder : transportOrders) {</span>
             try {
 <span class="pc bpc" id="L196" title="1 of 2 branches missed.">                if (LOGGER.isDebugEnabled()) {</span>
-<span class="nc" id="L197">                    LOGGER.debug(&quot;Trying to turn TransportOrder [{}] into state [{}]&quot;, transportOrder.getPk(), targetState);</span>
+<span class="fc" id="L197">                    LOGGER.debug(&quot;Trying to turn TransportOrder [{}] into state [{}]&quot;, transportOrder.getPk(), targetState);</span>
                 }
 <span class="fc" id="L199">                transportOrder.changeState(targetState);</span>
 <span class="pc bpc" id="L200" title="1 of 2 branches missed.">                if (message != null) {</span>

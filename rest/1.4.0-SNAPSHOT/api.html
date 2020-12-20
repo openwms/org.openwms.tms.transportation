@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<meta name="author" content="(1.4.0-SNAPSHOT-136)">
+<meta name="author" content="(1.4.0-SNAPSHOT-137)">
 <title>OpenWMS.org TMS: RESTful API (Transportation Service)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -442,7 +442,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>OpenWMS.org TMS: RESTful API (Transportation Service)</h1>
 <div class="details">
-<span id="author" class="author">(1.4.0-SNAPSHOT-136)</span><br>
+<span id="author" class="author">(1.4.0-SNAPSHOT-137)</span><br>
 <span id="revdate">Heiko Scherrer;</span>
 </div>
 <div id="toc" class="toc">
@@ -743,7 +743,7 @@ priority might be started and executed before those with lower priority.</p>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-Location: http://localhost:8080/v1/transport-orders/afc80f14-7ee2-47c7-907f-21775bf4a79d/</code></pre>
+Location: http://localhost:8080/v1/transport-orders/7dc7741e-7652-4092-a7b2-6c02cad47bd1/</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -791,10 +791,10 @@ where the API expects the partial representation of the <code>TransportOrder</co
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://localhost:8080/v1/transport-orders/95a0751d-36c2-4766-9c68-7490efa49027' -i -X PATCH \
+<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://localhost:8080/v1/transport-orders/d71bf07a-663b-4a43-b4ef-bfe6c699ccdb' -i -X PATCH \
     -H 'Content-Type: application/json;charset=UTF-8' \
     -d '{
-  "pKey" : "95a0751d-36c2-4766-9c68-7490efa49027",
+  "pKey" : "d71bf07a-663b-4a43-b4ef-bfe6c699ccdb",
   "barcode" : "4711",
   "priority" : "HIGHEST",
   "targetLocation" : "INIT/0000/0000/0000/0000",
@@ -812,10 +812,10 @@ Notice that the <code>TransportOrder</code> does not need to be started yet.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://localhost:8080/v1/transport-orders/876fd828-b29e-4510-98b6-74c50eb1c1cf' -i -X PATCH \
+<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://localhost:8080/v1/transport-orders/a5bd1c5d-40e1-4f7d-b997-95dfd4ac4837' -i -X PATCH \
     -H 'Content-Type: application/json;charset=UTF-8' \
     -d '{
-  "pKey" : "876fd828-b29e-4510-98b6-74c50eb1c1cf",
+  "pKey" : "a5bd1c5d-40e1-4f7d-b997-95dfd4ac4837",
   "barcode" : "4711",
   "priority" : "NORMAL",
   "targetLocation" : "ERR_/0000/0000/0000/0000",
@@ -851,7 +851,7 @@ Vary: Access-Control-Request-Headers</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-12-14 21:51:45 UTC
+Last updated 2020-12-20 16:29:55 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
