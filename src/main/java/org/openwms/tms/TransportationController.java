@@ -81,13 +81,14 @@ class TransportationController extends AbstractWebController {
     public void createTO(
             @RequestParam(value = "barcode") String barcode,
             @RequestParam(value = "target") String target,
-            @RequestParam(value = "priority", required = false) String priority,
+            @RequestParam(value = "priority", required = false) String priorityParam,
             HttpServletRequest req, HttpServletResponse resp) {
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Create TransportOrder with Barcode [{}] and Target [{}] and Priority [{}]", barcode, target, priority);
+            LOGGER.debug("Create TransportOrder with Barcode [{}] and Target [{}] and Priority [{}]", barcode, target, priorityParam);
         }
-        if (priority != null && !priority.isEmpty()) {
-            PriorityLevel.of(priority); // validate early here!
+        String priority = PriorityLevel.NORMAL.name();
+        if (priorityParam != null && !priorityParam.isEmpty()) {
+            priority = PriorityLevel.of(priorityParam).name(); // validate early here!
         }
         TransportOrder to = service.create(barcode, target, priority);
         resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));

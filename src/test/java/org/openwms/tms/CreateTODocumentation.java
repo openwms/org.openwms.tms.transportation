@@ -19,6 +19,7 @@ import org.ameba.exception.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.openwms.TransportationTestBase;
 import org.openwms.common.location.api.LocationVO;
+import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.core.SpringProfiles;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.openwms.tms.api.TMSApi;
@@ -68,6 +69,31 @@ class CreateTODocumentation extends TransportationTestBase {
     @Test
     void testCreateTO() throws Exception {
         MvcResult res = postTOAndValidate(createTO(), "to-create");
+        assertThat(res.getResponse().getHeaderValue(HttpHeaders.LOCATION)).isNotNull();
+    }
+
+    @Test
+    void testCreateTOSimple() throws Exception {
+        LocationVO actualLocation = new LocationVO(INIT_LOC_STRING);
+        actualLocation.setIncomingActive(true);
+        actualLocation.setOutgoingActive(true);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
+        TransportUnitVO tu = new TransportUnitVO(BC_4711);
+        tu.setActualLocation(actualLocation);
+        tu.setTarget(ERR_LOC_STRING);
+
+        given(transportUnitApi.findTransportUnit(BC_4711)).willReturn(tu);
+        given(locationApi.findLocationByCoordinate(ERR_LOC_STRING)).willReturn(Optional.of(errorLocation));
+        given(locationGroupApi.findByName(ERR_LOC_STRING)).willReturn(Optional.empty());
+
+        MvcResult res = mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
+                .param("barcode", BC_4711)
+                .param("target", ERR_LOC_STRING))
+                .andExpect(status().isCreated())
+                .andDo(document("to-create-simple"))
+                .andReturn();
         assertThat(res.getResponse().getHeaderValue(HttpHeaders.LOCATION)).isNotNull();
     }
 
