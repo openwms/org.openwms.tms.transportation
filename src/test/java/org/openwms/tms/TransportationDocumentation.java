@@ -15,16 +15,25 @@
  */
 package org.openwms.tms;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openwms.tms.api.TMSApi;
+import org.openwms.tms.api.TransportOrderVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,6 +48,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Sql(scripts = "classpath:import-test.sql")
 class TransportationDocumentation {
 
+    @Autowired
+    @Qualifier("jacksonOM")
+    protected ObjectMapper objectMapper;
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -51,11 +63,14 @@ class TransportationDocumentation {
 
     @Test
     void shall_find_one_for_barcode() throws Exception {
-        mockMvc.perform(get(TMSApi.TRANSPORT_ORDERS )
+        MvcResult res = mockMvc.perform(get(TMSApi.TRANSPORT_ORDERS)
                 .param("barcode", "4712")
                 .param("state", "STARTED"))
                 .andExpect(status().isOk())
                 .andDo(document("to-get-bybarcodestate"))
-        ;
+                .andReturn();
+
+        List<TransportOrderVO> tos = objectMapper.readValue(res.getResponse().getContentAsString(), new TypeReference<>() {});
+        assertThat(tos).hasSize(1);
     }
 }
