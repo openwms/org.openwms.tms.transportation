@@ -1,0 +1,1 @@
+INSERT INTO tms_transport_order (c_pk, c_created, c_ol, c_pid, c_priority, c_source_location, c_start_date, c_state, c_target_location, c_transport_unit_bk) values (1000, now(), 0, '1000', 'NORMAL', 'EXT_/0000/0000/0000/0000', now(), 'STARTED', 'EXT_/0000/0000/0000/0000', '4712');

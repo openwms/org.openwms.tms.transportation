@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openwms.tms.api.TMSApi;
 import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -34,6 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author Heiko Scherrer
  */
+@TMSApplicationTest
+@Sql(scripts = "classpath:import-test.sql")
 class TransportationDocumentation {
 
     private MockMvc mockMvc;
@@ -45,6 +48,7 @@ class TransportationDocumentation {
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .build();
     }
+
     @Test
     void shall_find_one_for_barcode() throws Exception {
         mockMvc.perform(get(TMSApi.TRANSPORT_ORDERS )
