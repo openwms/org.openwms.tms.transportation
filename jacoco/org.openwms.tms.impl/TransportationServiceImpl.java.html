@@ -73,7 +73,7 @@ class TransportationServiceImpl implements TransportationService&lt;TransportOrd
     @Override
     @Measured
     public List&lt;TransportOrder&gt; findBy(String barcode, String... states) {
-<span class="nc" id="L76">        return repository.findByTransportUnitBKAndStates(barcode, Stream.of(states).map(TransportOrderState::valueOf).collect(Collectors.toList()).toArray(new TransportOrderState[states.length]));</span>
+<span class="fc" id="L76">        return repository.findByTransportUnitBKAndStates(barcode, Stream.of(states).map(TransportOrderState::valueOf).collect(Collectors.toList()).toArray(new TransportOrderState[states.length]));</span>
     }
 
     /**

@@ -67,7 +67,7 @@ class StateManagerImpl implements StateManager {
             // Don't allow to turn back the state!
 <span class="fc" id="L68">            throw new StateChangeException(translator.translate(TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED, transportOrder.getPersistentKey()), TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED, transportOrder.getPersistentKey());</span>
         }
-<span class="pc bpc" id="L70" title="1 of 5 branches missed.">        switch (state) {</span>
+<span class="pc bpc" id="L70" title="2 of 5 branches missed.">        switch (state) {</span>
             case CREATED:
 <span class="pc bpc" id="L72" title="3 of 4 branches missed.">                if (newState != INITIALIZED &amp;&amp; newState != CANCELED) {</span>
 <span class="nc" id="L73">                    throw new StateChangeException(translator.translate(TMSMessageCodes.TO_STATE_CHANGE_NOT_READY, newState, transportOrder.getPersistentKey()), TMSMessageCodes.TO_STATE_CHANGE_NOT_READY, newState, transportOrder.getPersistentKey());</span>
@@ -88,7 +88,7 @@ class StateManagerImpl implements StateManager {
 <span class="fc" id="L88">                break;</span>
             case STARTED:
                 // new state may be one of the following, no additional if-check required here
-<span class="fc" id="L91">                break;</span>
+<span class="nc" id="L91">                break;</span>
             case FINISHED:
             case ONFAILURE:
             case CANCELED:

@@ -92,11 +92,11 @@ public class TransportationFacade implements TransportOrderApi {
     @Measured
     @Override
     public List&lt;TransportOrderVO&gt; findBy(String barcode, String state) {
-<span class="nc" id="L95">        List&lt;TransportOrderVO&gt; orders = mapper.map(service.findBy(barcode, state), TransportOrderVO.class);</span>
-<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
-<span class="nc" id="L97">            LOGGER.debug(&quot;Found [{}] TransportOrders with barcode [{}] in state [{}]&quot;, orders.size(), barcode, state);</span>
+<span class="fc" id="L95">        List&lt;TransportOrderVO&gt; orders = mapper.map(service.findBy(barcode, state), TransportOrderVO.class);</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
+<span class="fc" id="L97">            LOGGER.debug(&quot;Found [{}] TransportOrders with barcode [{}] in state [{}]&quot;, orders.size(), barcode, state);</span>
         }
-<span class="nc" id="L99">        return orders;</span>
+<span class="fc" id="L99">        return orders;</span>
     }
 
     @Measured

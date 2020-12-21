@@ -60,7 +60,7 @@ digraph "impliedTwoDegreesRelationshipsDiagram" {
       <TR><TD PORT="c_target_location" COLSPAN="3" ALIGN="LEFT">c_target_location</TD></TR>
       <TR><TD PORT="c_target_location_group" COLSPAN="3" ALIGN="LEFT">c_target_location_group</TD></TR>
       <TR><TD PORT="c_transport_unit_bk" COLSPAN="3" ALIGN="LEFT">c_transport_unit_bk</TD></TR>
-      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">34 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
+      <TR><TD ALIGN="LEFT" BGCOLOR="#f7f7f7">&lt; 1</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">35 rows</TD><TD ALIGN="RIGHT" BGCOLOR="#f7f7f7">1 &gt;</TD></TR>
     </TABLE>>
     URL="tms_transport_order.html"
     tooltip="tms_transport_order"

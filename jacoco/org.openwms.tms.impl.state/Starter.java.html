@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Starter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.impl.state</a> &gt; <span class="el_source">Starter.java</span></div><h1>Starter.java</h1><pre class="source lang-java linenums"><span class="fc" id="L1">/*</span>
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Starter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.impl.state</a> &gt; <span class="el_source">Starter.java</span></div><h1>Starter.java</h1><pre class="source lang-java linenums"><span class="pc" id="L1">/*</span>
  * Copyright 2005-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -70,7 +70,7 @@ class Starter implements Startable {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = StateChangeException.class)
-<span class="fc" id="L73">    public void start(String pKey) {</span>
+<span class="nc" id="L73">    public void start(String pKey) {</span>
 <span class="fc" id="L74">        this.startInternal(repository.findBypKey(pKey).orElseThrow(() -&gt; new NotFoundException(format(&quot;No TransportOrder with pKey [%s] found&quot;, pKey))));</span>
     }
 
@@ -101,39 +101,39 @@ class Starter implements Startable {
          */
     private void startInternal(TransportOrder to) {
 <span class="fc" id="L103">        LOGGER.debug(&quot;&gt; Request to start the TransportOrder with PKey [{}]&quot;, to.getPersistentKey());</span>
-<span class="fc bfc" id="L104" title="All 2 branches covered.">        Optional&lt;LocationGroupVO&gt; lg = to.getTargetLocationGroup() == null ? Optional.empty() : locationGroupApi.findByName(to.getTargetLocationGroup());</span>
-<span class="pc bpc" id="L105" title="1 of 4 branches missed.">        Optional&lt;LocationVO&gt; loc = to.getTargetLocation() != null &amp;&amp; LocationPK.isValid(to.getTargetLocation())</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        Optional&lt;LocationGroupVO&gt; lg = to.getTargetLocationGroup() == null ? Optional.empty() : locationGroupApi.findByName(to.getTargetLocationGroup());</span>
+<span class="pc bpc" id="L105" title="2 of 4 branches missed.">        Optional&lt;LocationVO&gt; loc = to.getTargetLocation() != null &amp;&amp; LocationPK.isValid(to.getTargetLocation())</span>
 <span class="fc" id="L106">                ? locationApi.findLocationByCoordinate(to.getTargetLocation())</span>
-<span class="fc" id="L107">                : Optional.empty();</span>
-<span class="pc bpc" id="L108" title="1 of 4 branches missed.">        if (!lg.isPresent() &amp;&amp; !loc.isPresent()) {</span>
+<span class="nc" id="L107">                : Optional.empty();</span>
+<span class="pc bpc" id="L108" title="2 of 4 branches missed.">        if (!lg.isPresent() &amp;&amp; !loc.isPresent()) {</span>
             // At least one target must be set
 <span class="fc" id="L110">            throw new NotFoundException(&quot;Neither a valid target LocationGroup nor a Location are set, hence it is not possible to start the TransportOrder&quot;);</span>
         }
-<span class="pc bpc" id="L112" title="1 of 2 branches missed.">        if (lg.isPresent()) {</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (lg.isPresent()) {</span>
 <span class="nc bnc" id="L113" title="All 2 branches missed.">            if (lg.get().isInfeedBlocked()) {</span>
 <span class="nc" id="L114">                throw new StateChangeException(&quot;Cannot start the TransportOrder because TargetLocationGroup is blocked&quot;);</span>
             }
 <span class="nc" id="L116">            to.setTargetLocationGroup(lg.get().asString());</span>
 <span class="nc" id="L117">        } else {</span>
-<span class="fc" id="L118">            to.setTargetLocationGroup(null);</span>
+<span class="nc" id="L118">            to.setTargetLocationGroup(null);</span>
         }
-<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        if (loc.isPresent()) {</span>
-<span class="pc bpc" id="L121" title="1 of 2 branches missed.">            if (loc.get().isInfeedBlocked()) {</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        if (loc.isPresent()) {</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">            if (loc.get().isInfeedBlocked()) {</span>
 <span class="nc" id="L122">                throw new StateChangeException(&quot;Cannot start the TransportOrder because TargetLocation is blocked&quot;);</span>
             }
-<span class="fc" id="L124">            to.setTargetLocation(loc.get().asString());</span>
-<span class="fc" id="L125">        } else {</span>
+<span class="nc" id="L124">            to.setTargetLocation(loc.get().asString());</span>
+<span class="nc" id="L125">        } else {</span>
 <span class="nc" id="L126">            to.setTargetLocation(null);</span>
         }
 
-<span class="fc" id="L129">        List&lt;TransportOrder&gt; others = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.STARTED);</span>
-<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if (!others.isEmpty()) {</span>
+<span class="nc" id="L129">        List&lt;TransportOrder&gt; others = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.STARTED);</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (!others.isEmpty()) {</span>
 <span class="nc" id="L131">            throw new StateChangeException(format(&quot;Cannot start TransportOrder for TransportUnit [%s] because [%s] TransportOrders already started [%s]&quot;, to.getTransportUnitBK(), others.size(), others.get(0).getPersistentKey()));</span>
         }
-<span class="fc" id="L133">        to.changeState(TransportOrderState.STARTED);</span>
-<span class="fc" id="L134">        repository.save(to);</span>
-<span class="fc" id="L135">        LOGGER.info(&quot;TransportOrder for TransportUnit with Barcode [{}] STARTED at [{}]. Persisted key is [{}]&quot;, to.getTransportUnitBK(), to.getStartDate(), to.getPk());</span>
-<span class="fc" id="L136">        ctx.publishEvent(new TransportServiceEvent(to, TransportServiceEvent.TYPE.STARTED));</span>
-<span class="fc" id="L137">    }</span>
+<span class="nc" id="L133">        to.changeState(TransportOrderState.STARTED);</span>
+<span class="nc" id="L134">        repository.save(to);</span>
+<span class="nc" id="L135">        LOGGER.info(&quot;TransportOrder for TransportUnit with Barcode [{}] STARTED at [{}]. Persisted key is [{}]&quot;, to.getTransportUnitBK(), to.getStartDate(), to.getPk());</span>
+<span class="nc" id="L136">        ctx.publishEvent(new TransportServiceEvent(to, TransportServiceEvent.TYPE.STARTED));</span>
+<span class="nc" id="L137">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>
