@@ -46,7 +46,7 @@ class LocationRedirector extends TargetRedirector<LocationVO> {
 
     @Override
     protected boolean isTargetAvailable(LocationVO target) {
-        return target.isIncomingActive();
+        return target.getIncomingActive();
     }
 
     @Override
