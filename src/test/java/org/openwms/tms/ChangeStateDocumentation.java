@@ -48,7 +48,10 @@ class ChangeStateDocumentation extends TransportationTestBase {
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        transportUnit.setTarget(ERR_LOC_STRING);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
+        transportUnit.setTargetLocation(errorLocation);
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
@@ -76,7 +79,10 @@ class ChangeStateDocumentation extends TransportationTestBase {
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        transportUnit.setTarget(ERR_LOC_STRING);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
+        transportUnit.setTargetLocation(errorLocation);
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         LOGGER.debug("Calling API with:" + vo2);
@@ -101,7 +107,10 @@ class ChangeStateDocumentation extends TransportationTestBase {
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        transportUnit.setTarget(ERR_LOC_STRING);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
+        transportUnit.setTargetLocation(errorLocation);
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
@@ -124,7 +133,10 @@ class ChangeStateDocumentation extends TransportationTestBase {
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        transportUnit.setTarget(ERR_LOC_STRING);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
+        transportUnit.setTargetLocation(errorLocation);
 
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
@@ -148,7 +160,10 @@ class ChangeStateDocumentation extends TransportationTestBase {
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        transportUnit.setTarget(ERR_LOC_STRING);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
+        transportUnit.setTargetLocation(errorLocation);
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
@@ -171,7 +186,10 @@ class ChangeStateDocumentation extends TransportationTestBase {
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        transportUnit.setTarget(ERR_LOC_STRING);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
+        transportUnit.setTargetLocation(errorLocation);
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
@@ -192,7 +210,10 @@ class ChangeStateDocumentation extends TransportationTestBase {
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        transportUnit.setTarget(ERR_LOC_STRING);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
+        transportUnit.setTargetLocation(errorLocation);
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
@@ -214,7 +235,10 @@ class ChangeStateDocumentation extends TransportationTestBase {
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        transportUnit.setTarget(ERR_LOC_STRING);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
+        transportUnit.setTargetLocation(errorLocation);
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
@@ -236,7 +260,10 @@ class ChangeStateDocumentation extends TransportationTestBase {
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        transportUnit.setTarget(ERR_LOC_STRING);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
+        transportUnit.setTargetLocation(errorLocation);
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         // test ...
@@ -257,7 +284,10 @@ class ChangeStateDocumentation extends TransportationTestBase {
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        transportUnit.setTarget(ERR_LOC_STRING);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
+        transportUnit.setTargetLocation(errorLocation);
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
         vo.setState(TransportOrderState.FINISHED.toString());
         mockMvc.perform(
@@ -286,7 +316,10 @@ class ChangeStateDocumentation extends TransportationTestBase {
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        transportUnit.setTarget(ERR_LOC_STRING);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
+        transportUnit.setTargetLocation(errorLocation);
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 //        vo.setState(TransportOrderState.ONFAILURE.toString());
         mockMvc.perform(
@@ -315,7 +348,10 @@ class ChangeStateDocumentation extends TransportationTestBase {
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        transportUnit.setTarget(ERR_LOC_STRING);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
+        transportUnit.setTargetLocation(errorLocation);
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 //        vo.setState(TransportOrderState.CANCELED.toString());
         mockMvc.perform(

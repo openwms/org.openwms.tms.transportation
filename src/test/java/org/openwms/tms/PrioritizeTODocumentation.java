@@ -70,7 +70,10 @@ public class PrioritizeTODocumentation extends TransportationTestBase {
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        transportUnit.setTarget(ERR_LOC_STRING);
+        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        errorLocation.setIncomingActive(true);
+        errorLocation.setOutgoingActive(true);
+        transportUnit.setTargetLocation(errorLocation);
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
 
         mockMvc.perform(

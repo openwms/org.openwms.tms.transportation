@@ -123,7 +123,7 @@ public abstract class TransportationTestBase {
         errorLocation.setOutgoingActive(true);
         TransportUnitVO tu = new TransportUnitVO(BC_4711);
         tu.setActualLocation(actualLocation);
-        tu.setTarget(ERR_LOC_STRING);
+        tu.setTargetLocation(errorLocation);
 
         given(transportUnitApi.findTransportUnit(BC_4711)).willReturn(tu);
         given(locationApi.findLocationByCoordinate(ERR_LOC_STRING)).willReturn(Optional.of(errorLocation));

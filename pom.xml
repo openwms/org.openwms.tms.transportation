@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.openwms</groupId>
         <artifactId>org.openwms.parent</artifactId>
-        <version>19</version>
+        <version>19.1</version>
         <relativePath />
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
@@ -13,7 +13,7 @@
     <url>https://openwms.github.io/${project.artifactId}/index.html</url>
 
     <issueManagement>
-        <system>github</system>
+        <system>GitHub</system>
         <url>https://github.com/openwms/${project.artifactId}/issues</url>
     </issueManagement>
 
@@ -63,7 +63,8 @@
 
     <properties>
         <commons-configuration.version>1.10</commons-configuration.version>
-        <common-service.version>1.7.0-SNAPSHOT</common-service.version>
+		<common.version>1.7.0-SNAPSHOT</common.version>
+        <core.units.version>0.4.0-SNAPSHOT</core.units.version>
         <core.version>1.9.0-SNAPSHOT</core.version>
         <guava.version>30.0-jre</guava.version>
         <HdrHistogram.version>2.1.12</HdrHistogram.version>
@@ -71,7 +72,7 @@
         <joda-time.version>2.10.8</joda-time.version>
         <jsr305.version>3.0.2</jsr305.version>
         <skipTests>false</skipTests>
-        <spring-cloud-dependencies.version>Hoxton.SR9</spring-cloud-dependencies.version>
+        <spring-cloud-dependencies.version>Hoxton.SR10</spring-cloud-dependencies.version>
         <stax2-api.version>4.2.1</stax2-api.version>
     </properties>
 
@@ -108,6 +109,10 @@
             <plugin>
                 <groupId>io.starter</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -152,6 +157,12 @@
                         </configuration>
                     </execution>
                 </executions>
+				<configuration>
+					<layers>
+						<configuration>${project.basedir}/src/layers.xml</configuration>
+						<enabled>true</enabled>
+					</layers>
+				</configuration>
             </plugin>
         </plugins>
     </build>
@@ -160,13 +171,18 @@
         <dependencies>
             <dependency>
                 <groupId>org.openwms</groupId>
+                <artifactId>org.openwms.core.units</artifactId>
+                <version>${core.units.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openwms</groupId>
                 <artifactId>org.openwms.core.util</artifactId>
                 <version>${core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.openwms</groupId>
                 <artifactId>org.openwms.common.service</artifactId>
-                <version>${common-service.version}</version>
+				<version>${common.version}</version>
                 <classifier>client</classifier>
             </dependency>
             <dependency>
@@ -175,27 +191,9 @@
                 <version>${stax2-api.version}</version>
             </dependency>
             <dependency>
-                <!-- Bites with Guava -->
-                <groupId>com.google.code.findbugs</groupId>
-                <artifactId>jsr305</artifactId>
-                <version>${jsr305.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
-            </dependency>
-            <dependency>
-                <!-- com.netflix.eureka:eureka has an internal clash -->
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-client</artifactId>
-                <version>${jersey.version}</version>
-            </dependency>
-            <dependency>
-                <!-- com.netflix.eureka:eureka has an internal clash -->
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-core</artifactId>
-                <version>${jersey.version}</version>
             </dependency>
             <dependency>
                 <!-- com.netflix.eureka:eureka has an internal clash -->
@@ -227,6 +225,11 @@
 
     <dependencies>
         <!-- Project Dependencies -->
+        <dependency>
+            <groupId>org.openwms</groupId>
+            <artifactId>org.openwms.core.units</artifactId>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.openwms</groupId>
             <artifactId>org.openwms.core.util</artifactId>
@@ -299,6 +302,12 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
             <optional>true</optional>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-io</groupId>
+					<artifactId>commons-io</artifactId>
+				</exclusion>
+			</exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -354,6 +363,11 @@
             <optional>true</optional>
         </dependency>
         <dependency>
+            <groupId>com.github.dozermapper</groupId>
+            <artifactId>dozer-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <!-- Need to upgrade Guava from version 11 because of CVE -->
             <!-- Required by eureka-client -->
             <groupId>com.google.guava</groupId>
@@ -372,11 +386,6 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.netflix.hystrix</groupId>
-            <artifactId>hystrix-javanica</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <!-- Required to use PATCH -->
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-httpclient</artifactId>
@@ -391,12 +400,6 @@
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
             <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.dozer</groupId>
-            <artifactId>dozer</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -442,18 +445,6 @@
             <groupId>org.springframework.restdocs</groupId>
             <artifactId>spring-restdocs-mockmvc</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-            <!-- We use the server for tests -->
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.woodstox</groupId>
-                    <artifactId>woodstox-core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 
