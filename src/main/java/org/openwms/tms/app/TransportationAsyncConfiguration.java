@@ -53,23 +53,20 @@ class TransportationAsyncConfiguration {
     private static final Logger BOOT_LOGGER = LoggerFactory.getLogger(BOOT);
 
     @ConditionalOnExpression("'${owms.transportation.serialization}'=='json'")
-    @Bean
-    MessageConverter messageConverter() {
+    @Bean MessageConverter messageConverter() {
         Jackson2JsonMessageConverter messageConverter = new Jackson2JsonMessageConverter();
         BOOT_LOGGER.info("Using JSON serialization over AMQP");
         return messageConverter;
     }
 
     @ConditionalOnExpression("'${owms.transportation.serialization}'=='barray'")
-    @Bean
-    MessageConverter serializerMessageConverter() {
+    @Bean MessageConverter serializerMessageConverter() {
         SerializerMessageConverter messageConverter = new SerializerMessageConverter();
         BOOT_LOGGER.info("Using byte array serialization over AMQP");
         return messageConverter;
     }
 
-    @Bean
-    RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
+    @Bean RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, MessageConverter messageConverter) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();
         backOffPolicy.setMultiplier(2);
@@ -82,81 +79,67 @@ class TransportationAsyncConfiguration {
         return rabbitTemplate;
     }
 
-    @Bean
-    DirectExchange dlExchange(@Value("${owms.transportation.dead-letter.exchange-name}") String exchangeName) {
+    @Bean DirectExchange tmsExchange(@Value("${owms.events.tms.to.exchange-name}") String exchangeName) {
+        return new DirectExchange(exchangeName, true, false);
+    }
+
+    @Bean DirectExchange dlExchange(@Value("${owms.transportation.dead-letter.exchange-name}") String exchangeName) {
         return new DirectExchange(exchangeName);
     }
 
-    @Bean
-    Queue dlq(@Value("${owms.transportation.dead-letter.queue-name}") String queueName) {
+    @Bean Queue dlq(@Value("${owms.transportation.dead-letter.queue-name}") String queueName) {
         return QueueBuilder.durable(queueName).build();
     }
 
-    @Bean
-    Binding dlBinding(@Value("${owms.transportation.dead-letter.queue-name}") String queueName,
+    @Bean Binding dlBinding(@Value("${owms.transportation.dead-letter.queue-name}") String queueName,
             @Value("${owms.transportation.dead-letter.exchange-name}") String exchangeName) {
         return BindingBuilder.bind(dlq(queueName)).to(dlExchange(exchangeName)).with("poison-message");
     }
 
     /* Commands TMS -> COMMON */
-    @Bean
-    TopicExchange commonCommandsExchange(@Value("${owms.commands.common.tu.exchange-name}") String exchangeName) {
+    @Bean TopicExchange commonCommandsExchange(@Value("${owms.commands.common.tu.exchange-name}") String exchangeName) {
         return new TopicExchange(exchangeName);
     }
-
-    @Bean
-    Queue commonCommandsQueue(@Value("${owms.commands.common.tu.queue-name}") String queueName,
+    @Bean Queue commonCommandsQueue(@Value("${owms.commands.common.tu.queue-name}") String queueName,
             @Value("${owms.transportation.dead-letter.exchange-name}") String exchangeName) {
         return QueueBuilder.durable(queueName)
                 .withArgument("x-dead-letter-exchange", exchangeName)
                 .withArgument("x-dead-letter-routing-key", "poison-message")
                 .build();
     }
-
-    @Bean
-    Binding commonCommandsBinding(TopicExchange commonCommandsExchange, Queue commonCommandsQueue, @Value("${owms.commands.common.tu.routing-key}") String routingKey) {
+    @Bean Binding commonCommandsBinding(TopicExchange commonCommandsExchange, Queue commonCommandsQueue, @Value("${owms.commands.common.tu.routing-key}") String routingKey) {
         return BindingBuilder.bind(commonCommandsQueue)
                 .to(commonCommandsExchange)
                 .with(routingKey);
     }
 
-    @Bean
-    TopicExchange tmsCommandsExchange(@Value("${owms.commands.tms.to.exchange-name}") String exchangeName) {
+    @Bean TopicExchange tmsCommandsExchange(@Value("${owms.commands.tms.to.exchange-name}") String exchangeName) {
         return new TopicExchange(exchangeName);
     }
-
-    @Bean
-    Queue tmsCommandsQueue(@Value("${owms.commands.tms.to.queue-name}") String queueName,
+    @Bean Queue tmsCommandsQueue(@Value("${owms.commands.tms.to.queue-name}") String queueName,
             @Value("${owms.transportation.dead-letter.exchange-name}") String exchangeName) {
         return QueueBuilder.durable(queueName)
                 .withArgument("x-dead-letter-exchange", exchangeName)
                 .withArgument("x-dead-letter-routing-key", "poison-message")
                 .build();
     }
-
-    @Bean
-    Binding tmsCommandsBinding(TopicExchange tmsCommandsExchange, Queue tmsCommandsQueue, @Value("${owms.commands.tms.to.routing-key}") String routingKey) {
+    @Bean Binding tmsCommandsBinding(TopicExchange tmsCommandsExchange, Queue tmsCommandsQueue, @Value("${owms.commands.tms.to.routing-key}") String routingKey) {
         return BindingBuilder.bind(tmsCommandsQueue)
                 .to(tmsCommandsExchange)
                 .with(routingKey);
     }
 
-    @Bean
-    TopicExchange tmsRequestsExchange(@Value("${owms.requests.tms.to.exchange-name}") String exchangeName) {
+    @Bean TopicExchange tmsRequestsExchange(@Value("${owms.requests.tms.to.exchange-name}") String exchangeName) {
         return new TopicExchange(exchangeName, true, false);
     }
-
-    @Bean
-    Queue tmsRequestsQueue(@Value("${owms.requests.tms.to.queue-name}") String queueName,
+    @Bean Queue tmsRequestsQueue(@Value("${owms.requests.tms.to.queue-name}") String queueName,
             @Value("${owms.transportation.dead-letter.exchange-name}") String exchangeName) {
         return QueueBuilder.durable(queueName)
                 .withArgument("x-dead-letter-exchange", exchangeName)
                 .withArgument("x-dead-letter-routing-key", "poison-message")
                 .build();
     }
-
-    @Bean
-    Binding tmsRequestsBinding(TopicExchange tmsRequestsExchange, Queue tmsRequestsQueue, @Value("${owms.requests.tms.to.routing-key}") String routingKey) {
+    @Bean Binding tmsRequestsBinding(TopicExchange tmsRequestsExchange, Queue tmsRequestsQueue, @Value("${owms.requests.tms.to.routing-key}") String routingKey) {
         return BindingBuilder
                 .bind(tmsRequestsQueue)
                 .to(tmsRequestsExchange)
