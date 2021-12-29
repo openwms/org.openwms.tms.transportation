@@ -60,14 +60,14 @@ class ChangeTU implements UpdateFunction {
             // change the target of the TU to assign
             TransportUnitVO savedTU = TransportUnitVO.builder()
                     .barcode(toUpdate.getTransportUnitBK())
-                    .target(toUpdate.getTargetLocationGroup())
+//                    .target(toUpdate.getTargetLocationGroup())
                     .build();
             transportUnitApi.updateTU(savedTU.getBarcode(), savedTU);
 
             // clear target of an formerly assigned TU
             savedTU = TransportUnitVO.builder()
                     .barcode(saved.getTransportUnitBK())
-                    .target("")
+//                    .target("")
                     .build();
             transportUnitApi.updateTU(savedTU.getBarcode(), savedTU);
 

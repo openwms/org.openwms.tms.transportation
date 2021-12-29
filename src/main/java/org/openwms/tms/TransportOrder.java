@@ -17,8 +17,6 @@ package org.openwms.tms;
 
 import org.ameba.integration.jpa.ApplicationEntity;
 import org.openwms.tms.api.ValidationGroups;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -28,7 +26,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
@@ -39,7 +36,6 @@ import java.util.Date;
  *
  * @author Heiko Scherrer
  */
-@Configurable
 @Entity
 @Table(name = "TMS_TRANSPORT_ORDER")
 public class TransportOrder extends ApplicationEntity implements Serializable {
@@ -105,10 +101,6 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
     @Column(name = "C_TARGET_LOCATION_GROUP")
     @NotEmpty(groups = ValidationGroups.ValidateBKAndTarget.class)
     private String targetLocationGroup;
-
-    @Transient
-    @Autowired
-    private transient StateManager stateManager;
 
     /* ----------------------------- constructors ------------------- */
 
@@ -201,8 +193,8 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
      * else then {@link TransportOrderState#INITIALIZED} or {@link TransportOrderState#CANCELED}</li> <li>the {@code TransportOrder} is
      * {@link TransportOrderState#CREATED} and shall be {@link TransportOrderState#INITIALIZED} but it is incomplete</li> </ul>
      */
-    public TransportOrder changeState(TransportOrderState newState) {
-        stateManager.validate(newState, this);
+    public TransportOrder changeState(StateManager stateManager, TransportOrderState newState) {
+            stateManager.validate(newState, this);
         state = newState;
         return this;
     }

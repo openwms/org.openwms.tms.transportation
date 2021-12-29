@@ -24,6 +24,7 @@ import org.openwms.common.location.api.TargetVO;
 import org.openwms.tms.Message;
 import org.openwms.tms.PriorityLevel;
 import org.openwms.tms.StateChangeException;
+import org.openwms.tms.StateManager;
 import org.openwms.tms.TMSMessageCodes;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportOrderState;
@@ -60,11 +61,13 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     @Autowired(required = false)
     private List<UpdateFunction> updateFunctions;
     private final Translator translator;
+    private final StateManager stateManager;
 
-    TransportationServiceImpl(Translator translator, TransportOrderRepository repository, ApplicationContext ctx) {
+    TransportationServiceImpl(Translator translator, TransportOrderRepository repository, ApplicationContext ctx, StateManager stateManager) {
         this.translator = translator;
         this.repository = repository;
         this.ctx = ctx;
+        this.stateManager = stateManager;
     }
 
     /**
@@ -171,7 +174,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Trying to turn TransportOrder [{}] into state [{}]", transportOrder.getPk(), state);
                 }
-                transportOrder.changeState(state);
+                transportOrder.changeState(stateManager, state);
                 ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.of(state)));
             } catch (StateChangeException sce) {
                 LOGGER.error("Could not turn TransportOrder: [{}] into [{}], because of [{}]", transportOrder.getPk(), state, sce.getMessage());
@@ -196,7 +199,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Trying to turn TransportOrder [{}] into state [{}]", transportOrder.getPk(), targetState);
                 }
-                transportOrder.changeState(targetState);
+                transportOrder.changeState(stateManager, targetState);
                 if (message != null) {
                     transportOrder.setProblem(message);
                 }

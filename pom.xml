@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.openwms</groupId>
         <artifactId>org.openwms.parent</artifactId>
-        <version>19.1</version>
+        <version>19.2</version>
         <relativePath />
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
@@ -105,10 +105,6 @@
                 <configuration>
                     <skip>${skipTests}</skip>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>io.starter</groupId>
-                <artifactId>aspectj-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

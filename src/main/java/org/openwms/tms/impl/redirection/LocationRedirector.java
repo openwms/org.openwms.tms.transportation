@@ -65,7 +65,6 @@ class LocationRedirector extends TargetRedirector<LocationVO> {
                         .tu(
                             TransportUnitVO.builder()
                                     .barcode(vote.getTransportOrder().getTransportUnitBK())
-                                    .target(vote.getTargetLocation())
                                     .build()
                         )
                         .type(TransportUnitEvent.TransportUnitEventType.CHANGE_TARGET)

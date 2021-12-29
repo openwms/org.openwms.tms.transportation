@@ -19,6 +19,7 @@ import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
 import org.openwms.common.transport.api.TransportUnitApi;
 import org.openwms.tms.StateChangeException;
+import org.openwms.tms.StateManager;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.TransportServiceEvent;
@@ -45,11 +46,13 @@ class Initializer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Initializer.class);
     private final TransportOrderRepository repository;
     private final TransportUnitApi transportUnitApi;
+    private final StateManager stateManager;
     private final ApplicationContext ctx;
 
-    Initializer(TransportOrderRepository repository, TransportUnitApi transportUnitApi, ApplicationContext ctx) {
+    Initializer(TransportOrderRepository repository, TransportUnitApi transportUnitApi, StateManager stateManager, ApplicationContext ctx) {
         this.repository = repository;
         this.transportUnitApi = transportUnitApi;
+        this.stateManager = stateManager;
         this.ctx = ctx;
     }
 
@@ -68,7 +71,7 @@ class Initializer {
             for (TransportOrder transportOrder : transportOrders) {
                 try {
                     transportOrder
-                            .changeState(TransportOrderState.INITIALIZED)
+                            .changeState(stateManager, TransportOrderState.INITIALIZED)
                             .setSourceLocation(transportUnitApi.findTransportUnit(transportOrder.getTransportUnitBK()).getActualLocation().getLocationId());
                     transportOrder = repository.save(transportOrder);
                     LOGGER.debug("TransportOrder with PK [{}] INITIALIZED", transportOrder.getPk());

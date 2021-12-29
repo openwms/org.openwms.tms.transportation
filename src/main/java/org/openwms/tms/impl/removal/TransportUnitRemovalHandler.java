@@ -19,6 +19,7 @@ import org.ameba.annotation.TxService;
 import org.openwms.common.transport.api.commands.TUCommand;
 import org.openwms.tms.Message;
 import org.openwms.tms.StateChangeException;
+import org.openwms.tms.StateManager;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.impl.TransportOrderRepository;
 import org.slf4j.Logger;
@@ -54,10 +55,11 @@ class TransportUnitRemovalHandler {
     private final TransportOrderRepository repository;
     private final ApplicationContext ctx;
     private final List<String> blockStates;
+    private final StateManager stateManager;
 
     TransportUnitRemovalHandler(TransportOrderRepository repository,
             ApplicationContext ctx,
-            @Value("${owms.tms.block-tu-deletion-states}") String cancelStartedTO) {
+            @Value("${owms.tms.block-tu-deletion-states}") String cancelStartedTO, StateManager stateManager) {
         this.repository = repository;
         this.ctx = ctx;
         this.blockStates = cancelStartedTO == null ?
@@ -66,6 +68,7 @@ class TransportUnitRemovalHandler {
                         .split(","))
                         .map(String::trim)
                         .collect(Collectors.toList());
+        this.stateManager = stateManager;
     }
 
     /**
@@ -112,7 +115,7 @@ class TransportUnitRemovalHandler {
 
     private void cancel(TransportOrder transportOrder) {
         try {
-            transportOrder.changeState(CANCELED);
+            transportOrder.changeState(stateManager, CANCELED);
             String barcode = transportOrder.getTransportUnitBK();
             setProblem(transportOrder, new Message.Builder()
                     .withMessage(

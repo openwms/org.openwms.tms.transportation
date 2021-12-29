@@ -23,6 +23,7 @@ import org.openwms.common.location.api.LocationGroupApi;
 import org.openwms.common.location.api.LocationGroupVO;
 import org.openwms.common.location.api.LocationVO;
 import org.openwms.tms.StateChangeException;
+import org.openwms.tms.StateManager;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.TransportServiceEvent;
@@ -31,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,14 +54,17 @@ class Starter implements Startable {
     private final LocationApi locationApi;
     private final LocationGroupApi locationGroupApi;
     private final ApplicationContext ctx;
+    @Lazy
     @Autowired(required = false)
     private ExternalStarter externalStarter;
+    private final StateManager stateManager;
 
-    Starter(TransportOrderRepository repository, LocationApi locationApi, LocationGroupApi locationGroupApi, ApplicationContext ctx) {
+    Starter(TransportOrderRepository repository, LocationApi locationApi, LocationGroupApi locationGroupApi, ApplicationContext ctx, StateManager stateManager) {
         this.repository = repository;
         this.locationApi = locationApi;
         this.locationGroupApi = locationGroupApi;
         this.ctx = ctx;
+        this.stateManager = stateManager;
     }
 
     /**
@@ -130,7 +135,7 @@ class Starter implements Startable {
         if (!others.isEmpty()) {
             throw new StateChangeException(format("Cannot start TransportOrder for TransportUnit [%s] because [%s] TransportOrders already started [%s]", to.getTransportUnitBK(), others.size(), others.get(0).getPersistentKey()));
         }
-        to.changeState(TransportOrderState.STARTED);
+        to.changeState(stateManager, TransportOrderState.STARTED);
         repository.save(to);
         LOGGER.info("TransportOrder for TransportUnit with Barcode [{}] STARTED at [{}]. Persisted key is [{}]", to.getTransportUnitBK(), to.getStartDate(), to.getPk());
         ctx.publishEvent(new TransportServiceEvent(to, TransportServiceEvent.TYPE.STARTED));

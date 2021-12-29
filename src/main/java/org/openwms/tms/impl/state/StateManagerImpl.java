@@ -26,6 +26,8 @@ import org.openwms.tms.impl.TransportOrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Transient;
 import java.util.Date;
@@ -40,7 +42,7 @@ import static org.openwms.tms.TransportOrderState.STARTED;
  *
  * @author Heiko Scherrer
  */
-//@Transactional(propagation = Propagation.MANDATORY) don't because it is called within a Hibernate generation
+@Transactional(propagation = Propagation.MANDATORY)// don't because it is called within a Hibernate generation
 @Component
 class StateManagerImpl implements StateManager {
 
