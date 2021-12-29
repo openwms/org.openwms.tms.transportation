@@ -204,7 +204,7 @@ class ChangeStateDocumentation extends TransportationTestBase {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-//        vo.setState(TransportOrderState.CANCELED.toString());
+        vo.setState(TransportOrderState.CANCELED.toString());
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
@@ -254,7 +254,7 @@ class ChangeStateDocumentation extends TransportationTestBase {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-//        vo.setState(TransportOrderState.FINISHED.toString());
+        vo.setState(TransportOrderState.FINISHED.toString());
         TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
         LocationVO location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);

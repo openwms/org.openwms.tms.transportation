@@ -58,8 +58,8 @@ jobs:
         run: >
           ./mvnw post-integration-test site scm-publish:publish-scm
           -DM2_REPO_DIR=/home/runner/.m2/repository
-          -DsurefireArgs=-Dspring.profiles.active=ASYNCHRONOUS,TEST,TESTPG
-          -Dargs=-Dspring.profiles.active=ASYNCHRONOUS,TEST,TESTPG
+          -DsurefireArgs=-Dspring.profiles.active=TEST,TESTPG
+          -Dargs=-Dspring.profiles.active=TEST,TESTPG
           -Dspring.datasource.url=jdbc:postgresql://localhost:5432/testdb
           -Dspring.rabbitmq.host=localhost
           -DDB_HOST=localhost
@@ -77,7 +77,7 @@ jobs:
           ./mvnw clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar
           -Dsonar.login=$SONAR_TOKEN
           -Dspring.rabbitmq.host=localhost
-          -DsurefireArgs=-Dspring.profiles.active=ASYNCHRONOUS,TEST
+          -DsurefireArgs=-Dspring.profiles.active=TEST
           -Dci.buildNumber=$GITHUB_RUN_NUMBER
           -DSONAR_TOKEN=$SONAR_TOKEN
           -Pcoverage -B $MAVEN_OPTS
