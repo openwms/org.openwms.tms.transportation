@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<meta name="author" content="(1.4.0-SNAPSHOT-138)">
+<meta name="author" content="(1.4.0-SNAPSHOT-5)">
 <title>OpenWMS.org TMS: RESTful API (Transportation Service)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -442,7 +442,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>OpenWMS.org TMS: RESTful API (Transportation Service)</h1>
 <div class="details">
-<span id="author" class="author">(1.4.0-SNAPSHOT-138)</span><br>
+<span id="author" class="author">(1.4.0-SNAPSHOT-5)</span><br>
 <span id="revdate">Heiko Scherrer;</span>
 </div>
 <div id="toc" class="toc">
@@ -489,7 +489,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Copyright © 2005-2020</p>
+<p>Copyright © 2005-2021</p>
 </div>
 <div class="paragraph">
 <p>Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies
@@ -743,7 +743,7 @@ priority might be started and executed before those with lower priority.</p>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-Location: http://localhost:8080/v1/transport-orders/58bb9b54-7c94-40ac-bf9a-7d19a386c295/</code></pre>
+Location: http://localhost:8080/v1/transport-orders/d23d739b-ce56-4610-a695-1144b136cf90/</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -753,13 +753,13 @@ Location: http://localhost:8080/v1/transport-orders/58bb9b54-7c94-40ac-bf9a-7d19
 <div class="sect2">
 <h3 id="_lookup_the_created_transportorder"><a class="anchor" href="#_lookup_the_created_transportorder"></a><a class="link" href="#_lookup_the_created_transportorder">Lookup the created TransportOrder</a></h3>
 <div class="paragraph">
-<p>Unresolved directive in api.adoc - include::/home/travis/build/openwms/org.openwms.tms.transportation/target/generated-snippets/to-create-and-get/curl-request.adoc[]</p>
+<p>Unresolved directive in api.adoc - include::/home/runner/work/org.openwms.tms.transportation/org.openwms.tms.transportation/target/generated-snippets/to-create-and-get/curl-request.adoc[]</p>
 </div>
 <div class="paragraph">
 <p>and the server returns the representation of the created <code>TransportOrder</code></p>
 </div>
 <div class="paragraph">
-<p>Unresolved directive in api.adoc - include::/home/travis/build/openwms/org.openwms.tms.transportation/target/generated-snippets/to-create-and-get/http-response.adoc[]</p>
+<p>Unresolved directive in api.adoc - include::/home/runner/work/org.openwms.tms.transportation/org.openwms.tms.transportation/target/generated-snippets/to-create-and-get/http-response.adoc[]</p>
 </div>
 </div>
 <div class="sect2">
@@ -769,7 +769,7 @@ Location: http://localhost:8080/v1/transport-orders/58bb9b54-7c94-40ac-bf9a-7d19
 Or the <code>Target</code> destination is unknown. In both cases the server responds with a http status code <code>404</code> (Not Found):</p>
 </div>
 <div class="paragraph">
-<p>Unresolved directive in api.adoc - include::/home/travis/build/openwms/org.openwms.tms.transportation/target/generated-snippets/to-create-uk-to/http-response.adoc[]</p>
+<p>Unresolved directive in api.adoc - include::/home/runner/work/org.openwms.tms.transportation/org.openwms.tms.transportation/target/generated-snippets/to-create-uk-to/http-response.adoc[]</p>
 </div>
 </div>
 </div>
@@ -791,10 +791,10 @@ where the API expects the partial representation of the <code>TransportOrder</co
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://localhost:8080/v1/transport-orders/89845de7-00bf-4abd-bad2-7c3dc986ac0a' -i -X PATCH \
+<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://localhost:8080/v1/transport-orders/637df9f8-2fdf-44d4-9f68-6898b7b7cecf' -i -X PATCH \
     -H 'Content-Type: application/json;charset=UTF-8' \
     -d '{
-  "pKey" : "89845de7-00bf-4abd-bad2-7c3dc986ac0a",
+  "pKey" : "637df9f8-2fdf-44d4-9f68-6898b7b7cecf",
   "barcode" : "4711",
   "priority" : "HIGHEST",
   "targetLocation" : "INIT/0000/0000/0000/0000",
@@ -812,10 +812,10 @@ Notice that the <code>TransportOrder</code> does not need to be started yet.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://localhost:8080/v1/transport-orders/f367fd53-6585-4d8a-9e67-ba1954f90ba5' -i -X PATCH \
+<pre class="highlightjs highlight"><code data-lang="bash" class="language-bash hljs">$ curl 'http://localhost:8080/v1/transport-orders/9bbf4b41-582e-4316-ac63-f225d60537d0' -i -X PATCH \
     -H 'Content-Type: application/json;charset=UTF-8' \
     -d '{
-  "pKey" : "f367fd53-6585-4d8a-9e67-ba1954f90ba5",
+  "pKey" : "9bbf4b41-582e-4316-ac63-f225d60537d0",
   "barcode" : "4711",
   "priority" : "NORMAL",
   "targetLocation" : "ERR_/0000/0000/0000/0000",
@@ -851,7 +851,7 @@ Vary: Access-Control-Request-Headers</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-12-21 23:11:13 UTC
+Last updated 2021-12-29 23:06:39 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
