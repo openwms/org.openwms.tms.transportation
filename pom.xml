@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>1.4.0</version>
     <name>OpenWMS.org TMS: Transportation Services</name>
     <url>https://openwms.github.io/${project.artifactId}/index.html</url>
 
@@ -63,9 +63,9 @@
 
     <properties>
         <commons-configuration.version>1.10</commons-configuration.version>
-		<common.version>1.7.0-SNAPSHOT</common.version>
-        <core.units.version>0.4.0-SNAPSHOT</core.units.version>
-        <core.version>1.9.0-SNAPSHOT</core.version>
+		<common.version>1.7.0</common.version>
+        <core.units.version>0.4.0</core.units.version>
+        <core.version>1.9.0</core.version>
         <guava.version>30.0-jre</guava.version>
         <HdrHistogram.version>2.1.12</HdrHistogram.version>
         <jersey.version>1.19.4</jersey.version>
