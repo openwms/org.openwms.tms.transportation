@@ -14,12 +14,11 @@ spring:
       enabled: false
   security:
     user:
-      password: sa
       name: user
+      password: sa
   jpa:
-    show-sql: false
-    open-in-view: false
     database: h2
+    open-in-view: false
     properties:
       hibernate:
         hbm2ddl:
@@ -34,18 +33,17 @@ spring:
             audit_strategy_validity_end_rev_field_name: C_REV_END
             audit_strategy_validity_revend_timestamp_field_name: C_REVEND_TSTMP
             store_data_at_delete: true
+    show-sql: false
+    mapping-resources: META-INF/tms-orm.xml
   jackson:
-    date-format: yyyy-MM-dd'T'HH:mm:ss.SSSZ
+    date-format: "yyyy-MM-dd'T'HH:mm:ssXXX" # Only matches Dates no Instants!
   main:
     allow-bean-definition-overriding: true
-  rabbitmq:
-    listener:
-      simple:
-        retry:
-          max-attempts: 3
-          enabled: true
-          initial-interval: 1s
-          max-interval: 1s
+  mvc:
+    format:
+      date-time: "yyyy-MM-dd'T'HH:mm:ssXXX" # Must match the pattern how of @JsonFormat field annotation patterns
+      date: yyyy-MM-dd
+      time: HH:mm:ss
   zipkin:
     sender:
       type: web
@@ -65,8 +63,8 @@ owms:
   srv:
     protocol: http
     hostname: localhost
-  transportation:
-    serialization: json
+  tms:
+    block-tu-deletion-states:
 
 server:
   port: ${PORT:8131}
@@ -105,7 +103,7 @@ management:
         enabled: true
   info:
     git:
-      mode: full
+      mode: simple
 
 logging:
   file:
@@ -114,31 +112,58 @@ logging:
 
 ---
 spring:
-  profiles: ASYNCHRONOUS
-  cloud:
-    config:
-      discovery:
-        enabled: true
-      enabled: true
-      fail-fast: true # true means retry
-    discovery:
-      enabled: true
+  config:
+    activate:
+      on-profile: ASYNCHRONOUS
+  rabbitmq:
+    listener:
+      simple:
+        retry:
+          max-attempts: 3
+          enabled: true
+          initial-interval: 1s
+          max-interval: 1s
 
 management:
   health:
     rabbit:
       enabled: true
 
+owms:
+  commands:
+    common:
+      tu:
+        exchange-name: common.tu.commands
+        routing-key: common.tu.command.out.removing
+        queue-name: tms-tu-commands-queue
+    tms:
+      to:
+        exchange-name: tms.commands
+        routing-key: to.*
+        queue-name: tms-to-commands
+  events:
+    tms:
+      to:
+        exchange-name: tms.events
+  requests:
+    tms:
+      to:
+        exchange-name: tms.requests
+        routing-key: response.state.change
+        queue-name: tms-to-requests
+  transportation:
+    dead-letter:
+      exchange-name: dle.transportation
+      queue-name: tms-dl-queue
+    serialization: json
+
 ---
 spring:
-  profiles: HEROKU
+  config:
+    activate:
+      on-profile: HEROKU
   main:
     banner-mode: "OFF"
-  cloud:
-    config:
-      discovery:
-        enabled: true
-      enabled: true
 
 owms:
   srv:
@@ -155,10 +180,23 @@ eureka:
 
 ---
 spring:
-  profiles: TEST
+  config:
+    activate:
+      on-profile: TEST
   cloud:
+    bootstrap:
+      enabled: false
     config:
-      fail-fast: false
+      discovery:
+        enabled: false
+      enabled: false
+      fail-fast: false # true means retry
+      retry:
+        max-attempts: 120
+    discovery:
+      enabled: false
+  jpa:
+    show-sql: false
   main:
     banner-mode: "off"
   zipkin:
@@ -166,21 +204,35 @@ spring:
     discovery-client-enabled: false
     sender:
       type: rabbit
-  jpa:
-    show-sql: false
 
 ---
 spring:
-  profiles: TESTPG
-  jpa:
-    database: postgresql
-    generate-ddl: true
-    properties:
-      hibernate.dialect: org.hibernate.dialect.PostgreSQL9Dialect
-      hibernate.temp.use_jdbc_metadata_defaults: false
-      hibernate.default_schema: public
+  config:
+    activate:
+      on-profile: TESTPG
+  cloud:
+    bootstrap:
+      enabled: false
+    config:
+      discovery:
+        enabled: false
+      enabled: false
+      fail-fast: false # true means retry
+      retry:
+        max-attempts: 120
+    discovery:
+      enabled: false
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql:testdb
     username: KARL
     password: KARL
+  jpa:
+    database: postgresql
+    generate-ddl: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
+        temp:
+          use_jdbc_metadata_defaults: false
+        default_schema: public
