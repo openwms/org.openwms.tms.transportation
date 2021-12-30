@@ -71,6 +71,7 @@
         <jersey.version>1.19.4</jersey.version>
         <joda-time.version>2.10.8</joda-time.version>
         <jsr305.version>3.0.2</jsr305.version>
+        <servo-core.version>0.12.21</servo-core.version>
         <skipTests>false</skipTests>
         <spring-cloud-dependencies.version>2021.0.0</spring-cloud-dependencies.version>
         <stax2-api.version>4.2.1</stax2-api.version>
@@ -193,6 +194,12 @@
                 <groupId>commons-configuration</groupId>
                 <artifactId>commons-configuration</artifactId>
                 <version>${commons-configuration.version}</version>
+            </dependency>
+            <dependency>
+                <!-- Clash in org.springframework.cloud:spring-cloud-starter-stream-rabbit -->
+                <groupId>com.netflix.servo</groupId>
+                <artifactId>servo-core</artifactId>
+                <version>${servo-core.version}</version>
             </dependency>
             <dependency>
                 <!-- Mismatch between Eureka Client and Envers -->
