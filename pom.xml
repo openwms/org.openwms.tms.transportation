@@ -67,7 +67,6 @@
         <core.version>2.0.0-SNAPSHOT</core.version>
         <core.units.version>0.5.0-SNAPSHOT</core.units.version>
         <guava.version>30.0-jre</guava.version>
-        <HdrHistogram.version>2.1.12</HdrHistogram.version>
         <jersey.version>1.19.4</jersey.version>
         <joda-time.version>2.10.8</joda-time.version>
         <jsr305.version>3.0.2</jsr305.version>
@@ -207,12 +206,6 @@
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>${joda-time.version}</version>
-            </dependency>
-            <dependency>
-                <!-- com.netflix.eureka:eureka has an internal clash -->
-                <groupId>org.hdrhistogram</groupId>
-                <artifactId>HdrHistogram</artifactId>
-                <version>${HdrHistogram.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.objenesis</groupId>
