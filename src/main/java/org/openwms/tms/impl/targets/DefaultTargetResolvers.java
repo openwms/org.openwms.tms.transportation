@@ -79,7 +79,7 @@ class DefaultTargetResolvers {
          */
         @Override
         public Optional<LocationVO> resolve(String target) {
-            return locationApi.findLocationByCoordinate(target);
+            return locationApi.findById(target);
         }
 
         /**
