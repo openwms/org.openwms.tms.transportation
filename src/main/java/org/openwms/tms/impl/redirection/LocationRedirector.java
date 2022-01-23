@@ -54,7 +54,7 @@ class LocationRedirector extends TargetRedirector<LocationVO> {
         return (
                 vote.getTargetLocation() == null || vote.getTargetLocation().isEmpty())
                 ? Optional.empty()
-                : locationApi.findLocationByCoordinate(vote.getTargetLocation());
+                : locationApi.findById(vote.getTargetLocation());
     }
 
     @Override

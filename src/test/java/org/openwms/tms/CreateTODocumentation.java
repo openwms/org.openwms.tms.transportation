@@ -85,7 +85,7 @@ class CreateTODocumentation extends TransportationTestBase {
         tu.setTargetLocation(errorLocation);
 
         given(transportUnitApi.findTransportUnit(BC_4711)).willReturn(tu);
-        given(locationApi.findLocationByCoordinate(ERR_LOC_STRING)).willReturn(Optional.of(errorLocation));
+        given(locationApi.findById(ERR_LOC_STRING)).willReturn(Optional.of(errorLocation));
         given(locationGroupApi.findByName(ERR_LOC_STRING)).willReturn(Optional.empty());
 
         MvcResult res = mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
@@ -131,7 +131,7 @@ class CreateTODocumentation extends TransportationTestBase {
     void testCreateTOUnknownTarget() throws Exception {
         CreateTransportOrderVO vo = createTO();
         vo.setTarget("UNKNOWN");
-        given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(Optional.empty());
+        given(locationApi.findById(vo.getTarget())).willReturn(Optional.empty());
         given(locationGroupApi.findByName(vo.getTarget())).willReturn(Optional.empty());
 
         mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
@@ -148,7 +148,7 @@ class CreateTODocumentation extends TransportationTestBase {
         vo.setTarget(ERR_LOC_STRING);
         LocationVO loc = new LocationVO(ERR_LOC_STRING);
         loc.setIncomingActive(false);
-        given(locationApi.findLocationByCoordinate(vo.getTarget())).willReturn(Optional.of(loc));
+        given(locationApi.findById(vo.getTarget())).willReturn(Optional.of(loc));
 
         MvcResult res = mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
                 .contentType(MediaType.APPLICATION_JSON)

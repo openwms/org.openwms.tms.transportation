@@ -126,7 +126,7 @@ public abstract class TransportationTestBase {
         tu.setTargetLocation(errorLocation);
 
         given(transportUnitApi.findTransportUnit(BC_4711)).willReturn(tu);
-        given(locationApi.findLocationByCoordinate(ERR_LOC_STRING)).willReturn(Optional.of(errorLocation));
+        given(locationApi.findById(ERR_LOC_STRING)).willReturn(Optional.of(errorLocation));
         given(locationGroupApi.findByName(ERR_LOC_STRING)).willReturn(Optional.empty());
         return vo.build();
     }

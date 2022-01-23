@@ -44,7 +44,7 @@ public class RedirectTODocumentation extends TransportationTestBase {
         vo.setTarget(UNKNOWN);
         INIT_LOC.setIncomingActive(true);
         given(locationGroupApi.findByName(UNKNOWN)).willReturn(Optional.empty());
-        given(locationApi.findLocationByCoordinate(UNKNOWN)).willReturn(Optional.of(INIT_LOC));
+        given(locationApi.findById(UNKNOWN)).willReturn(Optional.of(INIT_LOC));
 
         // test ...
         sendPatch(vo, status().isNoContent(), "to-patch-target-unknown-loc");
@@ -57,7 +57,7 @@ public class RedirectTODocumentation extends TransportationTestBase {
         postTOAndValidate(vo, NOTLOGGED);
         vo.setTarget(UNKNOWN);
         given(locationGroupApi.findByName(UNKNOWN)).willReturn(Optional.of(ERR_LOCGRB));
-        given(locationApi.findLocationByCoordinate(UNKNOWN)).willReturn(Optional.empty());
+        given(locationApi.findById(UNKNOWN)).willReturn(Optional.empty());
 
         // test ...
         sendPatch(vo, status().isNoContent(), "to-patch-target-unknown-locgb");
@@ -70,7 +70,7 @@ public class RedirectTODocumentation extends TransportationTestBase {
         postTOAndValidate(vo, NOTLOGGED);
         vo.setTarget(UNKNOWN);
         given(locationGroupApi.findByName(UNKNOWN)).willReturn(Optional.empty());
-        given(locationApi.findLocationByCoordinate(UNKNOWN)).willReturn(Optional.empty());
+        given(locationApi.findById(UNKNOWN)).willReturn(Optional.empty());
 
         // test ...
         sendPatch(vo, status().isConflict(), "to-patch-target-unknown");
@@ -84,7 +84,7 @@ public class RedirectTODocumentation extends TransportationTestBase {
         vo.setTarget(INIT_LOC_STRING);
         given(locationGroupApi.findByName(INIT_LOC_STRING)).willReturn(Optional.empty());
         INIT_LOC.setIncomingActive(false);
-        given(locationApi.findLocationByCoordinate(INIT_LOC_STRING)).willReturn(Optional.of(INIT_LOC));
+        given(locationApi.findById(INIT_LOC_STRING)).willReturn(Optional.of(INIT_LOC));
 
         // test ...
         sendPatch(vo, status().isConflict(), "to-patch-target-blocked-loc");
@@ -98,7 +98,7 @@ public class RedirectTODocumentation extends TransportationTestBase {
         vo.setTarget(INIT_LOCGB_STRING);
         INIT_LOCGRB.setIncomingActive(false);
         given(locationGroupApi.findByName(INIT_LOCGB_STRING)).willReturn(Optional.of(INIT_LOCGRB));
-        given(locationApi.findLocationByCoordinate(INIT_LOCGB_STRING)).willReturn(Optional.empty());
+        given(locationApi.findById(INIT_LOCGB_STRING)).willReturn(Optional.empty());
 
         // test ...
         sendPatch(vo, status().isConflict(), "to-patch-target-blocked-locgrp");

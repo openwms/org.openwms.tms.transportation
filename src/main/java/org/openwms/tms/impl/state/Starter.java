@@ -108,7 +108,7 @@ class Starter implements Startable {
         LOGGER.debug("> Request to start the TransportOrder with PKey [{}]", to.getPersistentKey());
         Optional<LocationGroupVO> lg = to.getTargetLocationGroup() == null ? Optional.empty() : locationGroupApi.findByName(to.getTargetLocationGroup());
         Optional<LocationVO> loc = to.getTargetLocation() != null && LocationPK.isValid(to.getTargetLocation())
-                ? locationApi.findLocationByCoordinate(to.getTargetLocation())
+                ? locationApi.findById(to.getTargetLocation())
                 : Optional.empty();
         if (!lg.isPresent() && !loc.isPresent()) {
             // At least one target must be set
