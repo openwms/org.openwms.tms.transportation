@@ -30,6 +30,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * A TransportOrder is used to move {@code TransportUnit}s from a current {@code Location} to a target.
@@ -332,5 +334,48 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
     boolean hasTargetChanged(TransportOrder transportOrder) {
         return ((targetLocation != null && !targetLocation.equals(transportOrder.getTargetLocation())) ||
                 (targetLocationGroup != null && targetLocationGroup.equals(transportOrder.getTargetLocationGroup())));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * All fields.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TransportOrder that)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(transportUnitBK, that.transportUnitBK) && priority == that.priority && Objects.equals(startDate, that.startDate) && Objects.equals(problem, that.problem) && Objects.equals(endDate, that.endDate) && state == that.state && Objects.equals(sourceLocation, that.sourceLocation) && Objects.equals(targetLocation, that.targetLocation) && Objects.equals(targetLocationGroup, that.targetLocationGroup);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * All fields.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), transportUnitBK, priority, startDate, problem, endDate, state, sourceLocation, targetLocation, targetLocationGroup);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * All fields.
+     */
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", TransportOrder.class.getSimpleName() + "[", "]")
+                .add("transportUnitBK='" + transportUnitBK + "'")
+                .add("priority=" + priority)
+                .add("startDate=" + startDate)
+                .add("problem=" + problem)
+                .add("endDate=" + endDate)
+                .add("state=" + state)
+                .add("sourceLocation='" + sourceLocation + "'")
+                .add("targetLocation='" + targetLocation + "'")
+                .add("targetLocationGroup='" + targetLocationGroup + "'")
+                .toString();
     }
 }

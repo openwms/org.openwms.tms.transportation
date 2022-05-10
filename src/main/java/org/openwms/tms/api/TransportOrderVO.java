@@ -47,8 +47,7 @@ public class TransportOrderVO implements Serializable {
     private String targetLocationGroup;
 
     @JsonCreator
-    public TransportOrderVO() {
-    }
+    TransportOrderVO() {}
 
     public String getId() {
         return id;

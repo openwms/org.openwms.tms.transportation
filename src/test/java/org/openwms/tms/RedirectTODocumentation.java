@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author Heiko Scherrer
  */
-public class RedirectTODocumentation extends TransportationTestBase {
+class RedirectTODocumentation extends TransportationTestBase {
 
     @Test
     void testRedirectToUnknownLocationGroupButLoc() throws Exception {

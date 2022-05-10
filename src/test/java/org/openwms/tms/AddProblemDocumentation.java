@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author Heiko Scherrer
  */
-public class AddProblemDocumentation extends TransportationTestBase {
+class AddProblemDocumentation extends TransportationTestBase {
 
     @Autowired
     private EntityManager em;
@@ -67,7 +67,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
         ;
 
         assertThat(mapper.map(readTransportOrder(vo.getpKey()).getProblem(), MessageVO.class)).isEqualTo(msg);
-        assertThat(getProblemHistories()).hasSize(0);
+        assertThat(getProblemHistories()).isEmpty();
     }
 
     @Test
@@ -88,7 +88,7 @@ public class AddProblemDocumentation extends TransportationTestBase {
                 .andDo(document("to-patch-addproblem"))
         ;
         assertThat(mapper.map(readTransportOrder(vo.getpKey()).getProblem(), MessageVO.class)).isEqualTo(msg);
-        assertThat(getProblemHistories()).hasSize(0);
+        assertThat(getProblemHistories()).isEmpty();
     }
 
     @Test

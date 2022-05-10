@@ -40,7 +40,7 @@ public class CreateTransportOrderVO implements Serializable {
 
     @JsonProperty("targetLocationGroup")
     public String getTargetLocationGroup() {
-        return target;
+        return getTarget();
     }
     public CreateTransportOrderVO() {
 

@@ -50,14 +50,14 @@ public class TransportUnitEventPropagator {
 
     @TransactionalEventListener(fallbackExecution = true)
     public void onEvent(TransportUnitEvent event) {
-        switch (event.getType()) {
-            case CHANGE_TARGET:
-                amqpTemplate.convertAndSend(exchangeName, "common.tu.command.in.change-target",
-                        TUCommand.newBuilder(TUCommand.Type.CHANGE_TARGET).withTransportUnit(mapper.map(event.getSource(), TransportUnitMO.class)).build()
-                );
-                break;
-            default:
-                throw new ServiceLayerException(format("Eventtype [%s] currently not supported", event.getType()));
+        if (event.getType() == TransportUnitEvent.TransportUnitEventType.CHANGE_TARGET) {
+            amqpTemplate.convertAndSend(exchangeName, "common.tu.command.in.change-target",
+                    TUCommand.newBuilder(TUCommand.Type.CHANGE_TARGET)
+                            .withTransportUnit(mapper.map(event.getSource(), TransportUnitMO.class))
+                            .build()
+            );
+        } else {
+            throw new ServiceLayerException(format("Eventtype [%s] currently not supported", event.getType()));
         }
     }
 }

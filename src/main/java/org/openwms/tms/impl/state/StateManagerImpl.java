@@ -70,7 +70,7 @@ class StateManagerImpl implements StateManager {
             throw new StateChangeException(translator, TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED, transportOrder.getPersistentKey());
         }
         switch (state) {
-            case CREATED:
+            case CREATED -> {
                 if (newState != INITIALIZED && newState != CANCELED) {
                     throw new StateChangeException(
                             translator,
@@ -85,8 +85,8 @@ class StateManagerImpl implements StateManager {
                             transportOrder.getTargetLocation(),
                             transportOrder.getTargetLocationGroup());
                 }
-                break;
-            case INITIALIZED:
+            }
+            case INITIALIZED -> {
                 if (newState != STARTED && newState != CANCELED && newState != ONFAILURE) {
                     throw new StateChangeException(
                             translator,
@@ -101,26 +101,18 @@ class StateManagerImpl implements StateManager {
                 }
                 LOGGER.debug("Current state is [{}], new state is [{}], # of started is [{}]", state, newState,
                         repo.numberOfTransportOrders(transportOrder.getTransportUnitBK(), STARTED));
-                break;
-            case STARTED:
-                // new state may be one of the following, no additional if-check required here
-                break;
-            case FINISHED:
-            case ONFAILURE:
-            case CANCELED:
-                throw new StateChangeException(
-                        translator,
-                        TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED,
-                        transportOrder.getPersistentKey()
-                );
-            default:
-                throw new IllegalStateException(format("State not managed: [%s]", state));
+            }
+            case STARTED -> { /* All fine here. */}
+            case FINISHED, ONFAILURE, CANCELED -> throw new StateChangeException(
+                    translator,
+                    TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED,
+                    transportOrder.getPersistentKey()
+            );
+            default -> throw new IllegalStateException(format("State not managed: [%s]", state));
         }
         switch (newState) {
             case STARTED -> transportOrder.setStartDate(new Date());
             case FINISHED, ONFAILURE, CANCELED -> transportOrder.setEndDate(new Date());
-            default -> {
-            }
             // OK for all others
         }
         LOGGER.debug("Request processed, order is now [{}]", newState);

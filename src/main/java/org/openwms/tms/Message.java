@@ -42,14 +42,15 @@ public class Message implements Serializable {
     @Column(name = "C_NO")
     private String messageNo;
 
-    /** Message text about the {@literal Message}. */
-    @Column(name = "C_MESSAGE")
-    private String message;
+    /** Message description text. */
+    @Column(name = "C_MESSAGE_TEXT")
+    private String messageText;
 
     /** The unique key of the domain object in that context the message occurred. */
     private String pKey;
 
-    /* ----------------------------- methods ------------------- */
+    /*~ ----------------------------- constructors ------------------- */
+
     /**
      * Dear JPA...
      */
@@ -59,7 +60,7 @@ public class Message implements Serializable {
     private Message(Builder builder) {
         occurred = builder.occurred;
         messageNo = builder.messageNo;
-        message = builder.message;
+        messageText = builder.messageText;
         pKey = builder.pKey;
     }
 
@@ -82,12 +83,12 @@ public class Message implements Serializable {
     }
 
     /**
-     * Get the message.
-     * 
-     * @return The message.
+     * Return the message text.
+     *
+     * @return The message text
      */
-    public String getMessage() {
-        return message;
+    public String getMessageText() {
+        return messageText;
     }
 
     /**
@@ -111,7 +112,7 @@ public class Message implements Serializable {
         Message message1 = (Message) o;
         return Objects.equals(occurred, message1.occurred) &&
                 Objects.equals(messageNo, message1.messageNo) &&
-                Objects.equals(message, message1.message) &&
+                Objects.equals(messageText, message1.messageText) &&
                 Objects.equals(pKey, message1.pKey);
     }
 
@@ -125,7 +126,7 @@ public class Message implements Serializable {
         return new StringJoiner(", ", Message.class.getSimpleName() + "[", "]")
                 .add("occurred=" + occurred)
                 .add("messageNo='" + messageNo + "'")
-                .add("message='" + message + "'")
+                .add("messageText='" + messageText + "'")
                 .toString();
     }
 
@@ -136,7 +137,7 @@ public class Message implements Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(occurred, messageNo, message, pKey);
+        return Objects.hash(occurred, messageNo, messageText, pKey);
     }
 
 
@@ -147,7 +148,7 @@ public class Message implements Serializable {
 
         private Date occurred;
         private String messageNo;
-        private String message;
+        private String messageText;
         private String pKey;
 
         /**
@@ -173,13 +174,13 @@ public class Message implements Serializable {
         }
 
         /**
-         * Sets the {@code message} and returns a reference to this Builder so that the methods can be chained together.
+         * Sets the {@code messageText} and returns a reference to this Builder so that the methods can be chained together.
          *
-         * @param val the {@code message} to set
+         * @param val the {@code messageText} to set
          * @return a reference to this Builder
          */
-        public Builder withMessage(String val) {
-            message = val;
+        public Builder withMessageText(String val) {
+            messageText = val;
             return this;
         }
 

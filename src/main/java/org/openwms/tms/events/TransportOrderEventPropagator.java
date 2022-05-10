@@ -19,6 +19,8 @@ import org.ameba.mapping.BeanMapper;
 import org.openwms.core.SpringProfiles;
 import org.openwms.tms.TransportServiceEvent;
 import org.openwms.tms.api.messages.TransportOrderMO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -34,6 +36,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Component
 class TransportOrderEventPropagator {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransportOrderEventPropagator.class);
     private final AmqpTemplate amqpTemplate;
     private final String exchangeName;
     private final BeanMapper mapper;
@@ -64,6 +67,7 @@ class TransportOrderEventPropagator {
                 mo.setEventType(TransportOrderMO.EventType.CREATED);
                 amqpTemplate.convertAndSend(exchangeName, "to.event.created", mo);
             }
+            default -> LOGGER.warn("Type not handled [{}]", event.getType());
         }
     }
 }

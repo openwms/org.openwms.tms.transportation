@@ -32,7 +32,7 @@ import java.util.List;
  *
  * @author Heiko Scherrer
  */
-@FeignClient(name = "tms-service", qualifier = "transportOrderApi", decode404 = true)
+@FeignClient(name = "tms-service", decode404 = true)
 public interface TransportOrderApi {
 
     /**

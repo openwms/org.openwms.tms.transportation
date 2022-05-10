@@ -33,6 +33,8 @@ import java.util.Optional;
  */
 class DefaultTargetResolvers {
 
+    private DefaultTargetResolvers() { }
+
     @Component
     static class LocationGroupTargetResolver implements TargetResolver<LocationGroupVO> {
 

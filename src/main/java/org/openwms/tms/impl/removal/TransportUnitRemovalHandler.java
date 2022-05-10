@@ -68,13 +68,10 @@ class TransportUnitRemovalHandler {
                 Stream.of(cancelStartedTO
                         .split(","))
                         .map(String::trim)
-                        .collect(Collectors.toList());
+                        .toList();
         this.stateManager = stateManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Transactional
     @Measured
     public void preRemove(TUCommand command) throws RemovalNotAllowedException {

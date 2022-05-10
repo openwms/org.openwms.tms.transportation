@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author Heiko Scherrer
  */
-public class PrioritizeTODocumentation extends TransportationTestBase {
+class PrioritizeTODocumentation extends TransportationTestBase {
 
     @Test
     void prioritizeTOWithNull() throws Exception {

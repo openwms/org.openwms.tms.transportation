@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author Heiko Scherrer
  */
-public class ChangeTUDocumentation extends TransportationTestBase {
+class ChangeTUDocumentation extends TransportationTestBase {
 
     @Test
     void testTUChange() throws Exception {
@@ -83,7 +83,7 @@ public class ChangeTUDocumentation extends TransportationTestBase {
                 .andDo(document("to-patch-tu-unknown"))
                 .andReturn()
         ;
-        assertThat(res.getResponse().getContentAsString().contains("COMMON.BARCODE_NOT_FOUND")).isTrue();
+        assertThat(res.getResponse().getContentAsString()).contains("COMMON.BARCODE_NOT_FOUND");
     }
 
     @Test
