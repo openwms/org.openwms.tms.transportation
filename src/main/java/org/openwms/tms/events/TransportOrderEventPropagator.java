@@ -50,6 +50,7 @@ class TransportOrderEventPropagator {
     @TransactionalEventListener(fallbackExecution = true)
     public void onEvent(TransportServiceEvent event) {
         var mo = mapper.map(event.getSource(), TransportOrderMO.class);
+        LOGGER.debug("Propagating event [{}]", event.getType());
         switch(event.getType()) {
             case STARTED -> {
                 mo.setEventType(TransportOrderMO.EventType.STARTED);
@@ -67,7 +68,7 @@ class TransportOrderEventPropagator {
                 mo.setEventType(TransportOrderMO.EventType.CREATED);
                 amqpTemplate.convertAndSend(exchangeName, "to.event.created", mo);
             }
-            default -> LOGGER.warn("Type not handled [{}]", event.getType());
+            default -> LOGGER.debug("Type not propagated [{}]", event.getType());
         }
     }
 }

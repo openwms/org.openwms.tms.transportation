@@ -115,13 +115,13 @@ public abstract class TransportationTestBase {
                 .withTarget(ERR_LOC_STRING)
                 ;
 
-        LocationVO actualLocation = new LocationVO(INIT_LOC_STRING);
+        var actualLocation = new LocationVO(INIT_LOC_STRING);
         actualLocation.setIncomingActive(true);
         actualLocation.setOutgoingActive(true);
-        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        var errorLocation = new LocationVO(ERR_LOC_STRING);
         errorLocation.setIncomingActive(true);
         errorLocation.setOutgoingActive(true);
-        TransportUnitVO tu = new TransportUnitVO(BC_4711);
+        var tu = new TransportUnitVO(BC_4711);
         tu.setActualLocation(actualLocation);
         tu.setTargetLocation(errorLocation);
 
@@ -149,7 +149,7 @@ public abstract class TransportationTestBase {
         }
 
         //TimeUnit.SECONDS.sleep(1);
-        String toLocation = (String) res.getResponse().getHeaderValue(HttpHeaders.LOCATION);
+        var toLocation = (String) res.getResponse().getHeaderValue(HttpHeaders.LOCATION);
         toLocation = toLocation.substring(0, toLocation.length() - 1);
         vo.setpKey(toLocation.substring(toLocation.lastIndexOf("/") + 1));
         return res;

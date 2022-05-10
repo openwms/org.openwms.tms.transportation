@@ -19,6 +19,8 @@ import org.ameba.exception.NotFoundException;
 import org.ameba.i18n.Translator;
 import org.openwms.tms.TransportServiceEvent;
 import org.openwms.tms.impl.TransportOrderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,7 @@ import static org.openwms.tms.TMSMessageCodes.TO_WITH_PK_NOT_FOUND;
 @Service
 class StartListener {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(StartListener.class);
     private final TransportOrderRepository repository;
     private final Startable starter;
     private final Translator translator;
@@ -48,9 +51,9 @@ class StartListener {
         var to = repository.findById(pk).orElseThrow(
                 () -> new NotFoundException(translator, TO_WITH_PK_NOT_FOUND, new Long[]{pk}, pk)
         );
+        LOGGER.debug("Handle event type [{}]", event.getType());
         switch (event.getType()) {
-            case INITIALIZED
-                    -> starter.triggerStart(to);
+            case INITIALIZED -> starter.triggerStart(to);
             case TRANSPORT_FINISHED, TRANSPORT_ONFAILURE, TRANSPORT_CANCELED, TRANSPORT_INTERRUPTED
                     -> starter.startNext(to.getTransportUnitBK());
             default -> {

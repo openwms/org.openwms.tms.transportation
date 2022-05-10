@@ -105,22 +105,24 @@ class TransportationController extends AbstractWebController {
     @PatchMapping(TMSApi.TRANSPORT_ORDERS + "/{pKey}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateTO(
-            @PathVariable(value = "pKey") String pKey,
+            @PathVariable("pKey") String pKey,
             @RequestBody UpdateTransportOrderVO vo) {
         transportationFacade.updateTO(pKey, vo);
     }
 
     @PostMapping(value = TMSApi.TRANSPORT_ORDERS + "/{pKey}", params = {"state"})
     public ResponseEntity<Void> changeState(
-            @PathVariable(value = "pKey") String pKey,
-            @RequestParam(value = "state") String state) {
+            @PathVariable("pKey") String pKey,
+            @RequestParam("state") String state) {
         try {
+            System.out.println(">>>>>> IN <<<<<<");
             transportationFacade.changeState(pKey, state);
             return ResponseEntity.noContent().build();
         } catch (StateChangeException sce) {
+            sce.printStackTrace();
             throw sce;
         } catch (Exception ex) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 

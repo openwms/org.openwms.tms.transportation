@@ -40,13 +40,13 @@ class ChangeStateDocumentation extends TransportationTestBase {
 
     @Test void turnBackState() throws Exception {
         // setup ...
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setState(TransportOrderState.INITIALIZED.toString());
-        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
-        LocationVO location = new LocationVO(INIT_LOC_STRING);
+        var transportUnit = new TransportUnitVO(KNOWN);
+        var location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        var errorLocation = new LocationVO(ERR_LOC_STRING);
         errorLocation.setIncomingActive(true);
         errorLocation.setOutgoingActive(true);
         transportUnit.setTargetLocation(errorLocation);
@@ -68,16 +68,16 @@ class ChangeStateDocumentation extends TransportationTestBase {
     @Test
     void createAnNewOneWhenOneIsAlreadyStarted() throws Exception {
         // setup ...
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         // create a second one that shall wait in INITIALIZED
-        CreateTransportOrderVO vo2 = createTO();
+        var vo2 = createTO();
         postTOAndValidate(vo2, NOTLOGGED);
 //        vo2.setState(TransportOrderState.STARTED.toString());
-        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
-        LocationVO location = new LocationVO(INIT_LOC_STRING);
+        var transportUnit = new TransportUnitVO(KNOWN);
+        var location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        var errorLocation = new LocationVO(ERR_LOC_STRING);
         errorLocation.setIncomingActive(true);
         errorLocation.setOutgoingActive(true);
         transportUnit.setTargetLocation(errorLocation);
@@ -97,15 +97,15 @@ class ChangeStateDocumentation extends TransportationTestBase {
     @Test
     void cancellingAnInitializedOne() throws Exception {
         // setup ...
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        CreateTransportOrderVO vo2 = createTO();
+        var vo2 = createTO();
         postTOAndValidate(vo2, NOTLOGGED);
 //        vo2.setState(TransportOrderState.CANCELED.toString());
-        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
-        LocationVO location = new LocationVO(INIT_LOC_STRING);
+        var transportUnit = new TransportUnitVO(KNOWN);
+        var location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        var errorLocation = new LocationVO(ERR_LOC_STRING);
         errorLocation.setIncomingActive(true);
         errorLocation.setOutgoingActive(true);
         transportUnit.setTargetLocation(errorLocation);
@@ -123,15 +123,15 @@ class ChangeStateDocumentation extends TransportationTestBase {
     @Test
     void settingAnInitializedOneOnFailure() throws Exception {
         // setup ...
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        CreateTransportOrderVO vo2 = createTO();
+        var vo2 = createTO();
         postTOAndValidate(vo2, NOTLOGGED);
 //        vo2.setState(TransportOrderState.ONFAILURE.toString());
-        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
-        LocationVO location = new LocationVO(INIT_LOC_STRING);
+        var transportUnit = new TransportUnitVO(KNOWN);
+        var location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        var errorLocation = new LocationVO(ERR_LOC_STRING);
         errorLocation.setIncomingActive(true);
         errorLocation.setOutgoingActive(true);
         transportUnit.setTargetLocation(errorLocation);
@@ -150,15 +150,15 @@ class ChangeStateDocumentation extends TransportationTestBase {
     @Test
     void finishingAnInitializedOne() throws Exception {
         // setup ...
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        CreateTransportOrderVO vo2 = createTO();
+        var vo2 = createTO();
         postTOAndValidate(vo2, NOTLOGGED);
 //        vo2.setState(TransportOrderState.FINISHED.toString());
-        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
-        LocationVO location = new LocationVO(INIT_LOC_STRING);
+        var transportUnit = new TransportUnitVO(KNOWN);
+        var location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        var errorLocation = new LocationVO(ERR_LOC_STRING);
         errorLocation.setIncomingActive(true);
         errorLocation.setOutgoingActive(true);
         transportUnit.setTargetLocation(errorLocation);
@@ -266,7 +266,7 @@ class ChangeStateDocumentation extends TransportationTestBase {
 
         // test ...
         mockMvc.perform(
-                post(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
+                post(TMSApi.TRANSPORT_ORDERS + "/" + vo.getpKey())
                         .param("state", TransportOrderState.FINISHED.toString())        )
                 .andExpect(status().isNoContent())
                 .andDo(document("to-patch-state-finish-a-started"))
@@ -277,20 +277,20 @@ class ChangeStateDocumentation extends TransportationTestBase {
     @Test
     void changingAnFinishedOne() throws Exception {
         // setup ...
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        TransportUnitVO transportUnit = new TransportUnitVO(KNOWN);
-        LocationVO location = new LocationVO(INIT_LOC_STRING);
+        var transportUnit = new TransportUnitVO(KNOWN);
+        var location = new LocationVO(INIT_LOC_STRING);
         transportUnit.setActualLocation(location);
-        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        var errorLocation = new LocationVO(ERR_LOC_STRING);
         errorLocation.setIncomingActive(true);
         errorLocation.setOutgoingActive(true);
         transportUnit.setTargetLocation(errorLocation);
         given(transportUnitApi.findTransportUnit(KNOWN)).willReturn(transportUnit);
-        vo.setState(TransportOrderState.FINISHED.toString());
+        vo.setState(TransportOrderState.FINISHED.name());
         mockMvc.perform(
-                post(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
-                        .param("state", TransportOrderState.FINISHED.toString())        )
+                post(TMSApi.TRANSPORT_ORDERS + "/" + vo.getpKey())
+                        .param("state", TransportOrderState.FINISHED.name())        )
                 .andExpect(status().isNoContent())
         ;
 

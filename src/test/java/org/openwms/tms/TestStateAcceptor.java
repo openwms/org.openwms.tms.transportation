@@ -37,7 +37,6 @@ class TestStateAcceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestStateAcceptor.class);
     private final AmqpTemplate amqpTemplate;
-    private final String exchangeName = "tms.requests";
 
     TestStateAcceptor(AmqpTemplate amqpTemplate) {
         this.amqpTemplate = amqpTemplate;
@@ -48,7 +47,7 @@ class TestStateAcceptor {
     public void onRequest(StateChangeRequest request) {
         if ("STARTED".equals(request.getRequestedState())) {
             LOGGER.debug("STARTING is approved!");
-            amqpTemplate.convertAndSend(exchangeName, "response.state.change", new StateChangeResponse(request, "STARTED", null));
+            amqpTemplate.convertAndSend("tms.requests", "response.state.change", new StateChangeResponse(request, "STARTED", null));
         }
     }
 }

@@ -61,7 +61,7 @@ class StateManagerImpl implements StateManager {
     @Override
     public void validate(TransportOrderState newState, TransportOrder transportOrder) throws StateChangeException {
         var state = transportOrder.getState();
-        LOGGER.debug("Request for state change of TransportOrder with PK [{}] from [{}] to [{}]", transportOrder.getPk(), state, newState);
+        LOGGER.debug("Request to change the state of TransportOrder with pKey [{}] from [{}] to [{}]", transportOrder.getPersistentKey(), state, newState);
         if (newState == null) {
             throw new StateChangeException(translator, TMSMessageCodes.TO_STATE_CHANGE_NULL_STATE, transportOrder.getPersistentKey());
         }
@@ -102,7 +102,7 @@ class StateManagerImpl implements StateManager {
                 LOGGER.debug("Current state is [{}], new state is [{}], # of started is [{}]", state, newState,
                         repo.numberOfTransportOrders(transportOrder.getTransportUnitBK(), STARTED));
             }
-            case STARTED -> { /* All fine here. */}
+            case STARTED -> { /* All fine here. */ }
             case FINISHED, ONFAILURE, CANCELED -> throw new StateChangeException(
                     translator,
                     TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED,

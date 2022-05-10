@@ -73,15 +73,15 @@ class Initializer {
                                     transportUnitApi.findTransportUnit(transportOrder.getTransportUnitBK()).getActualLocation().getLocationId()
                             );
                     transportOrder = repository.save(transportOrder);
-                    LOGGER.debug("TransportOrder with PK [{}] INITIALIZED", transportOrder.getPk());
+                    LOGGER.debug("TransportOrder with pKey [{}] INITIALIZED", transportOrder.getPersistentKey());
                 } catch (StateChangeException sce) {
-                    LOGGER.warn("Could not initialize TransportOrder with PK [{}]. Message: [{}]", transportOrder.getPk(), sce.getMessage());
+                    LOGGER.warn("Could not initialize TransportOrder with pKey [{}]. Message: [{}]", transportOrder.getPersistentKey(), sce.getMessage());
                     continue;
                 }
                 try {
                     ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.INITIALIZED));
                 } catch (StateChangeException sce) {
-                    LOGGER.warn("Post-processing of TransportOrder with PK [{}] failed with message: [{}]", transportOrder.getPk(), sce.getMessage());
+                    LOGGER.warn("Post-processing of TransportOrder with pKey [{}] failed with message: [{}]", transportOrder.getPersistentKey(), sce.getMessage());
                 }
             }
         }
