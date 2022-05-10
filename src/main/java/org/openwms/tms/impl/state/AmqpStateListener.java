@@ -65,7 +65,7 @@ class AmqpStateListener {
             if (response.hasError()) {
                 var to = service.findByPKey(response.getRequest().getTransportOrderPkey());
                 to.setProblem(new Message.Builder()
-                        .withMessageText(response.getError().getMessage())
+                        .withMessageText(response.getError().getMessageText())
                         .withOccurred(response.getError().getOccurred())
                         .build());
                 service.update(to);

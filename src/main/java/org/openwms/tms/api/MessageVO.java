@@ -30,18 +30,18 @@ import java.util.StringJoiner;
  */
 public class MessageVO implements Serializable {
 
-    @JsonProperty
+    @JsonProperty("occurred")
     private Date occurred;
-    @JsonProperty
+    @JsonProperty("messageNo")
     private String messageNo;
-    @JsonProperty
-    private String message;
+    @JsonProperty("messageText")
+    private String messageText;
 
     /*~-------------------- constructors --------------------*/
     private MessageVO(Builder builder) {
         occurred = builder.occurred;
         messageNo = builder.messageNo;
-        message = builder.message;
+        messageText = builder.messageText;
     }
 
     @JsonCreator
@@ -61,15 +61,15 @@ public class MessageVO implements Serializable {
         return messageNo;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMessageText() {
+        return messageText;
     }
 
     /*~-------------------- builder --------------------*/
     public static final class Builder {
         private Date occurred;
         private String messageNo;
-        private String message;
+        private String messageText;
 
         private Builder() {
         }
@@ -84,8 +84,8 @@ public class MessageVO implements Serializable {
             return this;
         }
 
-        public Builder message(String val) {
-            message = val;
+        public Builder messageText(String val) {
+            messageText = val;
             return this;
         }
 
@@ -97,6 +97,11 @@ public class MessageVO implements Serializable {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * All fields.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -104,25 +109,30 @@ public class MessageVO implements Serializable {
         if (o == null || getClass() != o.getClass())
             return false;
         MessageVO messageVO = (MessageVO) o;
-        return Objects.equals(occurred, messageVO.occurred) && Objects.equals(messageNo, messageVO.messageNo) && Objects.equals(message, messageVO.message);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(occurred, messageNo, message);
+        return Objects.equals(occurred, messageVO.occurred) && Objects.equals(messageNo, messageVO.messageNo) && Objects.equals(messageText, messageVO.messageText);
     }
 
     /**
      * {@inheritDoc}
      *
-     * Use all fields.
+     * All fields.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(occurred, messageNo, messageText);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * All fields.
      */
     @Override
     public String toString() {
         return new StringJoiner(", ", MessageVO.class.getSimpleName() + "[", "]")
                 .add("occurred=" + occurred)
                 .add("messageNo='" + messageNo + "'")
-                .add("message='" + message + "'")
+                .add("messageText='" + messageText + "'")
                 .toString();
     }
 }

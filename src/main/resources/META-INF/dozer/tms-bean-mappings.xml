@@ -31,8 +31,8 @@
 			<b is-accessible="true">messageNo</b>
 		</field>
 		<field>
-			<a is-accessible="true">message</a>
-			<b is-accessible="true">message</b>
+			<a is-accessible="true">messageText</a>
+			<b is-accessible="true">messageText</b>
 		</field>
     </mapping>
 

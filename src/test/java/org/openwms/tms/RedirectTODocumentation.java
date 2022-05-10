@@ -39,7 +39,7 @@ class RedirectTODocumentation extends TransportationTestBase {
     @Test
     void testRedirectToUnknownLocationGroupButLoc() throws Exception {
         // setup ...
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setTarget(UNKNOWN);
         INIT_LOC.setIncomingActive(true);
@@ -53,7 +53,7 @@ class RedirectTODocumentation extends TransportationTestBase {
     @Test
     void testRedirectToUnknownLocationButLocGroup() throws Exception {
         // setup ...
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setTarget(UNKNOWN);
         given(locationGroupApi.findByName(UNKNOWN)).willReturn(Optional.of(ERR_LOCGRB));
@@ -66,7 +66,7 @@ class RedirectTODocumentation extends TransportationTestBase {
     @Test
     void testRedirectToUnknownTargets() throws Exception {
         // setup ...
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setTarget(UNKNOWN);
         given(locationGroupApi.findByName(UNKNOWN)).willReturn(Optional.empty());
@@ -79,7 +79,7 @@ class RedirectTODocumentation extends TransportationTestBase {
     @Test
     void testRedirectToBlockedLocation() throws Exception {
         // setup ...
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setTarget(INIT_LOC_STRING);
         given(locationGroupApi.findByName(INIT_LOC_STRING)).willReturn(Optional.empty());
@@ -93,7 +93,7 @@ class RedirectTODocumentation extends TransportationTestBase {
     @Test
     void testRedirectToBlockedLocationGroup() throws Exception {
         // setup ...
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
         vo.setTarget(INIT_LOCGB_STRING);
         INIT_LOCGRB.setIncomingActive(false);

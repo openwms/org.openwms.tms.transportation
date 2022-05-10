@@ -50,7 +50,7 @@ class AddProblemDocumentation extends TransportationTestBase {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         MvcResult res = postTOAndValidate(vo, NOTLOGGED);
-        MessageVO msg = MessageVO.newBuilder().message("text").messageNo("77").build();
+        MessageVO msg = MessageVO.newBuilder().messageText("text").messageNo("77").build();
         vo.setProblem(msg);
         addProblem(vo);
         assertThat(mapper.map(readTransportOrder(vo.getpKey()).getProblem(), MessageVO.class)).isEqualTo(msg);
@@ -75,7 +75,7 @@ class AddProblemDocumentation extends TransportationTestBase {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        MessageVO msg = MessageVO.newBuilder().message("text").messageNo("77").build();
+        MessageVO msg = MessageVO.newBuilder().messageText("text").messageNo("77").build();
         vo.setProblem(msg);
 
         // test ...
@@ -96,11 +96,11 @@ class AddProblemDocumentation extends TransportationTestBase {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        MessageVO msg = MessageVO.newBuilder().message("text").messageNo("77").build();
+        MessageVO msg = MessageVO.newBuilder().messageText("text").messageNo("77").build();
         vo.setProblem(msg);
 
         addProblem(vo);
-        MessageVO msg2 = MessageVO.newBuilder().message("text2").messageNo("78").build();
+        MessageVO msg2 = MessageVO.newBuilder().messageText("text2").messageNo("78").build();
         vo.setProblem(msg2);
 
         // test ...
