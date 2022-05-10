@@ -32,7 +32,6 @@ import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
@@ -118,7 +117,7 @@ class TransportUnitRemovalHandler {
             var barcode = transportOrder.getTransportUnitBK();
             setProblem(transportOrder,
                     new Message.Builder()
-                            .withMessage(format("TransportUnit with ID [%s] was deleted and Transport Order canceled", barcode))
+                            .withMessageText(format("TransportUnit with ID [%s] was deleted and Transport Order canceled", barcode))
                             .build()
             );
             if (LOGGER.isInfoEnabled()) {
@@ -127,7 +126,7 @@ class TransportUnitRemovalHandler {
         } catch (StateChangeException sce) {
             transportOrder.setProblem(
                     new Message.Builder()
-                            .withMessage(sce.getMessage())
+                            .withMessageText(sce.getMessage())
                             .build()
             );
         } finally {
@@ -183,7 +182,7 @@ class TransportUnitRemovalHandler {
             transportOrders.forEach(to -> {
                 setProblem(to,
                         new Message.Builder()
-                                .withMessage(
+                                .withMessageText(
                                         format("TransportUnit with barcode [%s] was removed and TransportOrder unlinked",
                                                 command.getTransportUnit().getBarcode()
                                         )
@@ -210,7 +209,7 @@ class TransportUnitRemovalHandler {
             transportOrders.forEach(to -> {
                 setProblem(to,
                         new Message.Builder()
-                                .withMessage(format("TransportUnit with barcode [%s] was removed and TransportOrder unlinked",
+                                .withMessageText(format("TransportUnit with barcode [%s] was removed and TransportOrder unlinked",
                                         command.getTransportUnit().getBarcode()))
                                 .build());
                 if (LOGGER.isInfoEnabled()) {

@@ -83,7 +83,7 @@ public class TransportationFacade implements TransportOrderApi {
         if (!failures.isEmpty()) {
             LOGGER.error("Failed to changed TransportOrder [{}]", failures.toArray());
             var message = failures.iterator().next();
-            throw new StateChangeException(message.getMessage(), message.getMessageNo(), message.getpKey());
+            throw new StateChangeException(message.getMessageText(), message.getMessageNo(), message.getpKey());
         }
     }
 
