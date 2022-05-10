@@ -29,8 +29,8 @@ digraph "impliedTwoDegreesRelationshipsDiagram" {
       <TR><TD PORT="c_created" COLSPAN="3" ALIGN="LEFT">c_created</TD></TR>
       <TR><TD PORT="c_updated" COLSPAN="3" ALIGN="LEFT">c_updated</TD></TR>
       <TR><TD PORT="c_ol" COLSPAN="3" ALIGN="LEFT">c_ol</TD></TR>
-      <TR><TD PORT="c_message" COLSPAN="3" ALIGN="LEFT">c_message</TD></TR>
       <TR><TD PORT="c_no" COLSPAN="3" ALIGN="LEFT">c_no</TD></TR>
+      <TR><TD PORT="c_message_text" COLSPAN="3" ALIGN="LEFT">c_message_text</TD></TR>
       <TR><TD PORT="c_occurred" COLSPAN="3" ALIGN="LEFT">c_occurred</TD></TR>
       <TR><TD PORT="p_key" COLSPAN="3" ALIGN="LEFT">p_key</TD></TR>
       <TR><TD PORT="c_fk_to" COLSPAN="3" ALIGN="LEFT">c_fk_to</TD></TR>
@@ -50,8 +50,8 @@ digraph "impliedTwoDegreesRelationshipsDiagram" {
       <TR><TD PORT="c_pid" COLSPAN="2" BGCOLOR="#f4f7da" ALIGN="LEFT">c_pid</TD><TD PORT="c_pid.type" ALIGN="LEFT">varchar[255]</TD></TR>
       <TR><TD PORT="c_end_date" COLSPAN="2" ALIGN="LEFT">c_end_date</TD><TD PORT="c_end_date.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
       <TR><TD PORT="c_priority" COLSPAN="2" ALIGN="LEFT">c_priority</TD><TD PORT="c_priority.type" ALIGN="LEFT">varchar[255]</TD></TR>
-      <TR><TD PORT="c_message" COLSPAN="2" ALIGN="LEFT">c_message</TD><TD PORT="c_message.type" ALIGN="LEFT">varchar[255]</TD></TR>
       <TR><TD PORT="c_no" COLSPAN="2" ALIGN="LEFT">c_no</TD><TD PORT="c_no.type" ALIGN="LEFT">varchar[255]</TD></TR>
+      <TR><TD PORT="c_message_text" COLSPAN="2" ALIGN="LEFT">c_message_text</TD><TD PORT="c_message_text.type" ALIGN="LEFT">varchar[255]</TD></TR>
       <TR><TD PORT="c_occurred" COLSPAN="2" ALIGN="LEFT">c_occurred</TD><TD PORT="c_occurred.type" ALIGN="LEFT">timestamp[29,6]</TD></TR>
       <TR><TD PORT="p_key" COLSPAN="2" ALIGN="LEFT">p_key</TD><TD PORT="p_key.type" ALIGN="LEFT">varchar[255]</TD></TR>
       <TR><TD PORT="c_source_location" COLSPAN="2" ALIGN="LEFT">c_source_location</TD><TD PORT="c_source_location.type" ALIGN="LEFT">varchar[255]</TD></TR>
