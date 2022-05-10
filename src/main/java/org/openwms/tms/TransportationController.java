@@ -15,7 +15,7 @@
  */
 package org.openwms.tms;
 
-import org.ameba.annotation.Measured;
+import org.ameba.http.MeasuredRestController;
 import org.ameba.http.Response;
 import org.openwms.core.http.AbstractWebController;
 import org.openwms.tms.api.CreateTransportOrderVO;
@@ -36,8 +36,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,7 +47,7 @@ import java.util.List;
  * @author Heiko Scherrer
  */
 @Profile("!INMEM")
-@RestController
+@MeasuredRestController
 class TransportationController extends AbstractWebController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationController.class);
@@ -61,7 +59,6 @@ class TransportationController extends AbstractWebController {
         this.transportationFacade = transportationFacade;
     }
 
-    @Measured
     @GetMapping(value = TMSApi.TRANSPORT_ORDERS, params = {"barcode", "state"})
     public List<TransportOrderVO> findBy(
             @RequestParam String barcode,
@@ -69,13 +66,11 @@ class TransportationController extends AbstractWebController {
         return transportationFacade.findBy(barcode, state);
     }
 
-    @Measured
     @GetMapping(TMSApi.TRANSPORT_ORDERS + "/{pKey}")
     public TransportOrderVO findByPKey(@PathVariable(value = "pKey") String pKey) {
         return transportationFacade.findByPKey(pKey);
     }
 
-    @Measured
     @PostMapping(value = TMSApi.TRANSPORT_ORDERS, params = {"barcode", "target"})
     @ResponseStatus(HttpStatus.CREATED)
     public void createTO(
@@ -86,15 +81,14 @@ class TransportationController extends AbstractWebController {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create TransportOrder with Barcode [{}] and Target [{}] and Priority [{}]", barcode, target, priorityParam);
         }
-        String priority = PriorityLevel.NORMAL.name();
+        var priority = PriorityLevel.NORMAL.name();
         if (priorityParam != null && !priorityParam.isEmpty()) {
             priority = PriorityLevel.of(priorityParam).name(); // validate early here!
         }
-        TransportOrder to = service.create(barcode, target, priority);
-        resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
+        var to = service.create(barcode, target, priority);
+        resp.addHeader(HttpHeaders.LOCATION, super.getLocationForCreatedResource(req, to.getPersistentKey()));
     }
 
-    @Measured
     @PostMapping(TMSApi.TRANSPORT_ORDERS)
     @ResponseStatus(HttpStatus.CREATED)
     public void createTO(@RequestBody CreateTransportOrderVO vo, HttpServletRequest req, HttpServletResponse resp) {
@@ -104,11 +98,10 @@ class TransportationController extends AbstractWebController {
         if (vo.getPriority() != null && !vo.getPriority().isEmpty()) {
             PriorityLevel.of(vo.getPriority()); // validate early here!
         }
-        TransportOrder to = service.create(vo.getBarcode(), vo.getTarget(), vo.getPriority());
-        resp.addHeader(HttpHeaders.LOCATION, getCreatedResourceURI(req, to.getPersistentKey()));
+        var to = service.create(vo.getBarcode(), vo.getTarget(), vo.getPriority());
+        resp.addHeader(HttpHeaders.LOCATION, super.getLocationForCreatedResource(req, to.getPersistentKey()));
     }
 
-    @Measured
     @PatchMapping(TMSApi.TRANSPORT_ORDERS + "/{pKey}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateTO(
@@ -117,7 +110,6 @@ class TransportationController extends AbstractWebController {
         transportationFacade.updateTO(pKey, vo);
     }
 
-    @Measured
     @PostMapping(value = TMSApi.TRANSPORT_ORDERS + "/{pKey}", params = {"state"})
     public ResponseEntity<Void> changeState(
             @PathVariable(value = "pKey") String pKey,
@@ -133,7 +125,7 @@ class TransportationController extends AbstractWebController {
     }
 
     @ExceptionHandler(DeniedException.class)
-    protected ResponseEntity<Response> handleDeniedException(DeniedException bae) {
+    protected ResponseEntity<Response<?>> handleDeniedException(DeniedException bae) {
         return new ResponseEntity<>(Response.newBuilder()
                 .withMessage(bae.getMessage())
                 .withMessageKey(bae.getMessageKey())
@@ -142,11 +134,5 @@ class TransportationController extends AbstractWebController {
                 .build(),
                 HttpStatus.CONFLICT
         );
-    }
-
-    private String getCreatedResourceURI(HttpServletRequest req, String objId) {
-        StringBuffer url = req.getRequestURL();
-        UriTemplate template = new UriTemplate(url.append("/{objId}/").toString());
-        return template.expand(objId).toASCIIString();
     }
 }

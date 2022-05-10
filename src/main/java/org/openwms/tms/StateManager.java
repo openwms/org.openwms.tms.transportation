@@ -23,7 +23,8 @@ package org.openwms.tms;
 public interface StateManager {
 
     /**
-     * Validates if the requested state transition into {@code newState} is valid or not. Does not set the state at the given {@code transportOrder.}
+     * Validates if the requested state transition to {@code newState} is valid or not. Does not change the state of the given
+     * {@code transportOrder.}
      *
      * @param newState The new state
      * @param transportOrder The TransportOrder to check the state transition for

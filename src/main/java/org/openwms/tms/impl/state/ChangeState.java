@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.state;
 
+import org.ameba.annotation.Measured;
 import org.openwms.tms.StateManager;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportServiceEvent;
@@ -49,6 +50,7 @@ class ChangeState implements UpdateFunction {
      * {@inheritDoc}
      */
     @Override
+    @Measured
     public void update(TransportOrder saved, TransportOrder toUpdate) {
         if (saved.getState() != toUpdate.getState() && toUpdate.getState() != null) {
             if (LOGGER.isDebugEnabled()) {

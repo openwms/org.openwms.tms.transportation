@@ -46,25 +46,24 @@ class TransportOrderEventPropagator {
 
     @TransactionalEventListener(fallbackExecution = true)
     public void onEvent(TransportServiceEvent event) {
-        if (event.getType() == TransportServiceEvent.TYPE.STARTED) {
-            TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);
-            mo.setEventType(TransportOrderMO.EventType.STARTED);
-            amqpTemplate.convertAndSend(exchangeName, "to.event.started", mo);
-        }
-        if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_FINISHED) {
-            TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);
-            mo.setEventType(TransportOrderMO.EventType.FINISHED);
-            amqpTemplate.convertAndSend(exchangeName, "to.event.finished", mo);
-        }
-        if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_CANCELED) {
-            TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);
-            mo.setEventType(TransportOrderMO.EventType.CANCELED);
-            amqpTemplate.convertAndSend(exchangeName, "to.event.canceled", mo);
-        }
-        if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_CREATED) {
-            TransportOrderMO mo = mapper.map(event.getSource(), TransportOrderMO.class);
-            mo.setEventType(TransportOrderMO.EventType.CREATED);
-            amqpTemplate.convertAndSend(exchangeName, "to.event.created", mo);
+        var mo = mapper.map(event.getSource(), TransportOrderMO.class);
+        switch(event.getType()) {
+            case STARTED -> {
+                mo.setEventType(TransportOrderMO.EventType.STARTED);
+                amqpTemplate.convertAndSend(exchangeName, "to.event.started", mo);
+            }
+            case TRANSPORT_FINISHED -> {
+                mo.setEventType(TransportOrderMO.EventType.FINISHED);
+                amqpTemplate.convertAndSend(exchangeName, "to.event.finished", mo);
+            }
+            case TRANSPORT_CANCELED -> {
+                mo.setEventType(TransportOrderMO.EventType.CANCELED);
+                amqpTemplate.convertAndSend(exchangeName, "to.event.canceled", mo);
+            }
+            case TRANSPORT_CREATED -> {
+                mo.setEventType(TransportOrderMO.EventType.CREATED);
+                amqpTemplate.convertAndSend(exchangeName, "to.event.created", mo);
+            }
         }
     }
 }

@@ -34,6 +34,7 @@ public final class TransportServiceEvent extends ApplicationEvent implements Ser
      * All possible types of this event.
      *
      * @author <a href="mailto:russelltina@users.sourceforge.net">Tina Russell</a>
+     * @author Heiko Scherrer
      */
     public enum TYPE {
 
@@ -59,16 +60,16 @@ public final class TransportServiceEvent extends ApplicationEvent implements Ser
         TRANSPORT_FINISHED;
 
         public static TYPE of(TransportOrderState requestedState) {
-            switch (requestedState) {
-                case CREATED: return TRANSPORT_CREATED;
-                case INITIALIZED: return INITIALIZED;
-                case STARTED: return STARTED;
-                case INTERRUPTED: return TRANSPORT_INTERRUPTED;
-                case CANCELED: return TRANSPORT_CANCELED;
-                case ONFAILURE: return TRANSPORT_ONFAILURE;
-                case FINISHED: return TRANSPORT_FINISHED;
-                default: throw new IllegalStateException(format("The state [%s] is not supported", requestedState));
-            }
+            return switch (requestedState) {
+                case CREATED -> TRANSPORT_CREATED;
+                case INITIALIZED -> INITIALIZED;
+                case STARTED -> STARTED;
+                case INTERRUPTED -> TRANSPORT_INTERRUPTED;
+                case CANCELED -> TRANSPORT_CANCELED;
+                case ONFAILURE -> TRANSPORT_ONFAILURE;
+                case FINISHED -> TRANSPORT_FINISHED;
+                default -> throw new IllegalStateException(format("The state [%s] is not supported", requestedState));
+            };
         }
     }
 
@@ -78,7 +79,7 @@ public final class TransportServiceEvent extends ApplicationEvent implements Ser
      *
      * @param source Event source
      */
-    public TransportServiceEvent(Object source) {
+    public TransportServiceEvent(TransportOrder source) {
         super(source);
     }
 
@@ -88,9 +89,17 @@ public final class TransportServiceEvent extends ApplicationEvent implements Ser
      * @param source Event source
      * @param type Event type
      */
-    public TransportServiceEvent(Object source, TYPE type) {
+    public TransportServiceEvent(TransportOrder source, TYPE type) {
         super(source);
         this.type = type;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TransportOrder getSource() {
+        return (TransportOrder) super.getSource();
     }
 
     /**

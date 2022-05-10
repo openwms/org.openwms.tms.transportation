@@ -23,8 +23,8 @@ import org.openwms.tms.api.UpdateTransportOrderVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -32,6 +32,7 @@ import java.util.List;
  *
  * @author Heiko Scherrer
  */
+@Transactional
 @Component
 public class TransportationFacade implements TransportOrderApi {
 
@@ -44,8 +45,11 @@ public class TransportationFacade implements TransportOrderApi {
         this.service = service;
     }
 
-    @Measured
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @Measured
     public void createTO(String barcode, String target) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create TransportOrder with Barcode [{}] and Target [{}]", barcode, target);
@@ -53,8 +57,11 @@ public class TransportationFacade implements TransportOrderApi {
         service.create(barcode, target, null);
     }
 
-    @Measured
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @Measured
     public void createTO(String barcode, String target, String priority) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create TransportOrder with Barcode [{}] and Target [{}] and Priority [{}]", barcode, target, priority);
@@ -62,23 +69,29 @@ public class TransportationFacade implements TransportOrderApi {
         service.create(barcode, target, priority);
     }
 
-    @Measured
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @Measured
     public void changeState(String pKey, String state) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Change the state of the TransportOrder with persistent key [{}] to [{}]", pKey, state);
         }
-        TransportOrder order = service.findByPKey(pKey);
-        Collection<Message> failures = service.change(order.getTransportUnitBK(), order.getState(), TransportOrderState.valueOf(state), null);
+        var order = service.findByPKey(pKey);
+        var failures = service.change(order.getTransportUnitBK(), order.getState(), TransportOrderState.valueOf(state), null);
         if (!failures.isEmpty()) {
             LOGGER.error("Failed to changed TransportOrder [{}]", failures.toArray());
-            Message message = failures.iterator().next();
+            var message = failures.iterator().next();
             throw new StateChangeException(message.getMessage(), message.getMessageNo(), message.getpKey());
         }
     }
 
-    @Measured
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @Measured
     public void updateTO(String pKey, UpdateTransportOrderVO vo) {
         if (vo.getPriority() != null && !vo.getPriority().isEmpty()) {
             PriorityLevel.of(vo.getPriority());
@@ -89,18 +102,24 @@ public class TransportationFacade implements TransportOrderApi {
         service.update(mapper.map(vo, TransportOrder.class));
     }
 
-    @Measured
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @Measured
     public List<TransportOrderVO> findBy(String barcode, String state) {
-        List<TransportOrderVO> orders = mapper.map(service.findBy(barcode, state), TransportOrderVO.class);
+        var orders = mapper.map(service.findBy(barcode, state), TransportOrderVO.class);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Found [{}] TransportOrders with barcode [{}] in state [{}]", orders.size(), barcode, state);
         }
         return orders;
     }
 
-    @Measured
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @Measured
     public TransportOrderVO findByPKey(String pKey) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Find TransportOrder with persistent key [{}]", pKey);

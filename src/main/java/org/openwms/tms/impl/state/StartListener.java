@@ -16,11 +16,13 @@
 package org.openwms.tms.impl.state;
 
 import org.ameba.exception.NotFoundException;
-import org.openwms.tms.TransportOrder;
+import org.ameba.i18n.Translator;
 import org.openwms.tms.TransportServiceEvent;
 import org.openwms.tms.impl.TransportOrderRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+
+import static org.openwms.tms.TMSMessageCodes.TO_WITH_PK_NOT_FOUND;
 
 /**
  * A StartListener.
@@ -32,33 +34,28 @@ class StartListener {
 
     private final TransportOrderRepository repository;
     private final Startable starter;
+    private final Translator translator;
 
-    StartListener(TransportOrderRepository repository, Startable starter) {
+    StartListener(TransportOrderRepository repository, Startable starter, Translator translator) {
         this.repository = repository;
         this.starter = starter;
+        this.translator = translator;
     }
 
-    /**
-     * Handle an application event.
-     *
-     * @param event the event to respond to
-     */
     @EventListener
     public void onEvent(TransportServiceEvent event) {
-        Long pk = ((TransportOrder) event.getSource()).getPk();
-        final TransportOrder to = repository.findById(pk).orElseThrow(NotFoundException::new);
+        final var pk = event.getSource().getPk();
+        var to = repository.findById(pk).orElseThrow(
+                () -> new NotFoundException(translator, TO_WITH_PK_NOT_FOUND, new Long[]{pk}, pk)
+        );
         switch (event.getType()) {
-            case INITIALIZED:
-                starter.triggerStart(to);
-                break;
-            case TRANSPORT_FINISHED:
-            case TRANSPORT_ONFAILURE:
-            case TRANSPORT_CANCELED:
-            case TRANSPORT_INTERRUPTED:
-                starter.startNext(to.getTransportUnitBK());
-                break;
-            default:
-                // just accept the evolution here
+            case INITIALIZED
+                    -> starter.triggerStart(to);
+            case TRANSPORT_FINISHED, TRANSPORT_ONFAILURE, TRANSPORT_CANCELED, TRANSPORT_INTERRUPTED
+                    -> starter.startNext(to.getTransportUnitBK());
+            default -> {
+            // just accept the evolution here
+            }
         }
     }
 }

@@ -17,15 +17,12 @@ package org.openwms.tms.impl;
 
 import org.openwms.tms.ProblemHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * A ProblemHistoryRepository.
  *
  * @author Heiko Scherrer
  */
-@Transactional(propagation = Propagation.MANDATORY)
 public interface ProblemHistoryRepository extends JpaRepository<ProblemHistory, Long> {
 
 }

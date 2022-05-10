@@ -15,11 +15,11 @@
  */
 package org.openwms.tms.impl;
 
+import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.openwms.tms.Message;
 import org.openwms.tms.ProblemHistory;
 import org.openwms.tms.TransportOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 
 /**
@@ -32,8 +32,7 @@ class AddProblemFunction implements UpdateFunction {
 
     private final ProblemHistoryRepository repository;
 
-    @Autowired
-    public AddProblemFunction(ProblemHistoryRepository repository) {
+    AddProblemFunction(ProblemHistoryRepository repository) {
         this.repository = repository;
     }
 
@@ -41,8 +40,10 @@ class AddProblemFunction implements UpdateFunction {
      * {@inheritDoc}
      */
     @Override
+    @Measured
     public void update(TransportOrder saved, TransportOrder toUpdate) {
-        if (saved.hasProblem() && toUpdate.hasProblem() && !saved.getProblem().equals(toUpdate.getProblem()) ||
+        if (saved.hasProblem() && toUpdate.hasProblem() &&
+                !saved.getProblem().equals(toUpdate.getProblem()) ||
                 !saved.hasProblem() && toUpdate.hasProblem()) {
 
             // A Problem occurred and must be added to the TO ...

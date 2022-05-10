@@ -175,6 +175,15 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
     }
 
     /**
+     * Check whether this {@code TransportOrder} has a {@code TransportUnit}'s business key set.
+     *
+     * @return {@code true} if a the business key is assigne
+     */
+    public boolean hasTransportUnitBK() {
+        return this.transportUnitBK != null && !this.transportUnitBK.isEmpty();
+    }
+
+    /**
      * Returns the state of the {@code TransportOrder}.
      *
      * @return The state of the order

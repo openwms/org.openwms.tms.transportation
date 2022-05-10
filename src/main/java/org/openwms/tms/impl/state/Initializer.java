@@ -20,7 +20,6 @@ import org.ameba.exception.NotFoundException;
 import org.openwms.common.transport.api.TransportUnitApi;
 import org.openwms.tms.StateChangeException;
 import org.openwms.tms.StateManager;
-import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.TransportServiceEvent;
 import org.openwms.tms.impl.TransportOrderRepository;
@@ -30,8 +29,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 
@@ -65,14 +62,16 @@ class Initializer {
     @Transactional(propagation = REQUIRED, noRollbackFor = StateChangeException.class)
     public void onEvent(final TransportServiceEvent event) {
         if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_CREATED) {
-            TransportOrder to = repository.findById(((TransportOrder) event.getSource()).getPk()).orElseThrow(NotFoundException::new);
-            List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.CREATED);
+            var to = repository.findById(event.getSource().getPk()).orElseThrow(NotFoundException::new);
+            var transportOrders = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.CREATED);
             transportOrders.sort(new TransportStartComparator());
-            for (TransportOrder transportOrder : transportOrders) {
+            for (var transportOrder : transportOrders) {
                 try {
                     transportOrder
                             .changeState(stateManager, TransportOrderState.INITIALIZED)
-                            .setSourceLocation(transportUnitApi.findTransportUnit(transportOrder.getTransportUnitBK()).getActualLocation().getLocationId());
+                            .setSourceLocation(
+                                    transportUnitApi.findTransportUnit(transportOrder.getTransportUnitBK()).getActualLocation().getLocationId()
+                            );
                     transportOrder = repository.save(transportOrder);
                     LOGGER.debug("TransportOrder with PK [{}] INITIALIZED", transportOrder.getPk());
                 } catch (StateChangeException sce) {

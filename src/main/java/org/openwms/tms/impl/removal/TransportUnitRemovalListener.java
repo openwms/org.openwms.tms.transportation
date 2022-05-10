@@ -60,15 +60,12 @@ class TransportUnitRemovalListener {
 
     @TransactionalEventListener(fallbackExecution = true)
     public void onEvent(TUCommand command) {
-        switch (command.getType()) {
-            case REMOVE:
-                validate(validator, command, ValidationGroups.TransportUnit.Remove.class);
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Sending command to finally REMOVE the TransportUnit with pKey [{}]", command.getTransportUnit().getpKey());
-                }
-                amqpTemplate.convertAndSend(exchangeName, "common.tu.command.in.remove", command);
-                break;
-            default:
+        if (command.getType() == TUCommand.Type.REMOVE) {
+            validate(validator, command, ValidationGroups.TransportUnit.Remove.class);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Sending command to finally REMOVE the TransportUnit with pKey [{}]", command.getTransportUnit().getpKey());
+            }
+            amqpTemplate.convertAndSend(exchangeName, "common.tu.command.in.remove", command);
         }
     }
 
@@ -77,11 +74,8 @@ class TransportUnitRemovalListener {
     public void handle(@Payload TUCommand command) {
         Assert.notNull(command, "Command is null");
         try {
-            switch(command.getType()) {
-                case REMOVING:
-                    handler.preRemove(command);
-                    break;
-                default:
+            if (command.getType() == TUCommand.Type.REMOVING) {
+                handler.preRemove(command);
             }
         } catch (Exception e) {
             throw new AmqpRejectAndDontRequeueException(e.getMessage(), e);

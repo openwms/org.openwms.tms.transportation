@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class Vote {
 
-    private List<Message> messages = new ArrayList<>();
+    private final List<Message> messages = new ArrayList<>();
     private boolean completed = false;
 
     public boolean addMessage(Message message) {
@@ -40,14 +40,14 @@ public class Vote {
     }
 
     public boolean hasMessages() {
-        return messages != null && !messages.isEmpty();
+        return !messages.isEmpty();
     }
 
     public void complete() {
         this.completed = true;
     }
 
-    public boolean completed() {
+    public boolean isCompleted() {
         return completed;
     }
 }

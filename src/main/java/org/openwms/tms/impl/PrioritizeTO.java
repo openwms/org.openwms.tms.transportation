@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl;
 
+import org.ameba.annotation.Measured;
 import org.openwms.tms.TransportOrder;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,7 @@ class PrioritizeTO implements UpdateFunction {
      * {@inheritDoc}
      */
     @Override
+    @Measured
     public void update(TransportOrder saved, TransportOrder toUpdate) {
         if (saved.getPriority() != toUpdate.getPriority() && toUpdate.getPriority() != null) {
 

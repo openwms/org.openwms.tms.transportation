@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.state;
 
+import org.ameba.annotation.Measured;
 import org.openwms.core.SpringProfiles;
 import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.api.requests.state.StateChangeRequest;
@@ -44,8 +45,12 @@ class AmqpStartRequestForwarder implements ExternalStarter {
      * {@inheritDoc}
      */
     @Override
+    @Measured
     public void request(String pKey) {
-        StateChangeRequest req = new StateChangeRequest(pKey, TransportOrderState.STARTED.name());
-        amqpTemplate.convertAndSend(exchangeName, "request.state.change", req);
+        amqpTemplate.convertAndSend(
+                exchangeName,
+                "request.state.change",
+                new StateChangeRequest(pKey, TransportOrderState.STARTED.name())
+        );
     }
 }

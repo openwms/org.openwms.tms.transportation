@@ -40,8 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -54,20 +52,22 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationServiceImpl.class);
 
-    private final ApplicationContext ctx;
-    private final TransportOrderRepository repository;
-    @Autowired(required = false)
-    private List<TargetResolver<TargetVO>> targetResolvers;
-    @Autowired(required = false)
-    private List<UpdateFunction> updateFunctions;
     private final Translator translator;
+    private final TransportOrderRepository repository;
+    private final ApplicationContext ctx;
     private final StateManager stateManager;
+    private final List<UpdateFunction> updateFunctions;
+    private final List<TargetResolver<TargetVO>> targetResolvers;
 
-    TransportationServiceImpl(Translator translator, TransportOrderRepository repository, ApplicationContext ctx, StateManager stateManager) {
+    TransportationServiceImpl(Translator translator, TransportOrderRepository repository, ApplicationContext ctx,
+            StateManager stateManager, @Autowired(required = false) List<UpdateFunction> updateFunctions,
+            @Autowired(required = false) List<TargetResolver<TargetVO>> targetResolvers) {
         this.translator = translator;
         this.repository = repository;
         this.ctx = ctx;
         this.stateManager = stateManager;
+        this.updateFunctions = updateFunctions;
+        this.targetResolvers = targetResolvers;
     }
 
     /**
@@ -76,7 +76,12 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     @Override
     @Measured
     public List<TransportOrder> findBy(String barcode, String... states) {
-        return repository.findByTransportUnitBKAndStates(barcode, Stream.of(states).map(TransportOrderState::valueOf).collect(Collectors.toList()).toArray(new TransportOrderState[states.length]));
+        return repository.findByTransportUnitBKAndStates(barcode,
+                Stream.of(states)
+                        .map(TransportOrderState::valueOf)
+                        .toList()
+                        .toArray(new TransportOrderState[states.length])
+        );
     }
 
     /**
@@ -99,8 +104,8 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     @Measured
     public int getNoTransportOrdersToTarget(String target, String... states) {
         int i = 0;
-        for (TargetResolver<TargetVO> tr : targetResolvers) {
-            Optional<TargetVO> t = tr.resolve(target);
+        for (var tr : targetResolvers) {
+            var t = tr.resolve(target);
             if (t.isPresent()) {
                 i = +tr.getHandler().getNoTOToTarget(t.get());
             }
@@ -127,7 +132,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Trying to create TransportOrder with Barcode [{}], to Target [{}], with Priority [{}]", barcode, target, priority);
         }
-        TransportOrder transportOrder = new TransportOrder(barcode);
+        var transportOrder = new TransportOrder(barcode);
         if (LocationPK.isValid(target)) {
             transportOrder.setTargetLocation(target);
         } else {
@@ -156,7 +161,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     @Override
     @Measured
     public TransportOrder update(TransportOrder transportOrder) {
-        TransportOrder saved = findBy(transportOrder.getPersistentKey());
+        var saved = findBy(transportOrder.getPersistentKey());
         updateFunctions.forEach(up -> up.update(saved, transportOrder));
         return repository.save(saved);
     }
@@ -167,9 +172,9 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     @Override
     @Measured
     public Collection<String> change(TransportOrderState state, Collection<String> pKeys) {
-        List<String> failure = new ArrayList<>(pKeys.size());
-        List<TransportOrder> transportOrders = repository.findBypKeys(new ArrayList<>(pKeys));
-        for (TransportOrder transportOrder : transportOrders) {
+        var failure = new ArrayList<String>(pKeys.size());
+        var transportOrders = repository.findBypKeys(new ArrayList<>(pKeys));
+        for (var transportOrder : transportOrders) {
             try {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Trying to turn TransportOrder [{}] into state [{}]", transportOrder.getPk(), state);
@@ -178,7 +183,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
                 ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.of(state)));
             } catch (StateChangeException sce) {
                 LOGGER.error("Could not turn TransportOrder: [{}] into [{}], because of [{}]", transportOrder.getPk(), state, sce.getMessage());
-                Message problem = new Message.Builder().withMessage(sce.getMessage()).build();
+                var problem = new Message.Builder().withMessage(sce.getMessage()).build();
                 transportOrder.setProblem(problem);
                 failure.add(transportOrder.getPk().toString());
             }
@@ -192,9 +197,9 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     @Override
     @Measured
     public Collection<Message> change(String barcode, TransportOrderState currentState, TransportOrderState targetState, Message message) {
-        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(barcode, currentState);
-        List<Message> failure = new ArrayList<>();
-        for (TransportOrder transportOrder : transportOrders) {
+        var transportOrders = repository.findByTransportUnitBKAndStates(barcode, currentState);
+        var failure = new ArrayList<Message>();
+        for (var transportOrder : transportOrders) {
             try {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Trying to turn TransportOrder [{}] into state [{}]", transportOrder.getPk(), targetState);
@@ -206,7 +211,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
                 ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.of(targetState)));
             } catch (StateChangeException sce) {
                 LOGGER.error("Could not turn TransportOrder: [{}] into [{}], because of [{}]", transportOrder.getPk(), targetState, sce.getMessage());
-                Message problem = new Message.Builder()
+                var problem = new Message.Builder()
                         .withMessage(sce.getMessage())
                         .withMessageNo(sce.getMessageKey())
                         .withPKey(transportOrder.getPersistentKey())

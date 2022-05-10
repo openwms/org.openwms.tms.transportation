@@ -15,50 +15,46 @@
  */
 package org.openwms.tms.impl;
 
+import org.ameba.annotation.Measured;
+import org.ameba.annotation.TxService;
 import org.openwms.common.transport.api.TransportUnitApi;
 import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.api.ValidationGroups;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
-import java.util.Set;
 
 /**
  * A ChangeTU is responsible to change a {@link TransportOrder}s assigned {@code TransportUnit}.
  *
  * @author Heiko Scherrer
  */
-@Transactional(propagation = Propagation.MANDATORY)
-@Component
+@TxService(propagation = Propagation.MANDATORY)
 class ChangeTU implements UpdateFunction {
 
     private final TransportUnitApi transportUnitApi;
     private final Validator validator;
 
-    @Autowired
-    public ChangeTU(Validator validator, TransportUnitApi transportUnitApi) {
+    ChangeTU(Validator validator, TransportUnitApi transportUnitApi) {
         this.validator = validator;
         this.transportUnitApi = transportUnitApi;
     }
 
     /**
      * {@inheritDoc}
-     * <p>
+     *
      * If the assigned {@code TransportUnitBK} has changed, we're going to re-assign the {code TransportUnit}s.
      */
     @Override
+    @Measured
     public void update(TransportOrder saved, TransportOrder toUpdate) {
         validateAttributes(toUpdate);
         if (toUpdate.getTransportUnitBK() != null && !saved.getTransportUnitBK().equals(toUpdate.getTransportUnitBK())) {
 
             // change the target of the TU to assign
-            TransportUnitVO savedTU = TransportUnitVO.builder()
+            var savedTU = TransportUnitVO.builder()
                     .barcode(toUpdate.getTransportUnitBK())
 //                    .target(toUpdate.getTargetLocationGroup())
                     .build();
@@ -76,7 +72,7 @@ class ChangeTU implements UpdateFunction {
     }
 
     private void validateAttributes(TransportOrder to) {
-        Set<ConstraintViolation<TransportOrder>> violations = validator.validate(to, ValidationGroups.class);
+        var violations = validator.validate(to, ValidationGroups.class);
         if (!violations.isEmpty()) {
             throw new ValidationException(violations.iterator().next().getMessage());
         }

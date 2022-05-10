@@ -18,16 +18,15 @@ package org.openwms.tms.impl.redirection;
 import org.openwms.tms.TransportOrder;
 
 /**
- * A RedirectVote. Encapsulates a targetLocationGroup and a targetLocation to vote for as
- * targets.
+ * A RedirectVote encapsulates a targetLocationGroup and a targetLocation to vote for as a target.
  *
  * @author Heiko Scherrer
  */
 public class RedirectVote extends Vote {
 
-    private String targetLocation;
-    private String targetLocationGroup;
-    private TransportOrder transportOrder;
+    private final String targetLocation;
+    private final String targetLocationGroup;
+    private final TransportOrder transportOrder;
 
     /**
      * Create a new RedirectVote.

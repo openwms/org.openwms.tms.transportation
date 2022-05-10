@@ -28,7 +28,9 @@ public final class TMSMessageCodes {
     /*~ Messagetext Codes */
 
 
-    /** Signals that the TransportOrder with the given persisted key wasn't found. */
+    /** Signals that the TransportOrder with the given primary key does not exist. */
+    public static final String TO_WITH_PK_NOT_FOUND = "TMS.TO_WITH_PK_NOT_FOUND";
+    /** Signals that the TransportOrder with the given persisted key does not exist. */
     public static final String TO_WITH_PKEY_NOT_FOUND = "TMS.TO_WITH_PKEY_NOT_FOUND";
     /** Signals an exception because it was tried to turn back a TransportOrder into a state that isn't allowed. */
     public static final String TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED = "TMS.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED";
@@ -36,6 +38,8 @@ public final class TMSMessageCodes {
     public static final String TO_STATE_CHANGE_NOT_READY = "TMS.TO_STATE_CHANGE_NOT_READY";
     /** Signals that a request with state of NULL. */
     public static final String TO_STATE_CHANGE_NULL_STATE = "TMS.TO_STATE_CHANGE_NULL_STATE";
+    /** Signals that the request to initialize a TransportOrder cannot be accepted. */
+    public static final String INITIALIZATION_NOT_ALLOWED = "TMS.INITIALIZATION_NOT_ALLOWED";
     /** Signals an exception that it is not allowed to start a TransportOrder, because there is already a started one. */
     public static final String START_TO_NOT_ALLOWED_ALREADY_STARTED_ONE = "TMS.START_TO_NOT_ALLOWED_ALREADY_STARTED_ONE";
     /** Signals an exception that the requested state change is not allowed for the initialized TransportOrder. */

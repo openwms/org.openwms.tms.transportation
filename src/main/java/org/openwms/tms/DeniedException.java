@@ -33,22 +33,12 @@ public class DeniedException extends ServiceLayerException {
     }
 
     /**
-     * Create a new DeniedException.
-     * 
-     * @param message Detail message
-     * @param cause Root cause
-     */
-    public DeniedException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
      * Factory method to create one with a message text.
      *
      * @param message Detail message
      * @return A new instance
      */
-    public static final DeniedException with(String message) {
+    public static DeniedException with(String message) {
         return new DeniedException(message);
     }
 }

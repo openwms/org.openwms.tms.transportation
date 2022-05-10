@@ -15,11 +15,11 @@
  */
 package org.openwms.tms.impl;
 
+import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.openwms.tms.Message;
 import org.openwms.tms.ProblemHistory;
 import org.openwms.tms.TransportOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 
 /**
@@ -32,8 +32,7 @@ class AddProblemImpl implements AddProblem {
 
     private final ProblemHistoryRepository repository;
 
-    @Autowired
-    public AddProblemImpl(ProblemHistoryRepository repository) {
+    AddProblemImpl(ProblemHistoryRepository repository) {
         this.repository = repository;
     }
 
@@ -41,6 +40,7 @@ class AddProblemImpl implements AddProblem {
      * {@inheritDoc}
      */
     @Override
+    @Measured
     public void add(Message problem, TransportOrder transportOrder) {
         addInternal(problem, transportOrder);
     }

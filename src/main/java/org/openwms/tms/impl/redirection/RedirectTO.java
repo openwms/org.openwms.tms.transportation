@@ -41,7 +41,7 @@ class RedirectTO implements UpdateFunction {
     private final List<DecisionVoter<RedirectVote>> redirectVoters;
     private final AddProblem addProblem;
 
-    public RedirectTO(@Autowired(required = false) List<DecisionVoter<RedirectVote>> redirectVoters, AddProblem addProblem) {
+    RedirectTO(@Autowired(required = false) List<DecisionVoter<RedirectVote>> redirectVoters, AddProblem addProblem) {
         this.redirectVoters = redirectVoters;
         this.addProblem = addProblem;
     }
@@ -54,11 +54,12 @@ class RedirectTO implements UpdateFunction {
 
         if (null != redirectVoters && differentTarget(saved, toUpdate)) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Redirecting TO with pKey [{}] to targetLocation [{}] and targetLocationGroup [{}]", saved.getPersistentKey(), toUpdate.getTargetLocation(), toUpdate.getTargetLocationGroup());
+                LOGGER.debug("Redirecting TO with pKey [{}] to targetLocation [{}] and targetLocationGroup [{}]", saved.getPersistentKey(),
+                        toUpdate.getTargetLocation(), toUpdate.getTargetLocationGroup());
             }
-            RedirectVote rv = new RedirectVote(toUpdate.getTargetLocation(), toUpdate.getTargetLocationGroup(), saved);
+            var rv = new RedirectVote(toUpdate.getTargetLocation(), toUpdate.getTargetLocationGroup(), saved);
             // CHECK [openwms]: 13/07/16 the concept of a voter is misused in that a voter changes the state of a TO
-            for (DecisionVoter<RedirectVote> voter : redirectVoters) {
+            for (var voter : redirectVoters) {
                 voter.voteFor(rv);
             }
 
@@ -66,7 +67,7 @@ class RedirectTO implements UpdateFunction {
                 rv.getMessages().forEach(m -> addProblem.add(new Message.Builder().withMessage(m.getMessage()).build(), saved));
             }
 
-            if (!rv.completed()) {
+            if (!rv.isCompleted()) {
                 throw DeniedException.with("TransportOrder couldn't be redirected to a new Target");
             }
         }
@@ -74,10 +75,15 @@ class RedirectTO implements UpdateFunction {
 
     private boolean differentTarget(TransportOrder saved, TransportOrder toUpdate) {
         return (
-            saved.hasTargetLocationGroup() && !saved.getTargetLocationGroup().equals(toUpdate.getTargetLocationGroup()) && toUpdate.getTargetLocationGroup() != null ||
-            !saved.hasTargetLocationGroup() && toUpdate.hasTargetLocationGroup() ||
-            saved.hasTargetLocation() && !saved.getTargetLocation().equals(toUpdate.getTargetLocation()) && toUpdate.getTargetLocation() != null ||
-            !saved.hasTargetLocation() && toUpdate.hasTargetLocation()
+                saved.hasTargetLocationGroup()
+                        && !saved.getTargetLocationGroup().equals(toUpdate.getTargetLocationGroup())
+                        && toUpdate.getTargetLocationGroup() != null
+                        || !saved.hasTargetLocationGroup()
+                        && toUpdate.hasTargetLocationGroup()
+                        || saved.hasTargetLocation()
+                        && !saved.getTargetLocation().equals(toUpdate.getTargetLocation())
+                        && toUpdate.getTargetLocation() != null
+                        || !saved.hasTargetLocation() && toUpdate.hasTargetLocation()
         );
     }
 }

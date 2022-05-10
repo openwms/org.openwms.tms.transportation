@@ -51,8 +51,13 @@ abstract class TargetRedirector<T extends TargetVO> implements DecisionVoter<Red
                 assignTarget(vote);
                 vote.complete();
             } else {
-                String msg = translator.translate(TMSMessageCodes.TARGET_BLOCKED_MSG, vote.getTargetLocation(), vote.getTargetLocationGroup(), vote.getTransportOrder().getPersistentKey());
-                vote.addMessage(new Message.Builder().withMessage(msg).withMessageNo(TMSMessageCodes.TARGET_BLOCKED_MSG).build());
+                var msg = translator.translate(TMSMessageCodes.TARGET_BLOCKED_MSG, vote.getTargetLocation(),
+                        vote.getTargetLocationGroup(), vote.getTransportOrder().getPersistentKey());
+                vote.addMessage(new Message.Builder()
+                        .withMessage(msg)
+                        .withMessageNo(TMSMessageCodes.TARGET_BLOCKED_MSG)
+                        .build()
+                );
                 LOGGER.info(msg);
             }
         }

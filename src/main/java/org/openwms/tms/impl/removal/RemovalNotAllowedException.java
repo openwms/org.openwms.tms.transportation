@@ -24,16 +24,6 @@ import org.ameba.exception.ServiceLayerException;
  */
 class RemovalNotAllowedException extends ServiceLayerException {
 
-    /**
-     * {@inheritDoc}
-     */
-    public RemovalNotAllowedException(String message) {
-        super(message);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public RemovalNotAllowedException(String message, Throwable cause) {
         super(message, cause);
     }

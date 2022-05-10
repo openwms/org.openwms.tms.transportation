@@ -44,30 +44,38 @@ class LocationRedirector extends TargetRedirector<LocationVO> {
         this.ctx = ctx;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isTargetAvailable(LocationVO target) {
         return target.getIncomingActive();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Optional<LocationVO> resolveTarget(RedirectVote vote) {
-        return (
-                vote.getTargetLocation() == null || vote.getTargetLocation().isEmpty())
+        return (vote.getTargetLocation() == null || vote.getTargetLocation().isEmpty())
                 ? Optional.empty()
-                : locationApi.findById(vote.getTargetLocation());
+                : locationApi.findById(vote.getTargetLocation()
+        );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void assignTarget(RedirectVote vote) {
         vote.getTransportOrder().setTargetLocation(vote.getTargetLocation());
         ctx.publishEvent(
                 TransportUnitEvent.newBuilder()
-                        .tu(
-                            TransportUnitVO.builder()
-                                    .barcode(vote.getTransportOrder().getTransportUnitBK())
-                                    .build()
-                        )
+                        .tu(TransportUnitVO.builder()
+                                .barcode(vote.getTransportOrder().getTransportUnitBK())
+                                .build())
                         .type(TransportUnitEvent.TransportUnitEventType.CHANGE_TARGET)
-                        .build());
+                        .build()
+        );
     }
 }

@@ -17,7 +17,6 @@ package org.openwms.tms.impl.redirection;
 
 import org.openwms.common.location.api.LocationGroupApi;
 import org.openwms.common.location.api.LocationGroupVO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -37,21 +36,32 @@ class LocationGroupRedirector extends TargetRedirector<LocationGroupVO> {
 
     private final LocationGroupApi locationGroupApi;
 
-    @Autowired
     public LocationGroupRedirector(LocationGroupApi locationGroupApi) {
         this.locationGroupApi = locationGroupApi;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean isTargetAvailable(LocationGroupVO target) {
         return target.isIncomingActive();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Optional<LocationGroupVO> resolveTarget(RedirectVote vote) {
-        return (vote.getTargetLocationGroup() == null || vote.getTargetLocationGroup().isEmpty()) ? Optional.empty() : locationGroupApi.findByName(vote.getTargetLocationGroup());
+        return (vote.getTargetLocationGroup() == null || vote.getTargetLocationGroup().isEmpty())
+                ? Optional.empty()
+                : locationGroupApi.findByName(vote.getTargetLocationGroup()
+        );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void assignTarget(RedirectVote vote) {
         vote.getTransportOrder().setTargetLocationGroup(vote.getTargetLocationGroup());

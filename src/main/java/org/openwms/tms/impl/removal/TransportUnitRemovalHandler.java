@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.removal;
 
+import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.openwms.common.transport.api.commands.TUCommand;
 import org.openwms.tms.Message;
@@ -75,6 +76,7 @@ class TransportUnitRemovalHandler {
      * {@inheritDoc}
      */
     @Transactional
+    @Measured
     public void preRemove(TUCommand command) throws RemovalNotAllowedException {
         Assert.notNull(command, "Not allowed to call preRemove with null argument");
         if (LOGGER.isDebugEnabled()) {
@@ -94,7 +96,7 @@ class TransportUnitRemovalHandler {
     }
 
     protected void checkForStarted(TUCommand command) {
-        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(
+        var transportOrders = repository.findByTransportUnitBKAndStates(
                 command.getTransportUnit().getBarcode(),
                 STARTED
         );
@@ -116,18 +118,14 @@ class TransportUnitRemovalHandler {
     private void cancel(TransportOrder transportOrder) {
         try {
             transportOrder.changeState(stateManager, CANCELED);
-            String barcode = transportOrder.getTransportUnitBK();
-            setProblem(transportOrder, new Message.Builder()
-                    .withMessage(
-                            format("TransportUnit with ID [%s] was deleted and Transport Order canceled",
-                                    barcode
-                            )
-                    )
-                    .build()
+            var barcode = transportOrder.getTransportUnitBK();
+            setProblem(transportOrder,
+                    new Message.Builder()
+                            .withMessage(format("TransportUnit with ID [%s] was deleted and Transport Order canceled", barcode))
+                            .build()
             );
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Successfully unlinked and canceled TransportOrder with PK [{}]",
-                        transportOrder.getPk());
+                LOGGER.info("Successfully unlinked and canceled TransportOrder with PK [{}]", transportOrder.getPk());
             }
         } catch (StateChangeException sce) {
             transportOrder.setProblem(
@@ -146,7 +144,7 @@ class TransportUnitRemovalHandler {
     }
 
     protected void cancelInitializedOrders(TUCommand command) {
-        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(
+        var transportOrders = repository.findByTransportUnitBKAndStates(
                 command.getTransportUnit().getBarcode(),
                 CREATED,
                 INITIALIZED
@@ -168,7 +166,7 @@ class TransportUnitRemovalHandler {
     }
 
     protected void unlinkFinishedOrders(TUCommand command) {
-        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(
+        var transportOrders = repository.findByTransportUnitBKAndStates(
                 command.getTransportUnit().getBarcode(),
                 FINISHED,
                 ONFAILURE
@@ -203,7 +201,7 @@ class TransportUnitRemovalHandler {
     }
 
     protected void unlinkCanceledOrders(TUCommand command) {
-        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(
+        var transportOrders = repository.findByTransportUnitBKAndStates(
                 command.getTransportUnit().getBarcode(),
                 CANCELED
         );
@@ -215,15 +213,11 @@ class TransportUnitRemovalHandler {
             transportOrders.forEach(to -> {
                 setProblem(to,
                         new Message.Builder()
-                                .withMessage(
-                                        format("TransportUnit with barcode [%s] was removed and TransportOrder unlinked",
-                                                command.getTransportUnit().getBarcode()
-                                        )
-                                )
+                                .withMessage(format("TransportUnit with barcode [%s] was removed and TransportOrder unlinked",
+                                        command.getTransportUnit().getBarcode()))
                                 .build());
                 if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Successfully unlinked canceled TransportOrder with PK [{}]",
-                            to.getPk());
+                    LOGGER.info("Successfully unlinked canceled TransportOrder with PK [{}]", to.getPk());
                 }
             });
         }

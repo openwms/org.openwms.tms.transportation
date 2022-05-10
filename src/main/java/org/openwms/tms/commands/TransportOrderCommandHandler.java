@@ -25,17 +25,14 @@ import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.TransportationService;
 import org.openwms.tms.api.TOCommand;
-import org.openwms.tms.api.UpdateTransportOrderVO;
 import org.openwms.tms.api.ValidationGroups;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.handler.annotation.Payload;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.ValidationException;
 import javax.validation.Validator;
-import java.util.Arrays;
-import java.util.Set;
+import java.util.List;
 
 import static java.lang.String.format;
 
@@ -62,34 +59,35 @@ class TransportOrderCommandHandler {
     @RabbitListener(queues = "${owms.commands.tms.to.queue-name}")
     void receive(@Payload TOCommand command) {
         switch (command.getType()) {
-            case CREATE:
+            case CREATE -> {
                 validate(command.getCreateTransportOrder(), ValidationGroups.OrderCreation.class);
-                service.create(command.getCreateTransportOrder().getBarcode(), command.getCreateTransportOrder().getTarget(), command.getCreateTransportOrder().getPriority());
-                break;
-            case CHANGE_TARGET:
+                service.create(command.getCreateTransportOrder().getBarcode(), command.getCreateTransportOrder().getTarget(),
+                        command.getCreateTransportOrder().getPriority());
+            }
+            case CHANGE_TARGET -> {
                 validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);
                 service.update(mapper.map(command.getUpdateTransportOrder(), TransportOrder.class));
-                break;
-            case FINISH:
+            }
+            case FINISH -> {
                 validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);
-                service.change(TransportOrderState.FINISHED, Arrays.asList(command.getUpdateTransportOrder().getpKey()));
-                break;
-            case CANCEL_ALL:
-                UpdateTransportOrderVO vo = command.getUpdateTransportOrder();
-                Message msg = mapper.map(vo.getProblem(), Message.class);
+                service.change(TransportOrderState.FINISHED, List.of(command.getUpdateTransportOrder().getpKey()));
+            }
+            case CANCEL_ALL -> {
+                var vo = command.getUpdateTransportOrder();
+                var msg = mapper.map(vo.getProblem(), Message.class);
                 service.change(vo.getBarcode(), TransportOrderState.INITIALIZED, TransportOrderState.CANCELED, msg);
                 service.change(vo.getBarcode(), TransportOrderState.STARTED, TransportOrderState.CANCELED, msg);
-                break;
-            default:
-                throw new ServiceLayerException(format("Operation [%s] of TOCommand not supported", command.getType()));
+            }
+            default -> throw new ServiceLayerException(format("Operation [%s] of TOCommand not supported", command.getType()));
         }
     }
 
     private <T> void validate(T to, Class<?>... clazz) {
-        Set<ConstraintViolation<T>> violations = validator.validate(to, clazz);
+        var violations = validator.validate(to, clazz);
         if (!violations.isEmpty()) {
-            ConstraintViolation<T> violation = violations.iterator().next();
-            throw new ValidationException(String.format("Violation error [%s], property [%s]", violation.getMessage(), violation.getPropertyPath()));
+            var violation = violations.iterator().next();
+            throw new ValidationException(String.format("Violation error [%s], property [%s]", violation.getMessage(),
+                    violation.getPropertyPath()));
         }
     }
 }

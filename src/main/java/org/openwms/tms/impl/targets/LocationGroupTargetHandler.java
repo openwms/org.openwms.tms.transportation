@@ -15,13 +15,11 @@
  */
 package org.openwms.tms.impl.targets;
 
+import org.ameba.annotation.Measured;
 import org.openwms.common.location.api.LocationGroupVO;
-import org.openwms.tms.TransportOrder;
 import org.openwms.tms.impl.TargetHandler;
 import org.openwms.tms.impl.TransportOrderRepository;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * A LocationGroupTargetHandler.
@@ -33,7 +31,7 @@ class LocationGroupTargetHandler implements TargetHandler<LocationGroupVO> {
 
     private final TransportOrderRepository repository;
 
-    public LocationGroupTargetHandler(TransportOrderRepository repository) {
+    LocationGroupTargetHandler(TransportOrderRepository repository) {
         this.repository = repository;
     }
 
@@ -41,8 +39,9 @@ class LocationGroupTargetHandler implements TargetHandler<LocationGroupVO> {
      * {@inheritDoc}
      */
     @Override
+    @Measured
     public int getNoTOToTarget(LocationGroupVO target) {
-        List<TransportOrder> result = repository.findByTargetLocation(target.asString());
+        var result = repository.findByTargetLocation(target.asString());
         return result != null ? result.size() : 0;
     }
 }

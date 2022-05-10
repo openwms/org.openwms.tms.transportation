@@ -32,11 +32,11 @@ public interface Startable {
     void start(String pKey);
 
     /**
-     * Start the next {@code TransportOrder} for the {@code TransportUnit} with the given barcode.
+     * Start the next {@code TransportOrder} for the {@code TransportUnit}.
      *
-     * @param barcode The barcode of the {@code TransportUnit}
+     * @param transportUnitBK The business key of the {@code TransportUnit} to start
      */
-    void startNext(String barcode);
+    void startNext(String transportUnitBK);
 
     /**
      * Trigger a start of the given {@code TransportOrder}.

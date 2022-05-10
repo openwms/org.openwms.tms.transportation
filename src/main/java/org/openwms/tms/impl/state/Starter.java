@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.state;
 
+import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
 import org.openwms.common.location.LocationPK;
@@ -36,7 +37,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -59,7 +59,8 @@ class Starter implements Startable {
     private ExternalStarter externalStarter;
     private final StateManager stateManager;
 
-    Starter(TransportOrderRepository repository, LocationApi locationApi, LocationGroupApi locationGroupApi, ApplicationContext ctx, StateManager stateManager) {
+    Starter(TransportOrderRepository repository, LocationApi locationApi, LocationGroupApi locationGroupApi, ApplicationContext ctx,
+            StateManager stateManager) {
         this.repository = repository;
         this.locationApi = locationApi;
         this.locationGroupApi = locationGroupApi;
@@ -68,26 +69,33 @@ class Starter implements Startable {
     }
 
     /**
-     * Find and return a {@link TransportOrder} by its unique identifying persistent key.
-     *
-     * @param pKey The unique persistent identifying key
-     * @throws NotFoundException If no instance with the given arguments exist
+     * {@inheritDoc}
      */
     @Override
+    @Measured
     @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = StateChangeException.class)
     public void start(String pKey) {
         this.startInternal(repository.findBypKey(pKey).orElseThrow(() -> new NotFoundException(format("No TransportOrder with pKey [%s] found", pKey))));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void startNext(String barcode) {
-        List<TransportOrder> transportOrders = repository.findByTransportUnitBKAndStates(barcode, TransportOrderState.INITIALIZED);
+    @Measured
+    @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = StateChangeException.class)
+    public void startNext(String transportUnitBK) {
+        var transportOrders = repository.findByTransportUnitBKAndStates(transportUnitBK, TransportOrderState.INITIALIZED);
         if (!transportOrders.isEmpty()) {
             triggerStart(transportOrders.get(0));
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @Measured
     @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = StateChangeException.class)
     public void triggerStart(TransportOrder to) {
         if (externalStarter == null) {
@@ -97,20 +105,22 @@ class Starter implements Startable {
         }
     }
 
-        /**
-         * Call to start the {@link TransportOrder} identified by the information of {@code to}.
-         *
-         * @param to At last one of the targets must be present as well as the referring TransportUnitID
-         * @throws NotFoundException If input parameters are not valid
-         * @throws StateChangeException If it is not allowed to change the TransportOrders state
-         */
+    /**
+     * Call to start the {@link TransportOrder} identified by the information of {@code to}.
+     *
+     * @param to At last one of the targets must be present as well as the referring TransportUnitID
+     * @throws NotFoundException If input parameters are not valid
+     * @throws StateChangeException If it is not allowed to change the TransportOrders state
+     */
     private void startInternal(TransportOrder to) {
         LOGGER.debug("> Request to start the TransportOrder with PKey [{}]", to.getPersistentKey());
-        Optional<LocationGroupVO> lg = to.getTargetLocationGroup() == null ? Optional.empty() : locationGroupApi.findByName(to.getTargetLocationGroup());
-        Optional<LocationVO> loc = to.getTargetLocation() != null && LocationPK.isValid(to.getTargetLocation())
+        var lg = to.hasTargetLocationGroup()
+                ? Optional.<LocationGroupVO>empty()
+                : locationGroupApi.findByName(to.getTargetLocationGroup());
+        var loc = LocationPK.isValid(to.getTargetLocation())
                 ? locationApi.findById(to.getTargetLocation())
-                : Optional.empty();
-        if (!lg.isPresent() && !loc.isPresent()) {
+                : Optional.<LocationVO>empty();
+        if (lg.isEmpty() && loc.isEmpty()) {
             // At least one target must be set
             throw new NotFoundException("Neither a valid target LocationGroup nor a Location are set, hence it is not possible to start the TransportOrder");
         }
@@ -131,7 +141,7 @@ class Starter implements Startable {
             to.setTargetLocation(null);
         }
 
-        List<TransportOrder> others = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.STARTED);
+        var others = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.STARTED);
         if (!others.isEmpty()) {
             throw new StateChangeException(format("Cannot start TransportOrder for TransportUnit [%s] because [%s] TransportOrders already started [%s]", to.getTransportUnitBK(), others.size(), others.get(0).getPersistentKey()));
         }

@@ -15,13 +15,13 @@
  */
 package org.openwms.tms.impl.targets;
 
+import org.ameba.annotation.Measured;
 import org.openwms.common.location.api.LocationApi;
 import org.openwms.common.location.api.LocationGroupApi;
 import org.openwms.common.location.api.LocationGroupVO;
 import org.openwms.common.location.api.LocationVO;
 import org.openwms.tms.impl.TargetHandler;
 import org.openwms.tms.impl.TargetResolver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -34,12 +34,11 @@ import java.util.Optional;
 class DefaultTargetResolvers {
 
     @Component
-    class LocationGroupTargetResolver implements TargetResolver<LocationGroupVO> {
+    static class LocationGroupTargetResolver implements TargetResolver<LocationGroupVO> {
 
         private final LocationGroupApi locationGroupApi;
         private final TargetHandler<LocationGroupVO> handler;
 
-        @Autowired
         public LocationGroupTargetResolver(LocationGroupApi locationGroupApi, TargetHandler<LocationGroupVO> handler) {
             this.locationGroupApi = locationGroupApi;
             this.handler = handler;
@@ -49,6 +48,7 @@ class DefaultTargetResolvers {
          * {@inheritDoc}
          */
         @Override
+        @Measured
         public Optional<LocationGroupVO> resolve(String target) {
             return locationGroupApi.findByName(target);
         }
@@ -63,12 +63,11 @@ class DefaultTargetResolvers {
     }
 
     @Component
-    class LocationTargetResolver implements TargetResolver<LocationVO> {
+    static class LocationTargetResolver implements TargetResolver<LocationVO> {
 
         private final LocationApi locationApi;
         private final TargetHandler<LocationVO> handler;
 
-        @Autowired
         public LocationTargetResolver(LocationApi locationApi, TargetHandler<LocationVO> handler) {
             this.locationApi = locationApi;
             this.handler = handler;
@@ -78,6 +77,7 @@ class DefaultTargetResolvers {
          * {@inheritDoc}
          */
         @Override
+        @Measured
         public Optional<LocationVO> resolve(String target) {
             return locationApi.findById(target);
         }

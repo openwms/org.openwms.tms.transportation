@@ -75,7 +75,7 @@ class TransportationModuleConfiguration {
     @Primary
     @Bean(name = "jacksonOM")
     ObjectMapper jackson2ObjectMapper() {
-        ObjectMapper om = new ObjectMapper();
+        var om = new ObjectMapper();
         om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         om.configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false);
         om.configure(SerializationFeature.INDENT_OUTPUT, true);
@@ -88,7 +88,7 @@ class TransportationModuleConfiguration {
     public
     @Bean
     LocaleResolver localeResolver() {
-        SessionLocaleResolver slr = new SessionLocaleResolver();
+        var slr = new SessionLocaleResolver();
         slr.setDefaultLocale(Locale.US);
         return slr;
     }
@@ -96,7 +96,7 @@ class TransportationModuleConfiguration {
     public
     @Bean
     LocaleChangeInterceptor localeChangeInterceptor() {
-        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
+        var lci = new LocaleChangeInterceptor();
         lci.setParamName("lang");
         return lci;
     }
@@ -115,7 +115,7 @@ class TransportationModuleConfiguration {
     public
     @Bean
     MessageSource messageSource() {
-        ResourceBundleMessageSource nrrbm = new ResourceBundleMessageSource();
+        var nrrbm = new ResourceBundleMessageSource();
         nrrbm.setBasename("i18n");
         return nrrbm;
     }
@@ -129,8 +129,8 @@ class TransportationModuleConfiguration {
 
     public
     @Bean
-    FilterRegistrationBean requestIDFilter(IDGenerator<String> uuidGenerator) {
-        FilterRegistrationBean frb = new FilterRegistrationBean(new RequestIDFilter(uuidGenerator));
+    FilterRegistrationBean<RequestIDFilter> requestIDFilter(IDGenerator<String> uuidGenerator) {
+        var frb = new FilterRegistrationBean<>(new RequestIDFilter(uuidGenerator));
         frb.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
         return frb;
     }

@@ -25,7 +25,7 @@ import org.openwms.tms.TransportOrder;
 public interface UpdateFunction {
 
     /**
-     * Validate and change the requested values of the {code saved} instance.
+     * Validate and change the requested values of the {@code saved} instance.
      *
      * @param saved The currently persisted TransportOrder
      * @param toUpdate The TransportOrder holding the new values to save

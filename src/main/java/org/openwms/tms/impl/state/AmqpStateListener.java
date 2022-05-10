@@ -28,6 +28,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import static java.lang.String.format;
+
 /**
  * An AmqpStateListener listens on a start response from remote services as a reply to a former start request, validates the response and
  * delegates to the {@link Startable} instance for final starting of the {@code TransportOrder}.
@@ -57,11 +59,11 @@ class AmqpStateListener {
 
         try {
             if (!response.hasRequest()) {
-                throw new ServiceLayerException("Got a response that is assigned to a request: " + response);
+                throw new ServiceLayerException(format("Got a response that is assigned to a request: [%s]", response));
             }
 
             if (response.hasError()) {
-                TransportOrder to = service.findByPKey(response.getRequest().getTransportOrderPkey());
+                var to = service.findByPKey(response.getRequest().getTransportOrderPkey());
                 to.setProblem(new Message.Builder()
                         .withMessage(response.getError().getMessage())
                         .withOccurred(response.getError().getOccurred())
@@ -77,7 +79,7 @@ class AmqpStateListener {
                 // needs to be adjusted.
                 this.starter.start(response.getRequest().getTransportOrderPkey());
             } else {
-                throw new ServiceLayerException("Got a StateChangeResponse that is not supported: " + response);
+                throw new ServiceLayerException(format("Got a StateChangeResponse that is not supported: [%s]", response));
             }
         } catch (StateChangeException sce) {
             // fine here

@@ -16,6 +16,7 @@
 package org.openwms.tms;
 
 import org.ameba.exception.BehaviorAwareException;
+import org.ameba.i18n.Translator;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -29,24 +30,16 @@ import java.io.Serializable;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class StateChangeException extends BehaviorAwareException {
 
-    /**
-     * Create a new with a message text.
-     *
-     * @param message The message text
-     */
     public StateChangeException(String message) {
         super(message);
     }
 
-    /**
-     * Create a new with all fields.
-     *
-     * @param message The message text
-     * @param msgKey The message key
-     * @param data Any data passed to the exception
-     */
     public StateChangeException(String message, String msgKey, Serializable... data) {
         super(message, msgKey, data);
+    }
+
+    public StateChangeException(Translator translator, String messageKey, Serializable... param) {
+        super(translator.translate(messageKey, (Object[]) param), messageKey, param);
     }
 
     /**

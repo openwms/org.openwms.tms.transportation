@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.state;
 
+import org.ameba.annotation.Measured;
 import org.openwms.core.SpringProfiles;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
@@ -36,7 +37,11 @@ class InternalStartAcceptor implements ExternalStarter {
         this.startable = startable;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    @Measured
     public void request(String pKey) {
         startable.start(pKey);
     }
