@@ -6,12 +6,13 @@
     <parent>
         <groupId>org.openwms</groupId>
         <artifactId>org.openwms.parent</artifactId>
-        <version>20</version>
+        <version>21</version>
         <relativePath />
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <name>OpenWMS.org TMS: Transportation Services</name>
+    <description>Service to coordinate TransportOrders in automated warehouses</description>
     <url>https://openwms.github.io/${project.artifactId}/index.html</url>
 
     <issueManagement>
@@ -74,8 +75,7 @@
         <jsr305.version>3.0.2</jsr305.version>
         <objenesis.version>2.6</objenesis.version>
         <servo-core.version>0.12.21</servo-core.version>
-        <skipTests>false</skipTests>
-        <spring-cloud-dependencies.version>2021.0.0</spring-cloud-dependencies.version>
+        <spring-cloud-dependencies.version>2021.0.3</spring-cloud-dependencies.version>
         <stax2-api.version>4.2.1</stax2-api.version>
     </properties>
 
@@ -166,6 +166,34 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <!-- Clash in org.springframework.cloud:spring-cloud-starter-stream-rabbit -->
+                <groupId>com.netflix.servo</groupId>
+                <artifactId>servo-core</artifactId>
+                <version>${servo-core.version}</version>
+            </dependency>
+            <dependency>
+                <!-- com.netflix.eureka:eureka has an internal clash -->
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>${commons-configuration.version}</version>
+            </dependency>
+            <dependency>
+                <!-- Mismatch between Eureka Client and Envers -->
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.objenesis</groupId>
+                <artifactId>objenesis</artifactId>
+                <version>${objenesis.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.openwms</groupId>
                 <artifactId>org.openwms.core.units</artifactId>
                 <version>${core.units.version}</version>
@@ -178,41 +206,13 @@
             <dependency>
                 <groupId>org.openwms</groupId>
                 <artifactId>org.openwms.common.service</artifactId>
-				<version>${common.version}</version>
+                <version>${common.version}</version>
                 <classifier>client</classifier>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>stax2-api</artifactId>
                 <version>${stax2-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-            <dependency>
-                <!-- com.netflix.eureka:eureka has an internal clash -->
-                <groupId>commons-configuration</groupId>
-                <artifactId>commons-configuration</artifactId>
-                <version>${commons-configuration.version}</version>
-            </dependency>
-            <dependency>
-                <!-- Clash in org.springframework.cloud:spring-cloud-starter-stream-rabbit -->
-                <groupId>com.netflix.servo</groupId>
-                <artifactId>servo-core</artifactId>
-                <version>${servo-core.version}</version>
-            </dependency>
-            <dependency>
-                <!-- Mismatch between Eureka Client and Envers -->
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>${joda-time.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.objenesis</groupId>
-                <artifactId>objenesis</artifactId>
-                <version>${objenesis.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
@@ -419,12 +419,7 @@
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
