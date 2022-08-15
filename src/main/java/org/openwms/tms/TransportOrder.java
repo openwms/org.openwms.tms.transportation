@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
- * A TransportOrder is used to move {@code TransportUnit}s from a current {@code Location} to a target.
+ * A TransportOrder is used to move {@code TransportUnit}s from the current {@code Location} to another target (Location).
  *
  * @author Heiko Scherrer
  */
