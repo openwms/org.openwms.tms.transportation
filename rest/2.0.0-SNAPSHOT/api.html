@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.17">
-<meta name="author" content="(2.0.0-SNAPSHOT-MANUAL)">
+<meta name="author" content="(2.0.0-SNAPSHOT-29)">
 <title>OpenWMS.org TMS: RESTful API (Transportation Service)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -443,7 +443,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>OpenWMS.org TMS: RESTful API (Transportation Service)</h1>
 <div class="details">
-<span id="author" class="author">(2.0.0-SNAPSHOT-MANUAL)</span><br>
+<span id="author" class="author">(2.0.0-SNAPSHOT-29)</span><br>
 <span id="revdate">Heiko Scherrer;</span>
 </div>
 <div id="toc" class="toc">
@@ -744,7 +744,7 @@ priority might be started and executed before those with lower priority.</p>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-Location: http://localhost:8080/v1/transport-orders/1ca0e41b-a10b-48d0-aa76-c861222000ae/</code></pre>
+Location: http://localhost:8080/v1/transport-orders/e548dab5-f363-4569-a8b7-d0b9a94e0bd4/</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -753,32 +753,14 @@ Location: http://localhost:8080/v1/transport-orders/1ca0e41b-a10b-48d0-aa76-c861
 </div>
 <div class="sect2">
 <h3 id="_lookup_the_created_transportorder"><a class="anchor" href="#_lookup_the_created_transportorder"></a><a class="link" href="#_lookup_the_created_transportorder">Lookup the created TransportOrder</a></h3>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/v1/transport-orders/26f72a38-2e7e-455c-a383-0df154cb7dcb/' -i -X GET</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in api.adoc - include::/home/runner/work/org.openwms.tms.transportation/org.openwms.tms.transportation/target/generated-snippets/to-create-and-get/curl-request.adoc[]</p>
 </div>
 <div class="paragraph">
 <p>and the server returns the representation of the created <code>TransportOrder</code></p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json;charset=UTF-8
-Content-Length: 239
-
-{
-  "state" : "STARTED",
-  "priority" : "HIGHEST",
-  "sourceLocation" : "INIT/0000/0000/0000/0000",
-  "targetLocation" : "ERR_/0000/0000/0000/0000",
-  "persistentKey" : "26f72a38-2e7e-455c-a383-0df154cb7dcb",
-  "transportUnitBK" : "4711"
-}</code></pre>
-</div>
+<div class="paragraph">
+<p>Unresolved directive in api.adoc - include::/home/runner/work/org.openwms.tms.transportation/org.openwms.tms.transportation/target/generated-snippets/to-create-and-get/http-response.adoc[]</p>
 </div>
 </div>
 <div class="sect2">
@@ -823,10 +805,10 @@ where the API expects the partial representation of the <code>TransportOrder</co
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/v1/transport-orders/93264ac2-a74a-4e05-a635-ead93a4bbdc4' -i -X PATCH \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/v1/transport-orders/8d613e08-f448-4edb-b42d-30ca05485bb8' -i -X PATCH \
     -H 'Content-Type: application/json;charset=UTF-8' \
     -d '{
-  "pKey" : "93264ac2-a74a-4e05-a635-ead93a4bbdc4",
+  "pKey" : "8d613e08-f448-4edb-b42d-30ca05485bb8",
   "barcode" : "4711",
   "priority" : "HIGHEST",
   "targetLocation" : "INIT/0000/0000/0000/0000",
@@ -844,10 +826,10 @@ Notice that the <code>TransportOrder</code> does not need to be started yet.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/v1/transport-orders/de26e920-3308-4f8b-8e03-95505a4c1546' -i -X PATCH \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/v1/transport-orders/63d2fda8-98e4-4d7c-bccf-2d5e2298246e' -i -X PATCH \
     -H 'Content-Type: application/json;charset=UTF-8' \
     -d '{
-  "pKey" : "de26e920-3308-4f8b-8e03-95505a4c1546",
+  "pKey" : "63d2fda8-98e4-4d7c-bccf-2d5e2298246e",
   "barcode" : "4711",
   "priority" : "NORMAL",
   "targetLocation" : "ERR_/0000/0000/0000/0000",
@@ -891,7 +873,7 @@ Content-Length: 129
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-08-18 22:41:12 +0200
+Last updated 2022-08-18 20:50:16 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
