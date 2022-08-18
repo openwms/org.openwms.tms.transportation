@@ -91,7 +91,7 @@ TMS Transportation uses hypermedia links where resources include links to other 
 Responses are in http://stateless.co/hal_specification.html[Hypertext Application
 Language (HAL)] format. These hyperlinks belong to the technical part of the resource representation
 and are grouped with the `_links` element. Users of the API should not create URIs themselves,
-and use hyperlinkes for navigation only.
+and use hyperlinks for navigation only.
 
 [[resources]]
 = Resources
@@ -99,12 +99,12 @@ The domain model of the RESTful API consists of a couple of classes with simple 
 other. One special implicit type is the `Date` type that defines the default date format if not otherwise requested by the consuming
 service.
 
-image::rest-model.png[]
+image::images/rest-model.png[]
 
 [[resources-to]]
 == TransportOrder
 The main resource of the TMS Transportation module is the `TransportOrder`. A `TransportOrder` is used in automated warehouses to move `TransportUnits`
-between `Locations`. Automated warehouses means a Material Flow Controller (MFC, see (Material Flow)[https://en.wikipedia.org/wiki/Material_flow]) uses
+between `Locations`. Automated warehouses means a Material Flow Controller (MFC, see https://en.wikipedia.org/wiki/Material_flow[Material Flow]) uses
 `TransportOrders` to route and track the movements within the warehouse. In manual warehouse OpenWMS.org uses `Movements` to track this in a manually.
 
 The attributes of the `TransportOrder` representation:
@@ -179,7 +179,7 @@ include::{generated}/to-create-and-get/http-response.adoc[]
 The creation of a `TransportOrder` may fail for several reasons. At first the `TransportUnit` with the given `Barcode` may not exist.
 Or the `Target` destination is unknown. In both cases the server responds with a http status code `404` (Not Found):
 
-include::{generated}/to-create-uk-to/http-response.adoc[]
+include::{generated}/to-create-uk-tu/http-response.adoc[]
 
 == Changing TransportOrders
 Created `TransportOrders` can be changed. The system allows to redirect or prioritize them under certain circumstances.
@@ -206,4 +206,4 @@ include::{generated}/to-patch-priority-ok/http-response.adoc[]
 
 If the server does not accept the passed `Priority` level the response status is `400` (Bad Request),
 
-include::{generated}/to-patch-priority-with-null/http-response.adoc[]
+include::{generated}/to-patch-priority-with-unknown-priority/http-response.adoc[]

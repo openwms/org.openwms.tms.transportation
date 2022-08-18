@@ -39,19 +39,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PrioritizeTODocumentation extends TransportationTestBase {
 
     @Test
-    void prioritizeTOWithNull() throws Exception {
+    void prioritizeTOWithUnknownPriority() throws Exception {
         // setup ...
         CreateTransportOrderVO vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
 
-        vo.setPriority(null);
+        vo.setPriority("UNKNOWN");
         mockMvc.perform(
                 patch(TMSApi.TRANSPORT_ORDERS +"/"+vo.getpKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(vo))
                 )
-                .andExpect(status().isNoContent())
-                .andDo(document("to-patch-priority-with-null"))
+                .andExpect(status().isBadRequest())
+                .andDo(document("to-patch-priority-with-unknown-priority"))
         ;
 
         // We do not expect a change of the priority
