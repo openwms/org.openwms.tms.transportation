@@ -115,11 +115,9 @@ class TransportationController extends AbstractWebController {
             @PathVariable("pKey") String pKey,
             @RequestParam("state") String state) {
         try {
-            System.out.println(">>>>>> IN <<<<<<");
             transportationFacade.changeState(pKey, state);
             return ResponseEntity.noContent().build();
         } catch (StateChangeException sce) {
-            sce.printStackTrace();
             throw sce;
         } catch (Exception ex) {
             return ResponseEntity.internalServerError().build();
@@ -127,7 +125,7 @@ class TransportationController extends AbstractWebController {
     }
 
     @ExceptionHandler(DeniedException.class)
-    protected ResponseEntity<Response<?>> handleDeniedException(DeniedException bae) {
+    protected ResponseEntity<Response> handleDeniedException(DeniedException bae) {
         return new ResponseEntity<>(Response.newBuilder()
                 .withMessage(bae.getMessage())
                 .withMessageKey(bae.getMessageKey())
