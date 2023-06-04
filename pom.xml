@@ -75,7 +75,7 @@
         <jsr305.version>3.0.2</jsr305.version>
         <objenesis.version>3.2</objenesis.version>
         <servo-core.version>0.12.21</servo-core.version>
-        <spring-cloud-dependencies.version>2021.0.6</spring-cloud-dependencies.version>
+        <spring-cloud-dependencies.version>2021.0.7</spring-cloud-dependencies.version>
         <stax2-api.version>4.2.1</stax2-api.version>
     </properties>
 
