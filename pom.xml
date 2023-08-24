@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.openwms</groupId>
         <artifactId>org.openwms.parent</artifactId>
-        <version>23</version>
+        <version>24</version>
         <relativePath />
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
@@ -66,9 +66,9 @@
 
     <properties>
         <commons-configuration.version>1.10</commons-configuration.version>
-		<common.version>2.0.0-SNAPSHOT</common.version>
-        <core.units.version>0.5.0-SNAPSHOT</core.units.version>
-        <core.version>2.0.0-SNAPSHOT</core.version>
+		<common.version>2.1.0-SNAPSHOT</common.version>
+        <core.units.version>0.5.0</core.units.version>
+        <core.version>2.0.0</core.version>
         <guava.version>30.0-jre</guava.version>
         <jersey.version>1.19.4</jersey.version>
         <joda-time.version>2.10.8</joda-time.version>
