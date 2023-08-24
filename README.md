@@ -1,7 +1,6 @@
 # Purpose
-The TMS Transportation Service offers the essential functionality of the Transport Order Management (TMS) in automatic warehouses. This is 
-often referred to as Material Flow Controller (MFC). Some examples are the ability to create _automated_ `TransportOrders` or to finish
-already existing `TransportOrders`.
+The TMS Transportation Service offers essential functionality of the Transport Order Management (TMS) in automatic warehouses. This is 
+often referred to as Material Flow Controller (MFC). This includes for example the ability to create and run _automated_ `TransportOrders`.
 
 # Resources
 [![Build status](https://travis-ci.com/openwms/org.openwms.tms.transportation.svg?branch=master)](https://travis-ci.com/openwms/org.openwms.tms.transportation)
@@ -9,7 +8,7 @@ already existing `TransportOrders`.
 [![Quality](https://sonarcloud.io/api/project_badges/measure?project=org.openwms:org.openwms.tms.transportation&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.openwms:org.openwms.tms.transportation)
 [![Join the chat at https://gitter.im/openwms/org.openwms](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/openwms/org.openwms?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**Find further Documentation on [Microservice Website](https://openwms.github.io/org.openwms.tms.transportation) or on the [wiki page](https://openwms.atlassian.net/l/c/fvPkbPDF).**
+**Find further Documentation on [Microservice Website](https://openwms.github.io/org.openwms.tms.transportation) or on the [wiki page](https://wiki.butan092.startdedicated.de/projects/tms-transportation-service/wiki/).**
 
 # Build
 Build a runnable fat jar with the execution of all unit and in-memory database integration tests, but without a required [RabbitMQ](https://www.rabbitmq.com)
@@ -37,11 +36,11 @@ $ java -jar target/openwms-tms-transportation-exec.jar
 ```
 
 In a distributed environment the service configuration is fetched from the central [OpenWMS.org Configuration Service](https://github.com/spring-labs/org.openwms.configuration).
-This behavior can be enabled by activating the Spring Profile `DISTRIBUTED`. Additionally it makes sense to enable asynchronous
-communication that requires a running [RabbitMQ](https://www.rabbitmq.com) instance - just add another profile `ASYNCHRONOUS`. If the latter
-is not applied all asynchronous AMQP endpoints are disabled and the service does not send any events nor does it receive application events
-from remote services. The AMQP protocol with the [RabbitMQ](https://www.rabbitmq.com) is currently the only supported message broker. But
-switching to others, like [HiveMQ (MQTT)](https://www.hivemq.com) or [Apacha Kafka](https://kafka.apache.org/), is not rocket science.
+This behavior can be enabled by activating the Spring Profile `DISTRIBUTED`. Additionally, it makes sense to enable asynchronous
+communication that requires a running [RabbitMQ](https://www.rabbitmq.com) instance - just add another profile `ASYNCHRONOUS`. If the latter is not applied all
+asynchronous AMQP endpoints are disabled and the service does not send any events nor does it receive application events from remote
+services. The AMQP protocol with the [RabbitMQ](https://www.rabbitmq.com) is currently the only supported message broker. But switching to others, like [HiveMQ (MQTT)](https://www.hivemq.com) 
+or [Apacha Kafka](https://kafka.apache.org/), is not rocket science.
 
 ```
 $ java -jar target/openwms-tms-transportation-exec.jar --spring.profiles.active=ASYNCHRONOUS,DISTRIBUTED
