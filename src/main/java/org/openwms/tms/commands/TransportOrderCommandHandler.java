@@ -18,10 +18,8 @@ package org.openwms.tms.commands;
 import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.ameba.exception.ServiceLayerException;
-import org.ameba.mapping.BeanMapper;
 import org.openwms.core.SpringProfiles;
-import org.openwms.tms.Message;
-import org.openwms.tms.TransportOrder;
+import org.openwms.tms.TransportOrderMapper;
 import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.TransportationService;
 import org.openwms.tms.api.TOCommand;
@@ -47,9 +45,9 @@ class TransportOrderCommandHandler {
 
     private final TransportationService service;
     private final Validator validator;
-    private final BeanMapper mapper;
+    private final TransportOrderMapper mapper;
 
-    TransportOrderCommandHandler(TransportationService service, Validator validator, BeanMapper mapper) {
+    TransportOrderCommandHandler(TransportationService service, Validator validator, TransportOrderMapper mapper) {
         this.service = service;
         this.validator = validator;
         this.mapper = mapper;
@@ -66,7 +64,7 @@ class TransportOrderCommandHandler {
             }
             case CHANGE_TARGET -> {
                 validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);
-                service.update(mapper.map(command.getUpdateTransportOrder(), TransportOrder.class));
+                service.update(mapper.convertToEO(command.getUpdateTransportOrder()));
             }
             case FINISH -> {
                 validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);
@@ -74,7 +72,7 @@ class TransportOrderCommandHandler {
             }
             case CANCEL_ALL -> {
                 var vo = command.getUpdateTransportOrder();
-                var msg = mapper.map(vo.getProblem(), Message.class);
+                var msg = mapper.convertToEO(vo.getProblem());
                 service.change(vo.getBarcode(), TransportOrderState.INITIALIZED, TransportOrderState.CANCELED, msg);
                 service.change(vo.getBarcode(), TransportOrderState.STARTED, TransportOrderState.CANCELED, msg);
             }

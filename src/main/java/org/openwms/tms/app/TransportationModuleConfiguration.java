@@ -27,8 +27,6 @@ import org.ameba.http.EnableMultiTenancy;
 import org.ameba.http.RequestIDFilter;
 import org.ameba.i18n.AbstractTranslator;
 import org.ameba.i18n.Translator;
-import org.ameba.mapping.BeanMapper;
-import org.ameba.mapping.DozerMapperImpl;
 import org.openwms.tms.impl.TransportOrderRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
@@ -64,12 +62,6 @@ import java.util.Locale;
 @EnableAspects(propagateRootCause = true)
 @EnableMultiTenancy
 class TransportationModuleConfiguration {
-
-    public
-    @Bean
-    BeanMapper beanMapper() {
-        return new DozerMapperImpl("META-INF/dozer/tms-bean-mappings.xml");
-    }
 
     public
     @Primary

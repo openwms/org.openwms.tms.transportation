@@ -106,9 +106,8 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
 
     /* ----------------------------- constructors ------------------- */
 
-    /** Dear JPA and Dozer ... */
-    protected TransportOrder() {
-    }
+    /** Dear JPA... */
+    protected TransportOrder() {}
 
     /**
      * Create a TransportOrder with the given TransportUnit's business key.
@@ -120,6 +119,11 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
     }
 
     /*~ ----------------------------- methods ------------------- */
+
+    @Override
+    public void setPersistentKey(String pKey) {
+        super.setPersistentKey(pKey);
+    }
 
     /**
      * Returns the priority level of the {@code TransportOrder}.

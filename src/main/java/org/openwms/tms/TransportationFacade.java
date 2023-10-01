@@ -16,7 +16,6 @@
 package org.openwms.tms;
 
 import org.ameba.annotation.Measured;
-import org.ameba.mapping.BeanMapper;
 import org.openwms.tms.api.TransportOrderApi;
 import org.openwms.tms.api.TransportOrderVO;
 import org.openwms.tms.api.UpdateTransportOrderVO;
@@ -37,10 +36,10 @@ import java.util.List;
 public class TransportationFacade implements TransportOrderApi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationFacade.class);
-    private final BeanMapper mapper;
+    private final TransportOrderMapper mapper;
     private final TransportationService<TransportOrder> service;
 
-    TransportationFacade(BeanMapper mapper, TransportationService<TransportOrder> service) {
+    TransportationFacade(TransportOrderMapper mapper, TransportationService<TransportOrder> service) {
         this.mapper = mapper;
         this.service = service;
     }
@@ -104,7 +103,7 @@ public class TransportationFacade implements TransportOrderApi {
         if (vo.getpKey() == null || !pKey.equals(vo.getpKey())) {
             vo.setpKey(pKey);
         }
-        service.update(mapper.map(vo, TransportOrder.class));
+        service.update(mapper.convertToEO(vo));
     }
 
     /**
@@ -113,7 +112,7 @@ public class TransportationFacade implements TransportOrderApi {
     @Override
     @Measured
     public List<TransportOrderVO> findBy(String barcode, String state) {
-        var orders = mapper.map(service.findBy(barcode, state), TransportOrderVO.class);
+        var orders = mapper.convertToVO(service.findBy(barcode, state));
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Found [{}] TransportOrders with barcode [{}] in state [{}]", orders.size(), barcode, state);
         }
@@ -129,6 +128,6 @@ public class TransportationFacade implements TransportOrderApi {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Find TransportOrder with persistent key [{}]", pKey);
         }
-        return mapper.map(service.findByPKey(pKey), TransportOrderVO.class);
+        return mapper.convertToVO(service.findByPKey(pKey));
     }
 }

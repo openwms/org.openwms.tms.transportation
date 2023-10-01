@@ -45,8 +45,7 @@ public class MessageVO implements Serializable {
     }
 
     @JsonCreator
-    protected MessageVO() {
-    }
+    public MessageVO() {}
 
     /*~-------------------- accessors --------------------*/
     public static Builder newBuilder() {

@@ -16,9 +16,7 @@
 package org.openwms.common.transport;
 
 import org.ameba.exception.ServiceLayerException;
-import org.ameba.mapping.BeanMapper;
 import org.openwms.common.transport.api.commands.TUCommand;
-import org.openwms.common.transport.api.messages.TransportUnitMO;
 import org.openwms.core.SpringProfiles;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,12 +35,12 @@ public class TransportUnitEventPropagator {
 
     private final AmqpTemplate amqpTemplate;
     private final String exchangeName;
-    private final BeanMapper mapper;
+    private final TransportUnitMapper mapper;
 
     public TransportUnitEventPropagator(
             AmqpTemplate amqpTemplate,
             @Value("${owms.commands.common.tu.exchange-name}") String exchangeName,
-            BeanMapper mapper) {
+            TransportUnitMapper mapper) {
         this.amqpTemplate = amqpTemplate;
         this.exchangeName = exchangeName;
         this.mapper = mapper;
@@ -53,7 +51,7 @@ public class TransportUnitEventPropagator {
         if (event.getType() == TransportUnitEvent.TransportUnitEventType.CHANGE_TARGET) {
             amqpTemplate.convertAndSend(exchangeName, "common.tu.command.in.change-target",
                     TUCommand.newBuilder(TUCommand.Type.CHANGE_TARGET)
-                            .withTransportUnit(mapper.map(event.getSource(), TransportUnitMO.class))
+                            .withTransportUnit(mapper.convertToMO(event.getSource()))
                             .build()
             );
         } else {

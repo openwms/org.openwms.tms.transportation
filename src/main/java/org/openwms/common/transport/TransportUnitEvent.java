@@ -45,6 +45,11 @@ public class TransportUnitEvent extends RootApplicationEvent {
         return type;
     }
 
+    @Override
+    public TransportUnitVO getSource() {
+        return (TransportUnitVO) super.getSource();
+    }
+
     public static TransportUnitEvent of(TransportUnitVO tu, TransportUnitEventType type) {
         return new TransportUnitEvent(tu, type);
     }

@@ -38,8 +38,7 @@ public class UpdateTransportOrderVO implements Serializable {
     private String targetLocationGroup;
     private String actualLocation;
 
-    UpdateTransportOrderVO() {
-    }
+    public UpdateTransportOrderVO() {}
 
     private UpdateTransportOrderVO(Builder builder) {
         setpKey(builder.pKey);

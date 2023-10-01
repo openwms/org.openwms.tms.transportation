@@ -15,8 +15,8 @@
  */
 package org.openwms.tms.events;
 
-import org.ameba.mapping.BeanMapper;
 import org.openwms.core.SpringProfiles;
+import org.openwms.tms.TransportOrderMapper;
 import org.openwms.tms.TransportServiceEvent;
 import org.openwms.tms.api.messages.TransportOrderMO;
 import org.slf4j.Logger;
@@ -39,9 +39,9 @@ class TransportOrderEventPropagator {
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportOrderEventPropagator.class);
     private final AmqpTemplate amqpTemplate;
     private final String exchangeName;
-    private final BeanMapper mapper;
+    private final TransportOrderMapper mapper;
 
-    TransportOrderEventPropagator(AmqpTemplate amqpTemplate, @Value("${owms.events.tms.to.exchange-name}") String exchangeName, BeanMapper mapper) {
+    TransportOrderEventPropagator(AmqpTemplate amqpTemplate, @Value("${owms.events.tms.to.exchange-name}") String exchangeName, TransportOrderMapper mapper) {
         this.amqpTemplate = amqpTemplate;
         this.exchangeName = exchangeName;
         this.mapper = mapper;
@@ -49,7 +49,7 @@ class TransportOrderEventPropagator {
 
     @TransactionalEventListener(fallbackExecution = true)
     public void onEvent(TransportServiceEvent event) {
-        var mo = mapper.map(event.getSource(), TransportOrderMO.class);
+        var mo = mapper.convertToMO(event.getSource());
         LOGGER.debug("Propagating event [{}]", event.getType());
         switch(event.getType()) {
             case STARTED -> {

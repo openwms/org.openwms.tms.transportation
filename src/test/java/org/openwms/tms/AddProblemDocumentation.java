@@ -15,7 +15,6 @@
  */
 package org.openwms.tms;
 
-import org.ameba.mapping.BeanMapper;
 import org.junit.jupiter.api.Test;
 import org.openwms.TransportationTestBase;
 import org.openwms.tms.api.CreateTransportOrderVO;
@@ -23,7 +22,6 @@ import org.openwms.tms.api.MessageVO;
 import org.openwms.tms.api.TMSApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MvcResult;
 
 import javax.persistence.EntityManager;
 import java.util.List;
@@ -43,17 +41,16 @@ class AddProblemDocumentation extends TransportationTestBase {
     @Autowired
     private EntityManager em;
     @Autowired
-    private BeanMapper mapper;
+    private TransportOrderMapper mapper;
 
     @Test
     void testNullAsAddProblem() throws Exception {
         // setup ...
-        CreateTransportOrderVO vo = createTO();
-        MvcResult res = postTOAndValidate(vo, NOTLOGGED);
-        MessageVO msg = MessageVO.newBuilder().messageText("text").messageNo("77").build();
+        var vo = createTO();
+        var res = postTOAndValidate(vo, NOTLOGGED);
+        var msg = MessageVO.newBuilder().messageText("text").messageNo("77").build();
         vo.setProblem(msg);
         addProblem(vo);
-        assertThat(mapper.map(readTransportOrder(vo.getpKey()).getProblem(), MessageVO.class)).isEqualTo(msg);
 
         // test ...
         vo.setProblem(null);
@@ -66,16 +63,16 @@ class AddProblemDocumentation extends TransportationTestBase {
                 .andDo(document("to-patch-addproblem-null"))
         ;
 
-        assertThat(mapper.map(readTransportOrder(vo.getpKey()).getProblem(), MessageVO.class)).isEqualTo(msg);
+        assertThat(mapper.convertToVO(readTransportOrder(vo.getpKey()).getProblem())).isEqualTo(msg);
         assertThat(getProblemHistories()).isEmpty();
     }
 
     @Test
     void testAddProblem() throws Exception {
         // setup ...
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        MessageVO msg = MessageVO.newBuilder().messageText("text").messageNo("77").build();
+        var msg = MessageVO.newBuilder().messageText("text").messageNo("77").build();
         vo.setProblem(msg);
 
         // test ...
@@ -87,20 +84,20 @@ class AddProblemDocumentation extends TransportationTestBase {
                 .andExpect(status().isNoContent())
                 .andDo(document("to-patch-addproblem"))
         ;
-        assertThat(mapper.map(readTransportOrder(vo.getpKey()).getProblem(), MessageVO.class)).isEqualTo(msg);
+        assertThat(mapper.convertToVO(readTransportOrder(vo.getpKey()).getProblem())).isEqualTo(msg);
         assertThat(getProblemHistories()).isEmpty();
     }
 
     @Test
     void testAddSecondProblem() throws Exception {
         // setup ...
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        MessageVO msg = MessageVO.newBuilder().messageText("text").messageNo("77").build();
+        var msg = MessageVO.newBuilder().messageText("text").messageNo("77").build();
         vo.setProblem(msg);
 
         addProblem(vo);
-        MessageVO msg2 = MessageVO.newBuilder().messageText("text2").messageNo("78").build();
+        var msg2 = MessageVO.newBuilder().messageText("text2").messageNo("78").build();
         vo.setProblem(msg2);
 
         // test ...
@@ -112,8 +109,8 @@ class AddProblemDocumentation extends TransportationTestBase {
             .andExpect(status().isNoContent())
             .andDo(document("to-patch-addsecondproblem"))
         ;
-        assertThat(mapper.map(readTransportOrder(vo.getpKey()).getProblem(), MessageVO.class)).isEqualTo(msg2);
-        List<ProblemHistory> problemHistories = getProblemHistories();
+        assertThat(mapper.convertToVO(readTransportOrder(vo.getpKey()).getProblem())).isEqualTo(msg2);
+        var problemHistories = getProblemHistories();
         assertThat(problemHistories).hasSize(1);
     }
 

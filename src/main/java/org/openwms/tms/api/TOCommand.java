@@ -28,8 +28,7 @@ public class TOCommand implements Serializable {
     private UpdateTransportOrderVO updateTransportOrder;
     private Type type;
 
-    protected TOCommand() {
-    }
+    public TOCommand() {}
 
     private TOCommand(Builder builder) {
         setCreateTransportOrder(builder.createTransportOrder);

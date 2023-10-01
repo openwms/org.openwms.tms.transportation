@@ -42,9 +42,8 @@ public class CreateTransportOrderVO implements Serializable {
     public String getTargetLocationGroup() {
         return getTarget();
     }
-    public CreateTransportOrderVO() {
+    public CreateTransportOrderVO() {}
 
-    }
     private CreateTransportOrderVO(Builder builder) {
         setpKey(builder.pKey);
         setBarcode(builder.barcode);
