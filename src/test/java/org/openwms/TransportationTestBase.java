@@ -31,7 +31,6 @@ import org.openwms.tms.TMSApplicationTest;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.openwms.tms.api.TMSApi;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -61,7 +60,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public abstract class TransportationTestBase {
 
     @Autowired
-    @Qualifier("jacksonOM")
+    //@Qualifier("jacksonOM")
     protected ObjectMapper objectMapper;
     protected MockMvc mockMvc;
     @MockBean
@@ -108,7 +107,7 @@ public abstract class TransportationTestBase {
     }
 
     protected CreateTransportOrderVO createTO() {
-        CreateTransportOrderVO.Builder vo = CreateTransportOrderVO
+        var builder = CreateTransportOrderVO
                 .newBuilder()
                 .withPriority(PriorityLevel.HIGHEST.toString())
                 .withBarcode(BC_4711)
@@ -128,7 +127,7 @@ public abstract class TransportationTestBase {
         given(transportUnitApi.findTransportUnit(BC_4711)).willReturn(tu);
         given(locationApi.findById(ERR_LOC_STRING)).willReturn(Optional.of(errorLocation));
         given(locationGroupApi.findByName(ERR_LOC_STRING)).willReturn(Optional.empty());
-        return vo.build();
+        return builder.build();
     }
 
     protected MvcResult postTOAndValidate(CreateTransportOrderVO vo, String outputFile) throws Exception {

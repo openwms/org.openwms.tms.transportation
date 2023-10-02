@@ -117,7 +117,7 @@ class TransportUnitRemovalHandler {
             var barcode = transportOrder.getTransportUnitBK();
             setProblem(transportOrder,
                     new Message.Builder()
-                            .withMessageText(format("TransportUnit with ID [%s] was deleted and Transport Order canceled", barcode))
+                            .messageText(format("TransportUnit with ID [%s] was deleted and Transport Order canceled", barcode))
                             .build()
             );
             if (LOGGER.isInfoEnabled()) {
@@ -126,7 +126,7 @@ class TransportUnitRemovalHandler {
         } catch (StateChangeException sce) {
             transportOrder.setProblem(
                     new Message.Builder()
-                            .withMessageText(sce.getMessage())
+                            .messageText(sce.getMessage())
                             .build()
             );
         } finally {
@@ -182,7 +182,7 @@ class TransportUnitRemovalHandler {
             transportOrders.forEach(to -> {
                 setProblem(to,
                         new Message.Builder()
-                                .withMessageText(
+                                .messageText(
                                         format("TransportUnit with barcode [%s] was removed and TransportOrder unlinked",
                                                 command.getTransportUnit().getBarcode()
                                         )
@@ -209,7 +209,7 @@ class TransportUnitRemovalHandler {
             transportOrders.forEach(to -> {
                 setProblem(to,
                         new Message.Builder()
-                                .withMessageText(format("TransportUnit with barcode [%s] was removed and TransportOrder unlinked",
+                                .messageText(format("TransportUnit with barcode [%s] was removed and TransportOrder unlinked",
                                         command.getTransportUnit().getBarcode()))
                                 .build());
                 if (LOGGER.isInfoEnabled()) {

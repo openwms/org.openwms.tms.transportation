@@ -49,6 +49,7 @@ public interface TransportOrderMapper {
 
     @Mapping(target = "persistentKey", source = "pKey")
     @Mapping(target = "transportUnitBK", source = "barcode")
+    @Mapping(target = "state", source = "state", defaultExpression = "java( null )")
     TransportOrder convertToEO(UpdateTransportOrderVO vo);
 
     Message convertToEO(MessageVO vo);

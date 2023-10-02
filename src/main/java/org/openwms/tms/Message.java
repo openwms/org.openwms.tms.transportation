@@ -17,10 +17,8 @@ package org.openwms.tms;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -34,9 +32,8 @@ import java.util.StringJoiner;
 public class Message implements Serializable {
 
     /** Timestamp when the {@literal Message} has occurred. */
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "C_OCCURRED")
-    private Date occurred;
+    private LocalDateTime occurred;
 
     /** Message number of the {@literal Message}. */
     @Column(name = "C_NO")
@@ -54,8 +51,7 @@ public class Message implements Serializable {
     /**
      * Dear JPA...
      */
-    protected Message() {
-    }
+    protected Message() {}
 
     private Message(Builder builder) {
         occurred = builder.occurred;
@@ -64,12 +60,16 @@ public class Message implements Serializable {
         pKey = builder.pKey;
     }
 
+    public static Message.Builder newBuilder() {
+        return new Message.Builder();
+    }
+
     /**
      * Return the Date when the {@literal Message} has occurred.
      * 
      * @return Date when occurred.
      */
-    public Date getOccurred() {
+    public LocalDateTime getOccurred() {
         return occurred;
     }
 
@@ -109,7 +109,7 @@ public class Message implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Message message1 = (Message) o;
+        var message1 = (Message) o;
         return Objects.equals(occurred, message1.occurred) &&
                 Objects.equals(messageNo, message1.messageNo) &&
                 Objects.equals(messageText, message1.messageText) &&
@@ -144,9 +144,9 @@ public class Message implements Serializable {
     /**
      * {@code Message} builder static inner class.
      */
-    public static final class Builder {
+    public static class Builder {
 
-        private Date occurred;
+        private LocalDateTime occurred;
         private String messageNo;
         private String messageText;
         private String pKey;
@@ -157,7 +157,7 @@ public class Message implements Serializable {
          * @param val the {@code occurred} to set
          * @return a reference to this Builder
          */
-        public Builder withOccurred(Date val) {
+        public Builder occurred(LocalDateTime val) {
             occurred = val;
             return this;
         }
@@ -168,7 +168,7 @@ public class Message implements Serializable {
          * @param val the {@code messageNo} to set
          * @return a reference to this Builder
          */
-        public Builder withMessageNo(String val) {
+        public Builder messageNo(String val) {
             messageNo = val;
             return this;
         }
@@ -179,7 +179,7 @@ public class Message implements Serializable {
          * @param val the {@code messageText} to set
          * @return a reference to this Builder
          */
-        public Builder withMessageText(String val) {
+        public Builder messageText(String val) {
             messageText = val;
             return this;
         }
@@ -190,7 +190,7 @@ public class Message implements Serializable {
          * @param val the {@code pKey} to set
          * @return a reference to this Builder
          */
-        public Builder withPKey(String val) {
+        public Builder pKey(String val) {
             pKey = val;
             return this;
         }

@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -31,7 +31,7 @@ import java.util.StringJoiner;
 public class MessageVO implements Serializable {
 
     @JsonProperty("occurred")
-    private Date occurred;
+    private LocalDateTime occurred;
     @JsonProperty("messageNo")
     private String messageNo;
     @JsonProperty("messageText")
@@ -52,7 +52,7 @@ public class MessageVO implements Serializable {
         return new Builder();
     }
 
-    public Date getOccurred() {
+    public LocalDateTime getOccurred() {
         return occurred;
     }
 
@@ -65,15 +65,15 @@ public class MessageVO implements Serializable {
     }
 
     /*~-------------------- builder --------------------*/
-    public static final class Builder {
-        private Date occurred;
+    public static class Builder {
+        private LocalDateTime occurred;
         private String messageNo;
         private String messageText;
 
         private Builder() {
         }
 
-        public Builder occurred(Date val) {
+        public Builder occurred(LocalDateTime val) {
             occurred = val;
             return this;
         }
@@ -90,7 +90,7 @@ public class MessageVO implements Serializable {
 
         public MessageVO build() {
             if (this.occurred == null) {
-                this.occurred = new Date();
+                this.occurred = LocalDateTime.now();
             }
             return new MessageVO(this);
         }

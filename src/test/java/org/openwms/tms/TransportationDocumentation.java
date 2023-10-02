@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.openwms.tms.api.TMSApi;
 import org.openwms.tms.api.TransportOrderVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -49,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TransportationDocumentation {
 
     @Autowired
-    @Qualifier("jacksonOM")
+    //@Qualifier("jacksonOM")
     protected ObjectMapper objectMapper;
     private MockMvc mockMvc;
 

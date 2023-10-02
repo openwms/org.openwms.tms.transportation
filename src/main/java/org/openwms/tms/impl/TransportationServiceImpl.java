@@ -183,7 +183,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
                 ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.of(state)));
             } catch (StateChangeException sce) {
                 LOGGER.error("Could not turn TransportOrder: [{}] into [{}], because of [{}]", transportOrder.getPk(), state, sce.getMessage());
-                var problem = new Message.Builder().withMessageText(sce.getMessage()).build();
+                var problem = new Message.Builder().messageText(sce.getMessage()).build();
                 transportOrder.setProblem(problem);
                 failure.add(transportOrder.getPk().toString());
             }
@@ -212,9 +212,9 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
             } catch (StateChangeException sce) {
                 LOGGER.error("Could not turn TransportOrder: [{}] into [{}], because of [{}]", transportOrder.getPk(), targetState, sce.getMessage());
                 var problem = new Message.Builder()
-                        .withMessageText(sce.getMessage())
-                        .withMessageNo(sce.getMessageKey())
-                        .withPKey(transportOrder.getPersistentKey())
+                        .messageText(sce.getMessage())
+                        .messageNo(sce.getMessageKey())
+                        .pKey(transportOrder.getPersistentKey())
                         .build();
                 transportOrder.setProblem(problem);
                 failure.add(problem);

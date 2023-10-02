@@ -15,10 +15,10 @@
  */
 package org.openwms.tms.app;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.ameba.IDGenerator;
 import org.ameba.JdkIDGenerator;
@@ -30,13 +30,13 @@ import org.ameba.i18n.Translator;
 import org.openwms.tms.impl.TransportOrderRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.Ordered;
@@ -46,7 +46,11 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+
+import static org.openwms.core.time.TimeProvider.DATE_FORMAT;
+import static org.openwms.core.time.TimeProvider.DATE_TIME_MILLIS_FORMAT;
 
 /**
  * A TransportationModuleConfiguration.
@@ -63,17 +67,15 @@ import java.util.Locale;
 @EnableMultiTenancy
 class TransportationModuleConfiguration {
 
-    public
-    @Primary
-    @Bean(name = "jacksonOM")
-    ObjectMapper jackson2ObjectMapper() {
-        var om = new ObjectMapper();
-        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        om.configure(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS, false);
-        om.configure(SerializationFeature.INDENT_OUTPUT, true);
-        om.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
-        om.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-        return om;
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+        return builder -> {
+            builder.simpleDateFormat(DATE_FORMAT);
+            builder.serializers(new LocalDateSerializer(DateTimeFormatter.ofPattern(DATE_FORMAT)));
+            builder.serializers(new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DATE_TIME_MILLIS_FORMAT)));
+            builder.deserializers(new LocalDateDeserializer(DateTimeFormatter.ofPattern(DATE_FORMAT)));
+            builder.deserializers(new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DATE_TIME_MILLIS_FORMAT)));
+        };
     }
 
     /*~ ------------- i18n handling ----------- */

@@ -54,8 +54,8 @@ abstract class TargetRedirector<T extends TargetVO> implements DecisionVoter<Red
                 var msg = translator.translate(TMSMessageCodes.TARGET_BLOCKED_MSG, vote.getTargetLocation(),
                         vote.getTargetLocationGroup(), vote.getTransportOrder().getPersistentKey());
                 vote.addMessage(new Message.Builder()
-                        .withMessageText(msg)
-                        .withMessageNo(TMSMessageCodes.TARGET_BLOCKED_MSG)
+                        .messageText(msg)
+                        .messageNo(TMSMessageCodes.TARGET_BLOCKED_MSG)
                         .build()
                 );
                 LOGGER.info(msg);

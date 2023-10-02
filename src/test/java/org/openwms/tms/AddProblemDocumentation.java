@@ -47,8 +47,8 @@ class AddProblemDocumentation extends TransportationTestBase {
     void testNullAsAddProblem() throws Exception {
         // setup ...
         var vo = createTO();
-        var res = postTOAndValidate(vo, NOTLOGGED);
-        var msg = MessageVO.newBuilder().messageText("text").messageNo("77").build();
+        postTOAndValidate(vo, NOTLOGGED);
+        var msg = createMessage("text", "77");
         vo.setProblem(msg);
         addProblem(vo);
 
@@ -72,7 +72,7 @@ class AddProblemDocumentation extends TransportationTestBase {
         // setup ...
         var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        var msg = MessageVO.newBuilder().messageText("text").messageNo("77").build();
+        var msg = createMessage("text", "77");
         vo.setProblem(msg);
 
         // test ...
@@ -84,7 +84,9 @@ class AddProblemDocumentation extends TransportationTestBase {
                 .andExpect(status().isNoContent())
                 .andDo(document("to-patch-addproblem"))
         ;
-        assertThat(mapper.convertToVO(readTransportOrder(vo.getpKey()).getProblem())).isEqualTo(msg);
+        var updatedTO = readTransportOrder(vo.getpKey());
+        var msgVO = mapper.convertToVO(updatedTO.getProblem());
+        assertThat(msgVO).isEqualTo(msg);
         assertThat(getProblemHistories()).isEmpty();
     }
 
@@ -93,11 +95,11 @@ class AddProblemDocumentation extends TransportationTestBase {
         // setup ...
         var vo = createTO();
         postTOAndValidate(vo, NOTLOGGED);
-        var msg = MessageVO.newBuilder().messageText("text").messageNo("77").build();
+        var msg = createMessage("text", "77");
         vo.setProblem(msg);
 
         addProblem(vo);
-        var msg2 = MessageVO.newBuilder().messageText("text2").messageNo("78").build();
+        var msg2 = createMessage("text2", "78");
         vo.setProblem(msg2);
 
         // test ...
@@ -112,6 +114,12 @@ class AddProblemDocumentation extends TransportationTestBase {
         assertThat(mapper.convertToVO(readTransportOrder(vo.getpKey()).getProblem())).isEqualTo(msg2);
         var problemHistories = getProblemHistories();
         assertThat(problemHistories).hasSize(1);
+    }
+
+    private MessageVO createMessage(String text, String number) throws Exception {
+        var msg = MessageVO.newBuilder().messageText(text).messageNo(number).build();
+        // Let the VO through the mapper to format the date fields...
+        return objectMapper.readValue(objectMapper.writeValueAsString(msg), MessageVO.class);
     }
 
     private List<ProblemHistory> getProblemHistories() {

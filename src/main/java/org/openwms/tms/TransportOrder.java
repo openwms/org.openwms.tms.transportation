@@ -199,6 +199,15 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
     }
 
     /**
+     * Used for MapStruct only.
+     *
+     * @param state The state to set
+     */
+    public void setState(TransportOrderState state) {
+        this.state = state;
+    }
+
+    /**
      * Change the state of the {@code TransportOrder} regarding some rules.
      *
      * @param newState The new state of the order
@@ -209,7 +218,7 @@ public class TransportOrder extends ApplicationEntity implements Serializable {
      * {@link TransportOrderState#CREATED} and shall be {@link TransportOrderState#INITIALIZED} but it is incomplete</li> </ul>
      */
     public TransportOrder changeState(StateManager stateManager, TransportOrderState newState) {
-            stateManager.validate(newState, this);
+        stateManager.validate(newState, this);
         state = newState;
         return this;
     }

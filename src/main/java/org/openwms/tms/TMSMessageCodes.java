@@ -22,11 +22,10 @@ package org.openwms.tms;
  */
 public final class TMSMessageCodes {
 
-    private TMSMessageCodes() {
-    }
+    private TMSMessageCodes() { }
+
 
     /*~ Messagetext Codes */
-
 
     /** Signals that the TransportOrder with the given primary key does not exist. */
     public static final String TO_WITH_PK_NOT_FOUND = "TMS.TO_WITH_PK_NOT_FOUND";
