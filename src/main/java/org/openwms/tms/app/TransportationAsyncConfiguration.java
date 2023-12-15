@@ -58,14 +58,14 @@ class TransportationAsyncConfiguration {
 
     @ConditionalOnExpression("'${owms.transportation.serialization}'=='json'")
     @Bean MessageConverter messageConverter() {
-        Jackson2JsonMessageConverter messageConverter = new Jackson2JsonMessageConverter();
+        var messageConverter = new Jackson2JsonMessageConverter();
         BOOT_LOGGER.info("Using JSON serialization over AMQP");
         return messageConverter;
     }
 
     @ConditionalOnExpression("'${owms.transportation.serialization}'=='barray'")
     @Bean MessageConverter serializerMessageConverter() {
-        SerializerMessageConverter messageConverter = new SerializerMessageConverter();
+        var messageConverter = new SerializerMessageConverter();
         BOOT_LOGGER.info("Using byte array serialization over AMQP");
         return messageConverter;
     }
@@ -80,7 +80,7 @@ class TransportationAsyncConfiguration {
         backOffPolicy.setMultiplier(2);
         backOffPolicy.setMaxInterval(15000);
         backOffPolicy.setInitialInterval(500);
-        RetryTemplate retryTemplate = new RetryTemplate();
+        var retryTemplate = new RetryTemplate();
         retryTemplate.setBackOffPolicy(backOffPolicy);
         rabbitTemplate.setRetryTemplate(retryTemplate);
         rabbitTemplate.setMessageConverter(messageConverter.getIfUnique());
@@ -90,8 +90,8 @@ class TransportationAsyncConfiguration {
         return rabbitTemplate;
     }
 
-    @Bean DirectExchange tmsExchange(@Value("${owms.events.tms.to.exchange-name}") String exchangeName) {
-        return new DirectExchange(exchangeName, true, false);
+    @Bean TopicExchange tmsExchange(@Value("${owms.events.tms.to.exchange-name}") String exchangeName) {
+        return new TopicExchange(exchangeName, true, false);
     }
 
     @Bean DirectExchange dlExchange(@Value("${owms.transportation.dead-letter.exchange-name}") String exchangeName) {
