@@ -8,7 +8,7 @@ often referred to as Material Flow Controller (MFC). This includes for example t
 [![Quality](https://sonarcloud.io/api/project_badges/measure?project=org.openwms:org.openwms.tms.transportation&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.openwms:org.openwms.tms.transportation)
 [![Join the chat at https://gitter.im/openwms/org.openwms](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/openwms/org.openwms?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**Find further Documentation on [Microservice Website](https://openwms.github.io/org.openwms.tms.transportation) or on the [wiki page](https://wiki.butan092.startdedicated.de/projects/tms-transportation-service/wiki/).**
+**Find further Documentation on [Microservice Website](https://openwms.github.io/org.openwms.tms.transportation) or on the [wiki page](https://wiki.openwms.cloud/projects/tms-transportation-service/wiki/).**
 
 # Build
 Build a runnable fat jar with the execution of all unit and in-memory database integration tests, but without a required [RabbitMQ](https://www.rabbitmq.com)
