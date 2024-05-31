@@ -216,7 +216,7 @@
             </dependency>
             <dependency>
                 <groupId>org.openwms</groupId>
-                <artifactId>org.openwms.common.service</artifactId>
+                <artifactId>org.openwms.common.service.lib</artifactId>
                 <version>${common.version}</version>
                 <classifier>client</classifier>
             </dependency>
@@ -244,7 +244,7 @@
         </dependency>
         <dependency>
             <groupId>org.openwms</groupId>
-            <artifactId>org.openwms.common.service</artifactId>
+            <artifactId>org.openwms.common.service.lib</artifactId>
             <classifier>client</classifier>
             <optional>true</optional>
         </dependency>
