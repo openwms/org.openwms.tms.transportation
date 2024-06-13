@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.openwms</groupId>
         <artifactId>org.openwms.parent</artifactId>
-        <version>25</version>
+        <version>26</version>
         <relativePath />
     </parent>
     <artifactId>org.openwms.tms.transportation</artifactId>
@@ -66,12 +66,11 @@
     </ciManagement>
 
     <properties>
-		<common.version>2.1.0-SNAPSHOT</common.version>
-        <core.units.version>0.5.1-SNAPSHOT</core.units.version>
-        <core.version>2.1.0-SNAPSHOT</core.version>
-        <guava.version>30.0-jre</guava.version>
-        <servo-core.version>0.12.21</servo-core.version>
-        <spring-cloud-dependencies.version>2021.0.8</spring-cloud-dependencies.version>
+		<common.version>3.0.0-SNAPSHOT</common.version>
+        <core.units.version>0.7.0-SNAPSHOT</core.units.version>
+        <core.version>3.0.0-SNAPSHOT</core.version>
+        <guava.version>32.0.0-jre</guava.version>
+        <spring-cloud-dependencies.version>2023.0.1</spring-cloud-dependencies.version>
     </properties>
 
     <reporting>
@@ -194,15 +193,10 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+				<!-- Clash in spring-cloud-starter-netflix-eureka-client -->
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
-            </dependency>
-            <dependency>
-                <!-- Clash in org.springframework.cloud:spring-cloud-starter-netflix-eureka-client -->
-                <groupId>com.netflix.servo</groupId>
-                <artifactId>servo-core</artifactId>
-                <version>${servo-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.openwms</groupId>
@@ -320,16 +314,6 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-sleuth</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-sleuth-zipkin</artifactId>
-            <optional>true</optional>
-        </dependency>
 
         <!-- both for retry -->
         <dependency>
@@ -349,6 +333,16 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter-brave</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- 3rd party dependencies -->

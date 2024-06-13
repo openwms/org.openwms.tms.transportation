@@ -149,7 +149,6 @@ public abstract class TransportationTestBase {
 
         //TimeUnit.SECONDS.sleep(1);
         var toLocation = (String) res.getResponse().getHeaderValue(HttpHeaders.LOCATION);
-        toLocation = toLocation.substring(0, toLocation.length() - 1);
         vo.setpKey(toLocation.substring(toLocation.lastIndexOf("/") + 1));
         return res;
     }

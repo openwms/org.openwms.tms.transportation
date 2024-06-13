@@ -15,6 +15,8 @@
  */
 package org.openwms.tms.commands;
 
+import jakarta.validation.ValidationException;
+import jakarta.validation.Validator;
 import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.ameba.exception.ServiceLayerException;
@@ -28,8 +30,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.handler.annotation.Payload;
 
-import javax.validation.ValidationException;
-import javax.validation.Validator;
 import java.util.List;
 
 import static java.lang.String.format;

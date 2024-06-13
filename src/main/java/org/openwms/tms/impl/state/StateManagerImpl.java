@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.state;
 
+import jakarta.persistence.Transient;
 import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.ameba.i18n.Translator;
@@ -28,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 
-import javax.persistence.Transient;
 import java.util.Date;
 
 import static java.lang.String.format;

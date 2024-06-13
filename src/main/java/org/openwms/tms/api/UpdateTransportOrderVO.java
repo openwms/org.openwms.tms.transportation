@@ -16,8 +16,8 @@
 package org.openwms.tms.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotEmpty;
 
-import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 /**

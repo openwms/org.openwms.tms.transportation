@@ -21,7 +21,6 @@ import org.openwms.TransportationTestBase;
 import org.openwms.common.location.api.LocationVO;
 import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.core.SpringProfiles;
-import org.openwms.tms.api.CreateTransportOrderVO;
 import org.openwms.tms.api.TMSApi;
 import org.openwms.tms.impl.state.ExternalStarter;
 import org.openwms.tms.impl.state.Startable;
@@ -32,7 +31,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -68,19 +66,19 @@ class CreateTODocumentation extends TransportationTestBase {
 
     @Test
     void testCreateTO() throws Exception {
-        MvcResult res = postTOAndValidate(createTO(), "to-create");
+        var res = postTOAndValidate(createTO(), "to-create");
         assertThat(res.getResponse().getHeaderValue(HttpHeaders.LOCATION)).isNotNull();
     }
 
     @Test
     void testCreateTOSimple() throws Exception {
-        LocationVO actualLocation = new LocationVO(INIT_LOC_STRING);
+        var actualLocation = new LocationVO(INIT_LOC_STRING);
         actualLocation.setIncomingActive(true);
         actualLocation.setOutgoingActive(true);
-        LocationVO errorLocation = new LocationVO(ERR_LOC_STRING);
+        var errorLocation = new LocationVO(ERR_LOC_STRING);
         errorLocation.setIncomingActive(true);
         errorLocation.setOutgoingActive(true);
-        TransportUnitVO tu = new TransportUnitVO(BC_4711);
+        var tu = new TransportUnitVO(BC_4711);
         tu.setActualLocation(actualLocation);
         tu.setTargetLocation(errorLocation);
 
@@ -88,7 +86,7 @@ class CreateTODocumentation extends TransportationTestBase {
         given(locationApi.findById(ERR_LOC_STRING)).willReturn(Optional.of(errorLocation));
         given(locationGroupApi.findByName(ERR_LOC_STRING)).willReturn(Optional.empty());
 
-        MvcResult res = mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
+        var res = mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
                 .param("barcode", BC_4711)
                 .param("target", ERR_LOC_STRING))
                 .andExpect(status().isCreated())
@@ -99,10 +97,10 @@ class CreateTODocumentation extends TransportationTestBase {
 
     @Test
     void testCreateTOAndGet() throws Exception {
-        CreateTransportOrderVO vo = createTO();
-        MvcResult res = postTOAndValidate(vo, NOTLOGGED);
+        var vo = createTO();
+        var res = postTOAndValidate(vo, NOTLOGGED);
 
-        String toLocation = (String) res.getResponse().getHeaderValue(HttpHeaders.LOCATION);
+        var toLocation = (String) res.getResponse().getHeaderValue(HttpHeaders.LOCATION);
         mockMvc.perform(get(toLocation))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("state", is(TransportOrderState.STARTED.toString())))
@@ -115,7 +113,7 @@ class CreateTODocumentation extends TransportationTestBase {
 
     @Test
     void testCreateTOUnknownTU() throws Exception {
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         vo.setBarcode("UNKNOWN");
         given(transportUnitApi.findTransportUnit(vo.getBarcode())).willThrow(new NotFoundException());
 
@@ -129,7 +127,7 @@ class CreateTODocumentation extends TransportationTestBase {
 
     @Test
     void testCreateTOUnknownTarget() throws Exception {
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         vo.setTarget("UNKNOWN");
         given(locationApi.findById(vo.getTarget())).willReturn(Optional.empty());
         given(locationGroupApi.findByName(vo.getTarget())).willReturn(Optional.empty());
@@ -144,19 +142,19 @@ class CreateTODocumentation extends TransportationTestBase {
 
     @Test
     void testCreateTOTargetNotAvailable() throws Exception {
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         vo.setTarget(ERR_LOC_STRING);
-        LocationVO loc = new LocationVO(ERR_LOC_STRING);
+        var loc = new LocationVO(ERR_LOC_STRING);
         loc.setIncomingActive(false);
         given(locationApi.findById(vo.getTarget())).willReturn(Optional.of(loc));
 
-        MvcResult res = mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
+        var res = mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(vo)))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        String toLocation = (String) res.getResponse().getHeaderValue(HttpHeaders.LOCATION);
+        var toLocation = (String) res.getResponse().getHeaderValue(HttpHeaders.LOCATION);
         mockMvc.perform(get(toLocation))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("state", is(TransportOrderState.INITIALIZED.toString())))
@@ -169,7 +167,7 @@ class CreateTODocumentation extends TransportationTestBase {
 
     @Test
     void testCreateTOUnknownPriority() throws Exception {
-        CreateTransportOrderVO vo = createTO();
+        var vo = createTO();
         vo.setPriority("UNKNOWN");
 
         mockMvc.perform(post(TMSApi.TRANSPORT_ORDERS)

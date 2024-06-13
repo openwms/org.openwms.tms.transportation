@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.removal;
 
+import jakarta.validation.Validator;
 import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.openwms.common.transport.api.ValidationGroups;
@@ -30,8 +31,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.util.Assert;
-
-import javax.validation.Validator;
 
 import static org.ameba.system.ValidationUtil.validate;
 

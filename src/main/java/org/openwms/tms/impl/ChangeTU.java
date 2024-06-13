@@ -15,6 +15,8 @@
  */
 package org.openwms.tms.impl;
 
+import jakarta.validation.ValidationException;
+import jakarta.validation.Validator;
 import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.openwms.common.transport.api.TransportUnitApi;
@@ -22,9 +24,6 @@ import org.openwms.common.transport.api.TransportUnitVO;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.api.ValidationGroups;
 import org.springframework.transaction.annotation.Propagation;
-
-import javax.validation.ValidationException;
-import javax.validation.Validator;
 
 /**
  * A ChangeTU is responsible to change a {@link TransportOrder}s assigned {@code TransportUnit}.

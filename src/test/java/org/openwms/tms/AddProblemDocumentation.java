@@ -15,6 +15,7 @@
  */
 package org.openwms.tms;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.openwms.TransportationTestBase;
 import org.openwms.tms.api.CreateTransportOrderVO;
@@ -23,7 +24,6 @@ import org.openwms.tms.api.TMSApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;

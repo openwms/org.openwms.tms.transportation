@@ -35,10 +35,16 @@ public interface TransportOrderMapper {
 
     List<TransportOrderVO> convertToVO(List<TransportOrder> eos);
 
-    @Mapping(target="id", source = "persistentKey")
-    @Mapping(target="transportUnitId", source = "transportUnitBK")
+    @Mapping(target = "id", source = "persistentKey")
+    @Mapping(target = "transportUnitId", source = "transportUnitBK")
     TransportOrderVO convertToVO(TransportOrder eo);
 
+    @Mapping(target = "pKey", source = "persistentKey")
+    @Mapping(target = "state", source = "state")
+    @Mapping(target = "sourceLocation", source = "sourceLocation")
+    @Mapping(target = "targetLocation", source = "targetLocation")
+    @Mapping(target = "targetLocationGroup", source = "targetLocationGroup")
+    @Mapping(target = "transportUnitBK", source = "transportUnitBK")
     TransportOrderMO convertToMO(TransportOrder eo);
 
     @Mapping(target = "persistentKey", source = "pKey")
