@@ -15,12 +15,15 @@
  */
 package org.openwms.common.transport;
 
+import org.ameba.annotation.Measured;
 import org.ameba.exception.ServiceLayerException;
 import org.openwms.common.transport.api.commands.TUCommand;
 import org.openwms.core.SpringProfiles;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import static java.lang.String.format;
@@ -46,7 +49,9 @@ public class TransportUnitEventPropagator {
         this.mapper = mapper;
     }
 
+    @Measured
     @TransactionalEventListener(fallbackExecution = true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void onEvent(TransportUnitEvent event) {
         if (event.getType() == TransportUnitEvent.TransportUnitEventType.CHANGE_TARGET) {
             amqpTemplate.convertAndSend(exchangeName, "common.tu.command.in.change-target",

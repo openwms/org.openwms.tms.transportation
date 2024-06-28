@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.events;
 
+import org.ameba.annotation.Measured;
 import org.openwms.core.SpringProfiles;
 import org.openwms.tms.TransportOrderMapper;
 import org.openwms.tms.TransportServiceEvent;
@@ -25,6 +26,8 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 /**
@@ -47,7 +50,9 @@ class TransportOrderEventPropagator {
         this.mapper = mapper;
     }
 
+    @Measured
     @TransactionalEventListener(fallbackExecution = true)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void onEvent(TransportServiceEvent event) {
         var mo = mapper.convertToMO(event.getSource());
         LOGGER.debug("Propagating event [{}]", event.getType());
