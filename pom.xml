@@ -66,6 +66,7 @@
     </ciManagement>
 
     <properties>
+        <ameba-lib.version>4.1-SNAPSHOT</ameba-lib.version>
         <common.version>3.0.0-SNAPSHOT</common.version>
         <core.units.version>0.7.0-SNAPSHOT</core.units.version>
         <core.version>3.0.0-SNAPSHOT</core.version>
