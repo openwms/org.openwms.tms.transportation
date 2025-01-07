@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2022 the original author or authors.
+ * Copyright 2005-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.openwms.tms.impl.state;
 
 import org.ameba.exception.NotFoundException;
 import org.ameba.i18n.Translator;
+import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportServiceEvent;
 import org.openwms.tms.impl.TransportOrderRepository;
 import org.slf4j.Logger;
@@ -27,19 +28,19 @@ import org.springframework.stereotype.Service;
 import static org.openwms.tms.TMSMessageCodes.TO_WITH_PK_NOT_FOUND;
 
 /**
- * A StartListener.
+ * A StartListener listens on events and call the starter when required.
  *
  * @author Heiko Scherrer
  */
-@Service
+@Service // Must not be transactional
 class StartListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StartListener.class);
-    private final TransportOrderRepository repository;
+    private final TransportOrderRepository<TransportOrder, Long> repository;
     private final Startable starter;
     private final Translator translator;
 
-    StartListener(TransportOrderRepository repository, Startable starter, Translator translator) {
+    StartListener(TransportOrderRepository<TransportOrder, Long> repository, Startable starter, Translator translator) {
         this.repository = repository;
         this.starter = starter;
         this.translator = translator;

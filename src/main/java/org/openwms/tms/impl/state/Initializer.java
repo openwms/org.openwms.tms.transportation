@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2022 the original author or authors.
+ * Copyright 2005-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.ameba.exception.NotFoundException;
 import org.openwms.common.transport.api.TransportUnitApi;
 import org.openwms.tms.StateChangeException;
 import org.openwms.tms.StateManager;
+import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportOrderState;
 import org.openwms.tms.TransportServiceEvent;
 import org.openwms.tms.impl.TransportOrderRepository;
@@ -41,12 +42,12 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRED;
 class Initializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Initializer.class);
-    private final TransportOrderRepository repository;
+    private final TransportOrderRepository<TransportOrder, Long> repository;
     private final TransportUnitApi transportUnitApi;
     private final StateManager stateManager;
     private final ApplicationContext ctx;
 
-    Initializer(TransportOrderRepository repository, TransportUnitApi transportUnitApi, StateManager stateManager, ApplicationContext ctx) {
+    Initializer(TransportOrderRepository<TransportOrder, Long> repository, TransportUnitApi transportUnitApi, StateManager stateManager, ApplicationContext ctx) {
         this.repository = repository;
         this.transportUnitApi = transportUnitApi;
         this.stateManager = stateManager;

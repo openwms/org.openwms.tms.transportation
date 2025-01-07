@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2022 the original author or authors.
+ * Copyright 2005-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.openwms.tms.impl;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.ameba.annotation.Measured;
 import org.ameba.annotation.TxService;
 import org.ameba.exception.NotFoundException;
@@ -53,13 +55,13 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationServiceImpl.class);
 
     private final Translator translator;
-    private final TransportOrderRepository repository;
+    private final TransportOrderRepository<TransportOrder, Long> repository;
     private final ApplicationContext ctx;
     private final StateManager stateManager;
     private final List<UpdateFunction> updateFunctions;
     private final List<TargetResolver<TargetVO>> targetResolvers;
 
-    TransportationServiceImpl(Translator translator, TransportOrderRepository repository, ApplicationContext ctx,
+    TransportationServiceImpl(Translator translator, TransportOrderRepository<TransportOrder, Long> repository, ApplicationContext ctx,
             StateManager stateManager, @Autowired(required = false) List<UpdateFunction> updateFunctions,
             @Autowired(required = false) List<TargetResolver<TargetVO>> targetResolvers) {
         this.translator = translator;
@@ -89,7 +91,7 @@ class TransportationServiceImpl implements TransportationService<TransportOrder>
      */
     @Override
     @Measured
-    public TransportOrder findByPKey(String pKey) {
+    public @NotNull TransportOrder findByPKey(@NotBlank String pKey) {
         return findBy(pKey);
     }
 

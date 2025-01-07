@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2022 the original author or authors.
+ * Copyright 2005-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,21 +50,20 @@ import static java.lang.String.format;
 class Starter implements Startable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Starter.class);
-    private final TransportOrderRepository repository;
+    private final TransportOrderRepository<TransportOrder, Long> repository;
     private final LocationApi locationApi;
     private final LocationGroupApi locationGroupApi;
     private final ApplicationContext ctx;
-    @Lazy
-    @Autowired(required = false)
-    private ExternalStarter externalStarter;
+    private final ExternalStarter externalStarter;
     private final StateManager stateManager;
 
-    Starter(TransportOrderRepository repository, LocationApi locationApi, LocationGroupApi locationGroupApi, ApplicationContext ctx,
-            StateManager stateManager) {
+    Starter(TransportOrderRepository<TransportOrder, Long> repository, LocationApi locationApi, LocationGroupApi locationGroupApi,
+            ApplicationContext ctx, @Lazy @Autowired(required = false) ExternalStarter externalStarter, StateManager stateManager) {
         this.repository = repository;
         this.locationApi = locationApi;
         this.locationGroupApi = locationGroupApi;
         this.ctx = ctx;
+        this.externalStarter = externalStarter;
         this.stateManager = stateManager;
     }
 
@@ -87,7 +86,7 @@ class Starter implements Startable {
     public void startNext(String transportUnitBK) {
         var transportOrders = repository.findByTransportUnitBKAndStates(transportUnitBK, TransportOrderState.INITIALIZED);
         if (!transportOrders.isEmpty()) {
-            triggerStart(transportOrders.get(0));
+            triggerStartInternal(transportOrders.getFirst());
         }
     }
 
@@ -98,6 +97,10 @@ class Starter implements Startable {
     @Measured
     @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = StateChangeException.class)
     public void triggerStart(TransportOrder to) {
+        triggerStartInternal(to);
+    }
+
+    private void triggerStartInternal(TransportOrder to) {
         if (externalStarter == null) {
             startInternal(to);
         } else {

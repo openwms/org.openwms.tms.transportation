@@ -18,6 +18,7 @@ package org.openwms.tms.impl;
 import org.openwms.tms.TransportOrder;
 import org.openwms.tms.TransportOrderState;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -29,21 +30,38 @@ import java.util.Optional;
  *
  * @author Heiko Scherrer
  */
-public interface TransportOrderRepository<T extends TransportOrder, ID extends Long> {
+interface TransportOrderJpaRepository extends TransportOrderRepository<TransportOrder, Long>, JpaRepository<TransportOrder, Long> {
 
-    T save(T to);
-
-    <S extends T> S saveAndFlush(S entity);
-
-    Optional<T> findById(ID pk);
-
+    @Query("""
+              select to 
+                from TransportOrder to 
+               where to.pKey = ?1
+               """)
     Optional<TransportOrder> findBypKey(String pKey);
 
+    @Query("""
+            select to 
+              from TransportOrder to 
+             where to.pKey in ?1
+            """)
     List<TransportOrder> findBypKeys(List<String> pKeys);
 
     List<TransportOrder> findByTargetLocation(String targetLocation);
 
+    @Query("""
+                select to 
+                  from TransportOrder to 
+                 where to.transportUnitBK = ?1 
+                   and to.state in ?2 
+              order by to.priority desc, to.startDate, to.createDt
+            """)
     List<TransportOrder> findByTransportUnitBKAndStates(String transportUnitBK, TransportOrderState... states);
 
+    @Query("""
+            select count(to) 
+              from TransportOrder to 
+             where to.transportUnitBK = :transportUnitBK 
+               and to.state = :state
+            """)
     int numberOfTransportOrders(@Param("transportUnitBK") String transportUnitBK, @Param("state") TransportOrderState state);
 }

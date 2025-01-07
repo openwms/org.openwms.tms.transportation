@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2022 the original author or authors.
+ * Copyright 2005-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,12 +52,12 @@ import static org.openwms.tms.TransportOrderState.STARTED;
 class TransportUnitRemovalHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportUnitRemovalHandler.class);
-    private final TransportOrderRepository repository;
+    private final TransportOrderRepository<TransportOrder, Long> repository;
     private final ApplicationContext ctx;
     private final List<String> blockStates;
     private final StateManager stateManager;
 
-    TransportUnitRemovalHandler(TransportOrderRepository repository,
+    TransportUnitRemovalHandler(TransportOrderRepository<TransportOrder, Long> repository,
             ApplicationContext ctx,
             @Value("${owms.tms.block-tu-deletion-states}") String cancelStartedTO, StateManager stateManager) {
         this.repository = repository;

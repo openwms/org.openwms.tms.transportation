@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2022 the original author or authors.
+ * Copyright 2005-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,23 @@
 package org.openwms.tms.impl.targets;
 
 import org.ameba.annotation.Measured;
+import org.ameba.annotation.TxService;
 import org.openwms.common.location.api.LocationGroupVO;
+import org.openwms.tms.TransportOrder;
 import org.openwms.tms.impl.TargetHandler;
 import org.openwms.tms.impl.TransportOrderRepository;
-import org.springframework.stereotype.Component;
 
 /**
  * A LocationGroupTargetHandler.
  *
  * @author Heiko Scherrer
  */
-@Component
+@TxService
 class LocationGroupTargetHandler implements TargetHandler<LocationGroupVO> {
 
-    private final TransportOrderRepository repository;
+    private final TransportOrderRepository<TransportOrder, Long> repository;
 
-    LocationGroupTargetHandler(TransportOrderRepository repository) {
+    LocationGroupTargetHandler(TransportOrderRepository<TransportOrder, Long> repository) {
         this.repository = repository;
     }
 
