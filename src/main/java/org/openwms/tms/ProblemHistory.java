@@ -15,6 +15,7 @@
  */
 package org.openwms.tms;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -22,6 +23,7 @@ import jakarta.persistence.Table;
 import org.ameba.integration.jpa.BaseEntity;
 
 import java.io.Serializable;
+import java.util.StringJoiner;
 
 /**
  * A ProblemHistory stores an occurred problem, in form of {@code Message}, recorded on {@code TransportOrder}.
@@ -35,7 +37,7 @@ public class ProblemHistory extends BaseEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "C_FK_TO")
     private TransportOrder transportOrder;
-    @JoinColumn(name = "C_FK_MSG")
+    @Embedded
     private Message problem;
 
     /** Dear JPA ... */
@@ -69,5 +71,13 @@ public class ProblemHistory extends BaseEntity implements Serializable {
      */
     public TransportOrder getTransportOrder() {
         return transportOrder;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", ProblemHistory.class.getSimpleName() + "[", "]")
+                .add("transportOrderPKey=" + transportOrder.getPersistentKey())
+                .add("problem=" + problem)
+                .toString();
     }
 }
