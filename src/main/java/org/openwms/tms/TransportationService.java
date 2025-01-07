@@ -15,6 +15,9 @@
  */
 package org.openwms.tms;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -43,7 +46,7 @@ public interface TransportationService<T extends TransportOrder> {
      * @return An {@link TransportOrder} instance
      * @throws org.ameba.exception.NotFoundException if no entity was found
      */
-    T findByPKey(String pKey);
+    @NotNull T findByPKey(@NotBlank String pKey);
 
     /**
      * Returns the number of {@link TransportOrder}s that have the {@code target} as target and are in one of the {@code states}.

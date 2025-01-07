@@ -33,7 +33,7 @@ import java.util.List;
  */
 @Transactional
 @Component
-public class TransportationFacade implements TransportOrderApi {
+class TransportationFacade implements TransportOrderApi {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransportationFacade.class);
     private final TransportOrderMapper mapper;
