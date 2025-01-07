@@ -65,11 +65,11 @@ class StateManagerImpl implements StateManager {
 <span class="pc bpc" id="L65" title="1 of 2 branches missed.">        if (newState == null) {</span>
 <span class="nc" id="L66">            throw new StateChangeException(translator, TMSMessageCodes.TO_STATE_CHANGE_NULL_STATE, transportOrder.getPersistentKey());</span>
         }
-<span class="pc bpc" id="L68" title="1 of 2 branches missed.">        if (state.compareTo(newState) &gt; 0) {</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        if (state.compareTo(newState) &gt; 0) {</span>
             // Don't allow to turn back the state!
-<span class="nc" id="L70">            throw new StateChangeException(translator, TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED, transportOrder.getPersistentKey());</span>
+<span class="fc" id="L70">            throw new StateChangeException(translator, TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED, transportOrder.getPersistentKey());</span>
         }
-<span class="pc bpc" id="L72" title="3 of 5 branches missed.">        switch (state) {</span>
+<span class="pc bpc" id="L72" title="1 of 5 branches missed.">        switch (state) {</span>
             case CREATED -&gt; {
 <span class="pc bpc" id="L74" title="3 of 4 branches missed.">                if (newState != INITIALIZED &amp;&amp; newState != CANCELED) {</span>
 <span class="nc" id="L75">                    throw new StateChangeException(</span>
@@ -102,11 +102,11 @@ class StateManagerImpl implements StateManager {
 <span class="fc" id="L102">                LOGGER.debug(&quot;Current state is [{}], new state is [{}], # of started is [{}]&quot;, state, newState,</span>
 <span class="fc" id="L103">                        repo.numberOfTransportOrders(transportOrder.getTransportUnitBK(), STARTED));</span>
 <span class="fc" id="L104">            }</span>
-<span class="nc" id="L105">            case STARTED -&gt; { /* All fine here. */ }</span>
-<span class="nc" id="L106">            case FINISHED, ONFAILURE, CANCELED -&gt; throw new StateChangeException(</span>
+<span class="fc" id="L105">            case STARTED -&gt; { /* All fine here. */ }</span>
+<span class="fc" id="L106">            case FINISHED, ONFAILURE, CANCELED -&gt; throw new StateChangeException(</span>
                     translator,
                     TMSMessageCodes.TO_STATE_CHANGE_BACKWARDS_NOT_ALLOWED,
-<span class="nc" id="L109">                    transportOrder.getPersistentKey()</span>
+<span class="fc" id="L109">                    transportOrder.getPersistentKey()</span>
             );
 <span class="nc" id="L111">            default -&gt; throw new IllegalStateException(format(&quot;State not managed: [%s]&quot;, state));</span>
         }

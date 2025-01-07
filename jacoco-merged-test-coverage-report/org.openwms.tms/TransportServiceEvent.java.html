@@ -60,14 +60,14 @@ public final class TransportServiceEvent extends ApplicationEvent implements Ser
 <span class="fc" id="L60">        TRANSPORT_FINISHED;</span>
 
         public static TYPE of(TransportOrderState requestedState) {
-<span class="pc bpc" id="L63" title="6 of 8 branches missed.">            return switch (requestedState) {</span>
+<span class="pc bpc" id="L63" title="4 of 8 branches missed.">            return switch (requestedState) {</span>
 <span class="nc" id="L64">                case CREATED -&gt; TRANSPORT_CREATED;</span>
 <span class="nc" id="L65">                case INITIALIZED -&gt; INITIALIZED;</span>
-<span class="nc" id="L66">                case STARTED -&gt; STARTED;</span>
+<span class="fc" id="L66">                case STARTED -&gt; STARTED;</span>
 <span class="nc" id="L67">                case INTERRUPTED -&gt; TRANSPORT_INTERRUPTED;</span>
 <span class="fc" id="L68">                case CANCELED -&gt; TRANSPORT_CANCELED;</span>
 <span class="fc" id="L69">                case ONFAILURE -&gt; TRANSPORT_ONFAILURE;</span>
-<span class="nc" id="L70">                case FINISHED -&gt; TRANSPORT_FINISHED;</span>
+<span class="fc" id="L70">                case FINISHED -&gt; TRANSPORT_FINISHED;</span>
 <span class="nc" id="L71">                default -&gt; throw new IllegalStateException(format(&quot;The state [%s] is not supported&quot;, requestedState));</span>
             };
         }

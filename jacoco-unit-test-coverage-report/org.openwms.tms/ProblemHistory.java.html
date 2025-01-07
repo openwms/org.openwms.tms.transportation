@@ -15,6 +15,7 @@
  */
 package org.openwms.tms;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -22,6 +23,7 @@ import jakarta.persistence.Table;
 import org.ameba.integration.jpa.BaseEntity;
 
 import java.io.Serializable;
+import java.util.StringJoiner;
 
 /**
  * A ProblemHistory stores an occurred problem, in form of {@code Message}, recorded on {@code TransportOrder}.
@@ -35,12 +37,12 @@ public class ProblemHistory extends BaseEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = &quot;C_FK_TO&quot;)
     private TransportOrder transportOrder;
-    @JoinColumn(name = &quot;C_FK_MSG&quot;)
+    @Embedded
     private Message problem;
 
     /** Dear JPA ... */
-<span class="nc" id="L42">    protected ProblemHistory() {</span>
-<span class="nc" id="L43">    }</span>
+<span class="nc" id="L44">    protected ProblemHistory() {</span>
+<span class="nc" id="L45">    }</span>
 
     /**
      * Full constructor.
@@ -48,10 +50,10 @@ public class ProblemHistory extends BaseEntity implements Serializable {
      * @param transportOrder The TO this problem initially occurred
      * @param problem The problem itself
      */
-<span class="nc" id="L51">    public ProblemHistory(TransportOrder transportOrder, Message problem) {</span>
-<span class="nc" id="L52">        this.transportOrder = transportOrder;</span>
-<span class="nc" id="L53">        this.problem = problem;</span>
-<span class="nc" id="L54">    }</span>
+<span class="nc" id="L53">    public ProblemHistory(TransportOrder transportOrder, Message problem) {</span>
+<span class="nc" id="L54">        this.transportOrder = transportOrder;</span>
+<span class="nc" id="L55">        this.problem = problem;</span>
+<span class="nc" id="L56">    }</span>
 
     /**
      * Get the problem.
@@ -59,7 +61,7 @@ public class ProblemHistory extends BaseEntity implements Serializable {
      * @return The problem
      */
     public Message getProblem() {
-<span class="nc" id="L62">        return problem;</span>
+<span class="nc" id="L64">        return problem;</span>
     }
 
     /**
@@ -68,7 +70,15 @@ public class ProblemHistory extends BaseEntity implements Serializable {
      * @return The transportOrder
      */
     public TransportOrder getTransportOrder() {
-<span class="nc" id="L71">        return transportOrder;</span>
+<span class="nc" id="L73">        return transportOrder;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L78">        return new StringJoiner(&quot;, &quot;, ProblemHistory.class.getSimpleName() + &quot;[&quot;, &quot;]&quot;)</span>
+<span class="nc" id="L79">                .add(&quot;transportOrderPKey=&quot; + transportOrder.getPersistentKey())</span>
+<span class="nc" id="L80">                .add(&quot;problem=&quot; + problem)</span>
+<span class="nc" id="L81">                .toString();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

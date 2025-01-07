@@ -115,8 +115,8 @@ class TransportationController extends AbstractWebController {
             @PathVariable(&quot;pKey&quot;) String pKey,
             @RequestParam(&quot;state&quot;) String state) {
         try {
-<span class="nc" id="L118">            transportationFacade.changeState(pKey, state);</span>
-<span class="nc" id="L119">            return ResponseEntity.noContent().build();</span>
+<span class="fc" id="L118">            transportationFacade.changeState(pKey, state);</span>
+<span class="fc" id="L119">            return ResponseEntity.noContent().build();</span>
 <span class="fc" id="L120">        } catch (StateChangeException sce) {</span>
 <span class="fc" id="L121">            throw sce;</span>
 <span class="nc" id="L122">        } catch (Exception ex) {</span>

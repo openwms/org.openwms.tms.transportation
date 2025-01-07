@@ -84,12 +84,12 @@ class TransportationFacade implements TransportOrderApi {
 <span class="fc" id="L84">                TransportOrderState.valueOf(state),</span>
                 null
         );
-<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        if (!failures.isEmpty()) {</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (!failures.isEmpty()) {</span>
 <span class="fc" id="L88">            LOGGER.error(&quot;Failed to changed TransportOrders [{}]&quot;, failures.toArray());</span>
 <span class="fc" id="L89">            var message = failures.iterator().next();</span>
 <span class="fc" id="L90">            throw new StateChangeException(message.getMessageText(), message.getMessageNo(), message.getpKey());</span>
         }
-<span class="nc" id="L92">    }</span>
+<span class="fc" id="L92">    }</span>
 
     /**
      * {@inheritDoc}
