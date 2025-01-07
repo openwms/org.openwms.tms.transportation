@@ -1,5 +1,5 @@
 /*
- * Copyright 2005-2022 the original author or authors.
+ * Copyright 2005-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.openwms.tms;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
+import com.tngtech.archunit.junit.CacheMode;
 import com.tngtech.archunit.lang.ArchRule;
 import org.ameba.annotation.TxService;
 import org.slf4j.Logger;
@@ -31,20 +32,24 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
 /**
- * A EnsureArchitectureIT.
+ * A EnsureArchitectureTest.
  *
  * @author Heiko Scherrer
  */
-@AnalyzeClasses(packages = "org.openwms.tms", importOptions = {ImportOption.DoNotIncludeTests.class})
-class EnsureArchitectureIT {
+@AnalyzeClasses(packages = "org.openwms.tms", cacheMode = CacheMode.PER_CLASS, importOptions = {
+        ImportOption.DoNotIncludeTests.class,
+        ImportOption.DoNotIncludeJars.class,
+        ImportOption.DoNotIncludeArchives.class
+})
+class EnsureArchitectureTest {
 
     @ArchTest
     public static final ArchRule verify_logger_definition =
-        fields().that().haveRawType(Logger.class)
-                .should().bePrivate()
-                .andShould().beStatic()
-                .andShould().beFinal()
-                .because("This a an agreed convention")
+            fields().that().haveRawType(Logger.class)
+                    .should().bePrivate()
+                    .andShould().beStatic()
+                    .andShould().beFinal()
+                    .because("This a an agreed convention")
             ;
 
     @ArchTest
@@ -53,7 +58,13 @@ class EnsureArchitectureIT {
                     .resideInAPackage("..tms.api..")
                     .should()
                     .onlyDependOnClassesThat()
-                    .resideInAnyPackage("..tms.api..", "org.openwms.core..", "org.openwms.common..", "java..", "javax..", "com..", "org.springframework..")
+                    .resideInAnyPackage("..tms.api..",
+                            "org.openwms.common..",
+                            "org.openwms.core..",
+                            "java..", "javax..", "jakarta..",
+                            "org.springframework..",
+                            "com.."
+                    )
                     .because("The API package is separated and the only package accessible by the client")
             ;
 
@@ -75,16 +86,25 @@ class EnsureArchitectureIT {
             classes().that()
                     .areAnnotatedWith(Repository.class)
                     .or()
-                    .areAssignableFrom(JpaRepository.class)
+                    .areAssignableTo(JpaRepository.class)
                     .should()
-                    .bePackagePrivate()
-                    .andShould()
                     .onlyHaveDependentClassesThat()
                     .areAnnotatedWith(TxService.class)
                     .orShould()
                     .onlyHaveDependentClassesThat()
                     .areAnnotatedWith(Transactional.class)
-                    .because("A Repository must only be access in a transaction context")
+                    .because("A Repository must only be accessed in a transaction context")
+            ;
+
+    @ArchTest
+    public static final ArchRule verify_repositories_are_package_private =
+            classes().that()
+                    .areAnnotatedWith(Repository.class)
+                    .or()
+                    .areAssignableTo(JpaRepository.class)
+                    .should()
+                    .bePackagePrivate()
+                    .because("A Repository must only be accessed by a service")
             ;
 
     @ArchTest
