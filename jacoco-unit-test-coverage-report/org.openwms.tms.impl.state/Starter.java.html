@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Starter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.impl.state</a> &gt; <span class="el_source">Starter.java</span></div><h1>Starter.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2005-2025 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.openwms.tms.impl.state;
+
+import org.ameba.annotation.Measured;
+import org.ameba.annotation.TxService;
+import org.ameba.exception.NotFoundException;
+import org.openwms.common.location.LocationPK;
+import org.openwms.common.location.api.LocationApi;
+import org.openwms.common.location.api.LocationGroupApi;
+import org.openwms.common.location.api.LocationGroupVO;
+import org.openwms.common.location.api.LocationVO;
+import org.openwms.tms.StateChangeException;
+import org.openwms.tms.StateManager;
+import org.openwms.tms.TransportOrder;
+import org.openwms.tms.TransportOrderState;
+import org.openwms.tms.TransportServiceEvent;
+import org.openwms.tms.impl.TransportOrderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+import static java.lang.String.format;
+
+/**
+ * A Starter.
+ *
+ * @author Heiko Scherrer
+ */
+@TxService
+class Starter implements Startable {
+
+<span class="nc" id="L52">    private static final Logger LOGGER = LoggerFactory.getLogger(Starter.class);</span>
+    private final TransportOrderRepository&lt;TransportOrder, Long&gt; repository;
+    private final LocationApi locationApi;
+    private final LocationGroupApi locationGroupApi;
+    private final ApplicationContext ctx;
+    private final ExternalStarter externalStarter;
+    private final StateManager stateManager;
+
+    Starter(TransportOrderRepository&lt;TransportOrder, Long&gt; repository, LocationApi locationApi, LocationGroupApi locationGroupApi,
+<span class="nc" id="L61">            ApplicationContext ctx, @Lazy @Autowired(required = false) ExternalStarter externalStarter, StateManager stateManager) {</span>
+<span class="nc" id="L62">        this.repository = repository;</span>
+<span class="nc" id="L63">        this.locationApi = locationApi;</span>
+<span class="nc" id="L64">        this.locationGroupApi = locationGroupApi;</span>
+<span class="nc" id="L65">        this.ctx = ctx;</span>
+<span class="nc" id="L66">        this.externalStarter = externalStarter;</span>
+<span class="nc" id="L67">        this.stateManager = stateManager;</span>
+<span class="nc" id="L68">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Measured
+    @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = StateChangeException.class)
+    public void start(String pKey) {
+<span class="nc" id="L77">        this.startInternal(repository.findBypKey(pKey).orElseThrow(() -&gt; new NotFoundException(format(&quot;No TransportOrder with pKey [%s] found&quot;, pKey))));</span>
+<span class="nc" id="L78">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Measured
+    @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = StateChangeException.class)
+    public void startNext(String transportUnitBK) {
+<span class="nc" id="L87">        var transportOrders = repository.findByTransportUnitBKAndStates(transportUnitBK, TransportOrderState.INITIALIZED);</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if (!transportOrders.isEmpty()) {</span>
+<span class="nc" id="L89">            triggerStartInternal(transportOrders.getFirst());</span>
+        }
+<span class="nc" id="L91">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Measured
+    @Transactional(propagation = Propagation.REQUIRED, noRollbackFor = StateChangeException.class)
+    public void triggerStart(TransportOrder to) {
+<span class="nc" id="L100">        triggerStartInternal(to);</span>
+<span class="nc" id="L101">    }</span>
+
+    private void triggerStartInternal(TransportOrder to) {
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (externalStarter == null) {</span>
+<span class="nc" id="L105">            startInternal(to);</span>
+        } else {
+<span class="nc" id="L107">            externalStarter.request(to.getPersistentKey());</span>
+        }
+<span class="nc" id="L109">    }</span>
+
+    /**
+     * Call to start the {@link TransportOrder} identified by the information of {@code to}.
+     *
+     * @param to At last one of the targets must be present as well as the referring TransportUnitID
+     * @throws NotFoundException If input parameters are not valid
+     * @throws StateChangeException If it is not allowed to change the TransportOrders state
+     */
+    private void startInternal(TransportOrder to) {
+<span class="nc" id="L119">        LOGGER.debug(&quot;&gt; Request to start the TransportOrder with PKey [{}]&quot;, to.getPersistentKey());</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        var lg = to.hasTargetLocationGroup()</span>
+<span class="nc" id="L121">                ? Optional.&lt;LocationGroupVO&gt;empty()</span>
+<span class="nc" id="L122">                : locationGroupApi.findByName(to.getTargetLocationGroup());</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">        var loc = LocationPK.isValid(to.getTargetLocation())</span>
+<span class="nc" id="L124">                ? locationApi.findById(to.getTargetLocation())</span>
+<span class="nc" id="L125">                : Optional.&lt;LocationVO&gt;empty();</span>
+<span class="nc bnc" id="L126" title="All 4 branches missed.">        if (lg.isEmpty() &amp;&amp; loc.isEmpty()) {</span>
+            // At least one target must be set
+<span class="nc" id="L128">            throw new NotFoundException(&quot;Neither a valid target LocationGroup nor a Location are set, hence it is not possible to start the TransportOrder&quot;);</span>
+        }
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (lg.isPresent()) {</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">            if (lg.get().isInfeedBlocked()) {</span>
+<span class="nc" id="L132">                throw new StateChangeException(&quot;Cannot start the TransportOrder because TargetLocationGroup is blocked&quot;);</span>
+            }
+<span class="nc" id="L134">            to.setTargetLocationGroup(lg.get().asString());</span>
+        } else {
+<span class="nc" id="L136">            to.setTargetLocationGroup(null);</span>
+        }
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        if (loc.isPresent()) {</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">            if (loc.get().isInfeedBlocked()) {</span>
+<span class="nc" id="L140">                throw new StateChangeException(&quot;Cannot start the TransportOrder because TargetLocation is blocked&quot;);</span>
+            }
+<span class="nc" id="L142">            to.setTargetLocation(loc.get().asString());</span>
+        } else {
+<span class="nc" id="L144">            to.setTargetLocation(null);</span>
+        }
+
+<span class="nc" id="L147">        var others = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.STARTED);</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        if (!others.isEmpty()) {</span>
+<span class="nc" id="L149">            throw new StateChangeException(format(&quot;Cannot start TransportOrder for TransportUnit [%s] because [%s] TransportOrders already started [%s]&quot;, to.getTransportUnitBK(), others.size(), others.get(0).getPersistentKey()));</span>
+        }
+<span class="nc" id="L151">        to.changeState(stateManager, TransportOrderState.STARTED);</span>
+<span class="nc" id="L152">        repository.save(to);</span>
+<span class="nc" id="L153">        LOGGER.info(&quot;TransportOrder for TransportUnit with Barcode [{}] STARTED at [{}]. Persisted key is [{}]&quot;, to.getTransportUnitBK(), to.getStartDate(), to.getPk());</span>
+<span class="nc" id="L154">        ctx.publishEvent(new TransportServiceEvent(to, TransportServiceEvent.TYPE.STARTED));</span>
+<span class="nc" id="L155">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

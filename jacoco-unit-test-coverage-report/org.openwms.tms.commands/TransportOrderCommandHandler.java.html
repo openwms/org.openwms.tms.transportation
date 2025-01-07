@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransportOrderCommandHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.commands</a> &gt; <span class="el_source">TransportOrderCommandHandler.java</span></div><h1>TransportOrderCommandHandler.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2005-2025 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.openwms.tms.commands;
+
+import jakarta.validation.ValidationException;
+import jakarta.validation.Validator;
+import org.ameba.annotation.Measured;
+import org.ameba.annotation.TxService;
+import org.ameba.exception.ServiceLayerException;
+import org.openwms.core.SpringProfiles;
+import org.openwms.tms.TransportOrderMapper;
+import org.openwms.tms.TransportOrderState;
+import org.openwms.tms.TransportationService;
+import org.openwms.tms.api.TOCommand;
+import org.openwms.tms.api.ValidationGroups;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.annotation.Profile;
+import org.springframework.messaging.handler.annotation.Payload;
+
+import java.util.List;
+
+import static java.lang.String.format;
+
+/**
+ * A TransportOrderCommandHandler.
+ *
+ * @author Heiko Scherrer
+ */
+@Profile(SpringProfiles.ASYNCHRONOUS_PROFILE)
+@TxService
+class TransportOrderCommandHandler {
+
+    private final TransportationService service;
+    private final Validator validator;
+    private final TransportOrderMapper mapper;
+
+<span class="nc" id="L50">    TransportOrderCommandHandler(TransportationService service, Validator validator, TransportOrderMapper mapper) {</span>
+<span class="nc" id="L51">        this.service = service;</span>
+<span class="nc" id="L52">        this.validator = validator;</span>
+<span class="nc" id="L53">        this.mapper = mapper;</span>
+<span class="nc" id="L54">    }</span>
+
+    @Measured
+    @RabbitListener(queues = &quot;${owms.commands.tms.to.queue-name}&quot;)
+    void receive(@Payload TOCommand command) {
+<span class="nc bnc" id="L59" title="All 5 branches missed.">        switch (command.getType()) {</span>
+            case CREATE -&gt; {
+<span class="nc" id="L61">                validate(command.getCreateTransportOrder(), ValidationGroups.OrderCreation.class);</span>
+<span class="nc" id="L62">                service.create(command.getCreateTransportOrder().getBarcode(), command.getCreateTransportOrder().getTarget(),</span>
+<span class="nc" id="L63">                        command.getCreateTransportOrder().getPriority());</span>
+<span class="nc" id="L64">            }</span>
+            case CHANGE_TARGET -&gt; {
+<span class="nc" id="L66">                validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);</span>
+<span class="nc" id="L67">                service.update(mapper.convertToEO(command.getUpdateTransportOrder()));</span>
+<span class="nc" id="L68">            }</span>
+            case FINISH -&gt; {
+<span class="nc" id="L70">                validate(command.getUpdateTransportOrder(), ValidationGroups.OrderUpdate.class);</span>
+<span class="nc" id="L71">                service.change(TransportOrderState.FINISHED, List.of(command.getUpdateTransportOrder().getpKey()));</span>
+<span class="nc" id="L72">            }</span>
+            case CANCEL_ALL -&gt; {
+<span class="nc" id="L74">                var vo = command.getUpdateTransportOrder();</span>
+<span class="nc" id="L75">                var msg = mapper.convertToEO(vo.getProblem());</span>
+<span class="nc" id="L76">                service.change(vo.getBarcode(), TransportOrderState.INITIALIZED, TransportOrderState.CANCELED, msg);</span>
+<span class="nc" id="L77">                service.change(vo.getBarcode(), TransportOrderState.STARTED, TransportOrderState.CANCELED, msg);</span>
+<span class="nc" id="L78">            }</span>
+<span class="nc" id="L79">            default -&gt; throw new ServiceLayerException(format(&quot;Operation [%s] of TOCommand not supported&quot;, command.getType()));</span>
+        }
+<span class="nc" id="L81">    }</span>
+
+    private &lt;T&gt; void validate(T to, Class&lt;?&gt;... clazz) {
+<span class="nc" id="L84">        var violations = validator.validate(to, clazz);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        if (!violations.isEmpty()) {</span>
+<span class="nc" id="L86">            var violation = violations.iterator().next();</span>
+<span class="nc" id="L87">            throw new ValidationException(String.format(&quot;Violation error [%s], property [%s]&quot;, violation.getMessage(),</span>
+<span class="nc" id="L88">                    violation.getPropertyPath()));</span>
+        }
+<span class="nc" id="L90">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,2 +1,0 @@
-tms_transport_order
-tms_problem_history

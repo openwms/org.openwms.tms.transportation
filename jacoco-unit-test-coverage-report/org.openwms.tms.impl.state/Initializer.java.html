@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Initializer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.impl.state</a> &gt; <span class="el_source">Initializer.java</span></div><h1>Initializer.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2005-2025 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.openwms.tms.impl.state;
+
+import org.ameba.annotation.TxService;
+import org.ameba.exception.NotFoundException;
+import org.openwms.common.transport.api.TransportUnitApi;
+import org.openwms.tms.StateChangeException;
+import org.openwms.tms.StateManager;
+import org.openwms.tms.TransportOrder;
+import org.openwms.tms.TransportOrderState;
+import org.openwms.tms.TransportServiceEvent;
+import org.openwms.tms.impl.TransportOrderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.EventListener;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.springframework.transaction.annotation.Propagation.REQUIRED;
+
+/**
+ * A Initializer.
+ *
+ * @author Heiko Scherrer
+ */
+@TxService(propagation = Propagation.REQUIRED)
+class Initializer {
+
+<span class="nc" id="L44">    private static final Logger LOGGER = LoggerFactory.getLogger(Initializer.class);</span>
+    private final TransportOrderRepository&lt;TransportOrder, Long&gt; repository;
+    private final TransportUnitApi transportUnitApi;
+    private final StateManager stateManager;
+    private final ApplicationContext ctx;
+
+<span class="nc" id="L50">    Initializer(TransportOrderRepository&lt;TransportOrder, Long&gt; repository, TransportUnitApi transportUnitApi, StateManager stateManager, ApplicationContext ctx) {</span>
+<span class="nc" id="L51">        this.repository = repository;</span>
+<span class="nc" id="L52">        this.transportUnitApi = transportUnitApi;</span>
+<span class="nc" id="L53">        this.stateManager = stateManager;</span>
+<span class="nc" id="L54">        this.ctx = ctx;</span>
+<span class="nc" id="L55">    }</span>
+
+    /**
+     * Handle an application event.
+     *
+     * @param event the event to respond to
+     */
+    @EventListener
+    @Transactional(propagation = REQUIRED, noRollbackFor = StateChangeException.class)
+    public void onEvent(final TransportServiceEvent event) {
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (event.getType() == TransportServiceEvent.TYPE.TRANSPORT_CREATED) {</span>
+<span class="nc" id="L66">            var to = repository.findById(event.getSource().getPk()).orElseThrow(NotFoundException::new);</span>
+<span class="nc" id="L67">            var transportOrders = repository.findByTransportUnitBKAndStates(to.getTransportUnitBK(), TransportOrderState.CREATED);</span>
+<span class="nc" id="L68">            transportOrders.sort(new TransportStartComparator());</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">            for (var transportOrder : transportOrders) {</span>
+                try {
+<span class="nc" id="L71">                    transportOrder</span>
+<span class="nc" id="L72">                            .changeState(stateManager, TransportOrderState.INITIALIZED)</span>
+<span class="nc" id="L73">                            .setSourceLocation(</span>
+<span class="nc" id="L74">                                    transportUnitApi.findTransportUnit(transportOrder.getTransportUnitBK()).getActualLocation().getLocationId()</span>
+                            );
+<span class="nc" id="L76">                    transportOrder = repository.save(transportOrder);</span>
+<span class="nc" id="L77">                    LOGGER.debug(&quot;TransportOrder with pKey [{}] INITIALIZED&quot;, transportOrder.getPersistentKey());</span>
+<span class="nc" id="L78">                } catch (StateChangeException sce) {</span>
+<span class="nc" id="L79">                    LOGGER.warn(&quot;Could not initialize TransportOrder with pKey [{}]. Message: [{}]&quot;, transportOrder.getPersistentKey(), sce.getMessage());</span>
+<span class="nc" id="L80">                    continue;</span>
+<span class="nc" id="L81">                }</span>
+                try {
+<span class="nc" id="L83">                    ctx.publishEvent(new TransportServiceEvent(transportOrder, TransportServiceEvent.TYPE.INITIALIZED));</span>
+<span class="nc" id="L84">                } catch (StateChangeException sce) {</span>
+<span class="nc" id="L85">                    LOGGER.warn(&quot;Post-processing of TransportOrder with pKey [{}] failed with message: [{}]&quot;, transportOrder.getPersistentKey(), sce.getMessage());</span>
+<span class="nc" id="L86">                }</span>
+<span class="nc" id="L87">            }</span>
+        }
+<span class="nc" id="L89">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

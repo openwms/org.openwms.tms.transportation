@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransportServiceEvent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms</a> &gt; <span class="el_source">TransportServiceEvent.java</span></div><h1>TransportServiceEvent.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2005-2025 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.openwms.tms;
+
+import org.springframework.context.ApplicationEvent;
+
+import java.io.Serializable;
+
+import static java.lang.String.format;
+
+/**
+ * A TransportServiceEvent.
+ *
+ * @author &lt;a href=&quot;mailto:russelltina@users.sourceforge.net&quot;&gt;Tina Russell&lt;/a&gt;
+ */
+public final class TransportServiceEvent extends ApplicationEvent implements Serializable {
+
+    private TYPE type;
+
+    /**
+     * All possible types of this event.
+     *
+     * @author &lt;a href=&quot;mailto:russelltina@users.sourceforge.net&quot;&gt;Tina Russell&lt;/a&gt;
+     * @author Heiko Scherrer
+     */
+<span class="fc" id="L39">    public enum TYPE {</span>
+
+        /** A TransportOrder has been created. */
+<span class="fc" id="L42">        TRANSPORT_CREATED,</span>
+
+        /** TransportOrder has been initialized. */
+<span class="fc" id="L45">        INITIALIZED,</span>
+
+        /** TransportOrder has been started. */
+<span class="fc" id="L48">        STARTED,</span>
+
+        /** A TransportOrder was interrupted. */
+<span class="fc" id="L51">        TRANSPORT_INTERRUPTED,</span>
+
+        /** A TransportOrder was set on failure. */
+<span class="fc" id="L54">        TRANSPORT_ONFAILURE,</span>
+
+        /** A TransportOrder was canceled. */
+<span class="fc" id="L57">        TRANSPORT_CANCELED,</span>
+
+        /** A TransportOrder was finished. */
+<span class="fc" id="L60">        TRANSPORT_FINISHED;</span>
+
+        public static TYPE of(TransportOrderState requestedState) {
+<span class="pc bpc" id="L63" title="6 of 8 branches missed.">            return switch (requestedState) {</span>
+<span class="nc" id="L64">                case CREATED -&gt; TRANSPORT_CREATED;</span>
+<span class="nc" id="L65">                case INITIALIZED -&gt; INITIALIZED;</span>
+<span class="nc" id="L66">                case STARTED -&gt; STARTED;</span>
+<span class="nc" id="L67">                case INTERRUPTED -&gt; TRANSPORT_INTERRUPTED;</span>
+<span class="fc" id="L68">                case CANCELED -&gt; TRANSPORT_CANCELED;</span>
+<span class="fc" id="L69">                case ONFAILURE -&gt; TRANSPORT_ONFAILURE;</span>
+<span class="nc" id="L70">                case FINISHED -&gt; TRANSPORT_FINISHED;</span>
+<span class="nc" id="L71">                default -&gt; throw new IllegalStateException(format(&quot;The state [%s] is not supported&quot;, requestedState));</span>
+            };
+        }
+    }
+
+
+    /**
+     * Create a new RootApplicationEvent.
+     *
+     * @param source Event source
+     */
+    public TransportServiceEvent(TransportOrder source) {
+<span class="nc" id="L83">        super(source);</span>
+<span class="nc" id="L84">    }</span>
+
+    /**
+     * Create a new TransportServiceEvent.
+     *
+     * @param source Event source
+     * @param type Event type
+     */
+    public TransportServiceEvent(TransportOrder source, TYPE type) {
+<span class="fc" id="L93">        super(source);</span>
+<span class="fc" id="L94">        this.type = type;</span>
+<span class="fc" id="L95">    }</span>
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TransportOrder getSource() {
+<span class="fc" id="L102">        return (TransportOrder) super.getSource();</span>
+    }
+
+    /**
+     * Return the type of event.
+     *
+     * @return The event type
+     */
+    public TYPE getType() {
+<span class="fc" id="L111">        return type;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

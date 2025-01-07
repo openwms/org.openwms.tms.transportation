@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransportOrderMapperImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms</a> &gt; <span class="el_source">TransportOrderMapperImpl.java</span></div><h1>TransportOrderMapperImpl.java</h1><pre class="source lang-java linenums">package org.openwms.tms;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.processing.Generated;
+import org.openwms.tms.api.CreateTransportOrderVO;
+import org.openwms.tms.api.MessageVO;
+import org.openwms.tms.api.TransportOrderVO;
+import org.openwms.tms.api.UpdateTransportOrderVO;
+import org.openwms.tms.api.messages.TransportOrderMO;
+import org.springframework.stereotype.Component;
+
+@Generated(
+    value = &quot;org.mapstruct.ap.MappingProcessor&quot;
+)
+@Component
+<span class="fc" id="L17">public class TransportOrderMapperImpl implements TransportOrderMapper {</span>
+
+    @Override
+    public List&lt;TransportOrderVO&gt; convertToVO(List&lt;TransportOrder&gt; eos) {
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        if ( eos == null ) {</span>
+<span class="nc" id="L22">            return null;</span>
+        }
+
+<span class="fc" id="L25">        List&lt;TransportOrderVO&gt; list = new ArrayList&lt;TransportOrderVO&gt;( eos.size() );</span>
+<span class="fc bfc" id="L26" title="All 2 branches covered.">        for ( TransportOrder transportOrder : eos ) {</span>
+<span class="fc" id="L27">            list.add( convertToVO( transportOrder ) );</span>
+<span class="fc" id="L28">        }</span>
+
+<span class="fc" id="L30">        return list;</span>
+    }
+
+    @Override
+    public TransportOrderVO convertToVO(TransportOrder eo) {
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if ( eo == null ) {</span>
+<span class="nc" id="L36">            return null;</span>
+        }
+
+<span class="fc" id="L39">        TransportOrderVO transportOrderVO = new TransportOrderVO();</span>
+
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">        if ( eo.hasPersistentKey() ) {</span>
+<span class="fc" id="L42">            transportOrderVO.setId( eo.getPersistentKey() );</span>
+        }
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        if ( eo.hasTransportUnitBK() ) {</span>
+<span class="fc" id="L45">            transportOrderVO.setTransportUnitId( eo.getTransportUnitBK() );</span>
+        }
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">        if ( eo.getState() != null ) {</span>
+<span class="fc" id="L48">            transportOrderVO.setState( eo.getState().name() );</span>
+        }
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">        if ( eo.getPriority() != null ) {</span>
+<span class="fc" id="L51">            transportOrderVO.setPriority( eo.getPriority().name() );</span>
+        }
+<span class="fc" id="L53">        transportOrderVO.setSourceLocation( eo.getSourceLocation() );</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if ( eo.hasTargetLocation() ) {</span>
+<span class="fc" id="L55">            transportOrderVO.setTargetLocation( eo.getTargetLocation() );</span>
+        }
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        if ( eo.hasTargetLocationGroup() ) {</span>
+<span class="nc" id="L58">            transportOrderVO.setTargetLocationGroup( eo.getTargetLocationGroup() );</span>
+        }
+
+<span class="fc" id="L61">        return transportOrderVO;</span>
+    }
+
+    @Override
+    public TransportOrderMO convertToMO(TransportOrder eo) {
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        if ( eo == null ) {</span>
+<span class="nc" id="L67">            return null;</span>
+        }
+
+<span class="nc" id="L70">        TransportOrderMO transportOrderMO = new TransportOrderMO();</span>
+
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if ( eo.hasPersistentKey() ) {</span>
+<span class="nc" id="L73">            transportOrderMO.setpKey( eo.getPersistentKey() );</span>
+        }
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        if ( eo.getState() != null ) {</span>
+<span class="nc" id="L76">            transportOrderMO.setState( eo.getState().name() );</span>
+        }
+<span class="nc" id="L78">        transportOrderMO.setSourceLocation( eo.getSourceLocation() );</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        if ( eo.hasTargetLocation() ) {</span>
+<span class="nc" id="L80">            transportOrderMO.setTargetLocation( eo.getTargetLocation() );</span>
+        }
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        if ( eo.hasTargetLocationGroup() ) {</span>
+<span class="nc" id="L83">            transportOrderMO.setTargetLocationGroup( eo.getTargetLocationGroup() );</span>
+        }
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        if ( eo.hasTransportUnitBK() ) {</span>
+<span class="nc" id="L86">            transportOrderMO.setTransportUnitBK( eo.getTransportUnitBK() );</span>
+        }
+
+<span class="nc" id="L89">        return transportOrderMO;</span>
+    }
+
+    @Override
+    public TransportOrder convertToEO(CreateTransportOrderVO vo) {
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if ( vo == null ) {</span>
+<span class="nc" id="L95">            return null;</span>
+        }
+
+<span class="nc" id="L98">        String transportUnitBK = null;</span>
+
+<span class="nc" id="L100">        transportUnitBK = vo.getBarcode();</span>
+
+<span class="nc" id="L102">        TransportOrder transportOrder = new TransportOrder( transportUnitBK );</span>
+
+<span class="nc" id="L104">        transportOrder.setPersistentKey( vo.getpKey() );</span>
+<span class="nc" id="L105">        transportOrder.setTargetLocation( vo.getTarget() );</span>
+<span class="nc" id="L106">        transportOrder.setTargetLocationGroup( vo.getTargetLocationGroup() );</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        if ( vo.getPriority() != null ) {</span>
+<span class="nc" id="L108">            transportOrder.setPriority( Enum.valueOf( PriorityLevel.class, vo.getPriority() ) );</span>
+        }
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        if ( vo.getState() != null ) {</span>
+<span class="nc" id="L111">            transportOrder.setState( Enum.valueOf( TransportOrderState.class, vo.getState() ) );</span>
+        }
+<span class="nc" id="L113">        transportOrder.setProblem( convertToEO( vo.getProblem() ) );</span>
+
+<span class="nc" id="L115">        return transportOrder;</span>
+    }
+
+    @Override
+    public TransportOrder convertToEO(UpdateTransportOrderVO vo) {
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        if ( vo == null ) {</span>
+<span class="nc" id="L121">            return null;</span>
+        }
+
+<span class="fc" id="L124">        String transportUnitBK = null;</span>
+
+<span class="fc" id="L126">        transportUnitBK = vo.getBarcode();</span>
+
+<span class="fc" id="L128">        TransportOrder transportOrder = new TransportOrder( transportUnitBK );</span>
+
+<span class="fc" id="L130">        transportOrder.setPersistentKey( vo.getpKey() );</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">        if ( vo.getState() != null ) {</span>
+<span class="nc" id="L132">            transportOrder.setState( Enum.valueOf( TransportOrderState.class, vo.getState() ) );</span>
+        }
+        else {
+<span class="fc" id="L135">            transportOrder.setState( null );</span>
+        }
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        if ( vo.getPriority() != null ) {</span>
+<span class="fc" id="L138">            transportOrder.setPriority( Enum.valueOf( PriorityLevel.class, vo.getPriority() ) );</span>
+        }
+<span class="fc" id="L140">        transportOrder.setTargetLocation( vo.getTargetLocation() );</span>
+<span class="fc" id="L141">        transportOrder.setTargetLocationGroup( vo.getTargetLocationGroup() );</span>
+<span class="fc" id="L142">        transportOrder.setProblem( convertToEO( vo.getProblem() ) );</span>
+
+<span class="fc" id="L144">        return transportOrder;</span>
+    }
+
+    @Override
+    public Message convertToEO(MessageVO vo) {
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        if ( vo == null ) {</span>
+<span class="fc" id="L150">            return null;</span>
+        }
+
+<span class="fc" id="L153">        Message.Builder message = Message.newBuilder();</span>
+
+<span class="fc" id="L155">        message.occurred( vo.getOccurred() );</span>
+<span class="fc" id="L156">        message.messageNo( vo.getMessageNo() );</span>
+<span class="fc" id="L157">        message.messageText( vo.getMessageText() );</span>
+
+<span class="fc" id="L159">        return message.build();</span>
+    }
+
+    @Override
+    public MessageVO convertToVO(Message eo) {
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">        if ( eo == null ) {</span>
+<span class="nc" id="L165">            return null;</span>
+        }
+
+<span class="fc" id="L168">        MessageVO.Builder messageVO = MessageVO.newBuilder();</span>
+
+<span class="fc" id="L170">        messageVO.occurred( eo.getOccurred() );</span>
+<span class="fc" id="L171">        messageVO.messageNo( eo.getMessageNo() );</span>
+<span class="fc" id="L172">        messageVO.messageText( eo.getMessageText() );</span>
+
+<span class="fc" id="L174">        return messageVO.build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

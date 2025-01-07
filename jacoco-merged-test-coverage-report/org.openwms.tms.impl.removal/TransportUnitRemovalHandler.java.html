@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TransportUnitRemovalHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.impl.removal</a> &gt; <span class="el_source">TransportUnitRemovalHandler.java</span></div><h1>TransportUnitRemovalHandler.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2005-2025 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.openwms.tms.impl.removal;
+
+import org.ameba.annotation.Measured;
+import org.ameba.annotation.TxService;
+import org.openwms.common.transport.api.commands.TUCommand;
+import org.openwms.tms.Message;
+import org.openwms.tms.StateChangeException;
+import org.openwms.tms.StateManager;
+import org.openwms.tms.TransportOrder;
+import org.openwms.tms.impl.TransportOrderRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static java.lang.String.format;
+import static org.openwms.tms.TransportOrderState.CANCELED;
+import static org.openwms.tms.TransportOrderState.CREATED;
+import static org.openwms.tms.TransportOrderState.FINISHED;
+import static org.openwms.tms.TransportOrderState.INITIALIZED;
+import static org.openwms.tms.TransportOrderState.ONFAILURE;
+import static org.openwms.tms.TransportOrderState.STARTED;
+
+/**
+ * A TransportUnitRemovalHandler updates existing TransportOrders in case a TransportUnit
+ * is deleted.
+ *
+ * @author Heiko Scherrer
+ */
+@TxService
+class TransportUnitRemovalHandler {
+
+<span class="fc" id="L54">    private static final Logger LOGGER = LoggerFactory.getLogger(TransportUnitRemovalHandler.class);</span>
+    private final TransportOrderRepository&lt;TransportOrder, Long&gt; repository;
+    private final ApplicationContext ctx;
+    private final List&lt;String&gt; blockStates;
+    private final StateManager stateManager;
+
+    TransportUnitRemovalHandler(TransportOrderRepository&lt;TransportOrder, Long&gt; repository,
+            ApplicationContext ctx,
+<span class="fc" id="L62">            @Value(&quot;${owms.tms.block-tu-deletion-states}&quot;) String cancelStartedTO, StateManager stateManager) {</span>
+<span class="fc" id="L63">        this.repository = repository;</span>
+<span class="fc" id="L64">        this.ctx = ctx;</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">        this.blockStates = cancelStartedTO == null ?</span>
+<span class="nc" id="L66">                Collections.emptyList() :</span>
+<span class="fc" id="L67">                Stream.of(cancelStartedTO</span>
+<span class="fc" id="L68">                        .split(&quot;,&quot;))</span>
+<span class="fc" id="L69">                        .map(String::trim)</span>
+<span class="fc" id="L70">                        .toList();</span>
+<span class="fc" id="L71">        this.stateManager = stateManager;</span>
+<span class="fc" id="L72">    }</span>
+
+    @Transactional
+    @Measured
+    public void preRemove(TUCommand command) throws RemovalNotAllowedException {
+<span class="nc" id="L77">        Assert.notNull(command, &quot;Not allowed to call preRemove with null argument&quot;);</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        if (LOGGER.isDebugEnabled()) {</span>
+<span class="nc" id="L79">            LOGGER.debug(&quot;The TransportUnit with pKey [{}] is going to be removed. Check for existing TransportOrders&quot;,</span>
+<span class="nc" id="L80">                    command.getTransportUnit().getpKey());</span>
+        }
+        try {
+<span class="nc" id="L83">            checkForStarted(command);</span>
+<span class="nc" id="L84">            cancelInitializedOrders(command);</span>
+<span class="nc" id="L85">            unlinkFinishedOrders(command);</span>
+<span class="nc" id="L86">            unlinkCanceledOrders(command);</span>
+<span class="nc" id="L87">            command.setType(TUCommand.Type.REMOVE);</span>
+<span class="nc" id="L88">            ctx.publishEvent(command);</span>
+<span class="nc" id="L89">        } catch (IllegalStateException ise) {</span>
+<span class="nc" id="L90">            throw new RemovalNotAllowedException(ise.getMessage(), ise);</span>
+<span class="nc" id="L91">        }</span>
+<span class="nc" id="L92">    }</span>
+
+    protected void checkForStarted(TUCommand command) {
+<span class="nc" id="L95">        var transportOrders = repository.findByTransportUnitBKAndStates(</span>
+<span class="nc" id="L96">                command.getTransportUnit().getBarcode(),</span>
+                STARTED
+        );
+
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        if (blockStates.contains(STARTED.toString()) &amp;&amp;</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">                !transportOrders.isEmpty()) {</span>
+
+<span class="nc" id="L103">            throw new IllegalStateException(&quot;STARTED TransportOrders exist, removal not allowed&quot;);</span>
+        }
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (transportOrders.isEmpty()) {</span>
+
+<span class="nc" id="L107">            LOGGER.debug(&quot;No STARTED TransportOrders found&quot;);</span>
+        } else {
+
+<span class="nc" id="L110">            transportOrders.forEach(this::cancel);</span>
+        }
+<span class="nc" id="L112">    }</span>
+
+    private void cancel(TransportOrder transportOrder) {
+        try {
+<span class="nc" id="L116">            transportOrder.changeState(stateManager, CANCELED);</span>
+<span class="nc" id="L117">            var barcode = transportOrder.getTransportUnitBK();</span>
+<span class="nc" id="L118">            setProblem(transportOrder,</span>
+                    new Message.Builder()
+<span class="nc" id="L120">                            .messageText(format(&quot;TransportUnit with ID [%s] was deleted and Transport Order canceled&quot;, barcode))</span>
+<span class="nc" id="L121">                            .build()</span>
+            );
+<span class="nc bnc" id="L123" title="All 2 branches missed.">            if (LOGGER.isInfoEnabled()) {</span>
+<span class="nc" id="L124">                LOGGER.info(&quot;Successfully unlinked and canceled TransportOrder with PK [{}]&quot;, transportOrder.getPk());</span>
+            }
+<span class="nc" id="L126">        } catch (StateChangeException sce) {</span>
+<span class="nc" id="L127">            transportOrder.setProblem(</span>
+                    new Message.Builder()
+<span class="nc" id="L129">                            .messageText(sce.getMessage())</span>
+<span class="nc" id="L130">                            .build()</span>
+            );
+        } finally {
+<span class="nc" id="L133">            repository.save(transportOrder);</span>
+        }
+<span class="nc" id="L135">    }</span>
+
+    private void setProblem(TransportOrder transportOrder, Message problem) {
+<span class="nc" id="L138">        transportOrder.setProblem(problem);</span>
+<span class="nc" id="L139">        repository.save(transportOrder);</span>
+<span class="nc" id="L140">    }</span>
+
+    protected void cancelInitializedOrders(TUCommand command) {
+<span class="nc" id="L143">        var transportOrders = repository.findByTransportUnitBKAndStates(</span>
+<span class="nc" id="L144">                command.getTransportUnit().getBarcode(),</span>
+                CREATED,
+                INITIALIZED
+        );
+
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        if ((blockStates.contains(INITIALIZED.toString()) ||</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">                (blockStates.contains(CREATED.toString()))) &amp;&amp;</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">                !transportOrders.isEmpty()) {</span>
+
+<span class="nc" id="L153">            throw new IllegalStateException(&quot;CREATED or INITIALIZED TransportOrders exist, removal not allowed&quot;);</span>
+        }
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        if (transportOrders.isEmpty()) {</span>
+
+<span class="nc" id="L157">            LOGGER.debug(&quot;No CREATED or INITIALIZED TransportOrders found&quot;);</span>
+        } else {
+
+<span class="nc" id="L160">            transportOrders.forEach(this::cancel);</span>
+        }
+<span class="nc" id="L162">    }</span>
+
+    protected void unlinkFinishedOrders(TUCommand command) {
+<span class="nc" id="L165">        var transportOrders = repository.findByTransportUnitBKAndStates(</span>
+<span class="nc" id="L166">                command.getTransportUnit().getBarcode(),</span>
+                FINISHED,
+                ONFAILURE
+        );
+
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if ((blockStates.contains(FINISHED.toString()) ||</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">                (blockStates.contains(ONFAILURE.toString()))) &amp;&amp;</span>
+<span class="nc bnc" id="L173" title="All 2 branches missed.">                !transportOrders.isEmpty()) {</span>
+
+<span class="nc" id="L175">            throw new IllegalStateException(&quot;FINISHED or ONFAILURE TransportOrders exist, removal not allowed&quot;);</span>
+        }
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        if (transportOrders.isEmpty()) {</span>
+
+<span class="nc" id="L179">            LOGGER.debug(&quot;No FINISHED and ONFAILURE TransportOrders found to unlink&quot;);</span>
+        } else {
+
+<span class="nc" id="L182">            transportOrders.forEach(to -&gt; {</span>
+<span class="nc" id="L183">                setProblem(to,</span>
+                        new Message.Builder()
+<span class="nc" id="L185">                                .messageText(</span>
+<span class="nc" id="L186">                                        format(&quot;TransportUnit with barcode [%s] was removed and TransportOrder unlinked&quot;,</span>
+<span class="nc" id="L187">                                                command.getTransportUnit().getBarcode()</span>
+                                        )
+                                )
+<span class="nc" id="L190">                                .build());</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">                if (LOGGER.isInfoEnabled()) {</span>
+<span class="nc" id="L192">                    LOGGER.info(&quot;Successfully unlinked TransportOrder with PK [{}]&quot;,</span>
+<span class="nc" id="L193">                            to.getPk());</span>
+                }
+<span class="nc" id="L195">            });</span>
+        }
+<span class="nc" id="L197">    }</span>
+
+    protected void unlinkCanceledOrders(TUCommand command) {
+<span class="nc" id="L200">        var transportOrders = repository.findByTransportUnitBKAndStates(</span>
+<span class="nc" id="L201">                command.getTransportUnit().getBarcode(),</span>
+                CANCELED
+        );
+<span class="nc bnc" id="L204" title="All 2 branches missed.">        if (transportOrders.isEmpty()) {</span>
+
+<span class="nc" id="L206">            LOGGER.debug(&quot;No CANCELED TransportOrders found to unlink&quot;);</span>
+        } else {
+
+<span class="nc" id="L209">            transportOrders.forEach(to -&gt; {</span>
+<span class="nc" id="L210">                setProblem(to,</span>
+                        new Message.Builder()
+<span class="nc" id="L212">                                .messageText(format(&quot;TransportUnit with barcode [%s] was removed and TransportOrder unlinked&quot;,</span>
+<span class="nc" id="L213">                                        command.getTransportUnit().getBarcode()))</span>
+<span class="nc" id="L214">                                .build());</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">                if (LOGGER.isInfoEnabled()) {</span>
+<span class="nc" id="L216">                    LOGGER.info(&quot;Successfully unlinked canceled TransportOrder with PK [{}]&quot;, to.getPk());</span>
+                }
+<span class="nc" id="L218">            });</span>
+        }
+<span class="nc" id="L220">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

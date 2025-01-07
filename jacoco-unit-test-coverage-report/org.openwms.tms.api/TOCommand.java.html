@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TOCommand.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">OpenWMS.org TMS: Transportation Services</a> &gt; <a href="index.source.html" class="el_package">org.openwms.tms.api</a> &gt; <span class="el_source">TOCommand.java</span></div><h1>TOCommand.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2005-2025 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.openwms.tms.api;
+
+import java.io.Serializable;
+
+/**
+ * A TOCommand is used to trigger actions on {@code TransportOrder}s.
+ *
+ * @author Heiko Scherrer
+ */
+public class TOCommand implements Serializable {
+
+    private CreateTransportOrderVO createTransportOrder;
+    private UpdateTransportOrderVO updateTransportOrder;
+    private Type type;
+
+<span class="nc" id="L31">    public TOCommand() {}</span>
+
+<span class="nc" id="L33">    private TOCommand(Builder builder) {</span>
+<span class="nc" id="L34">        setCreateTransportOrder(builder.createTransportOrder);</span>
+<span class="nc" id="L35">        setUpdateTransportOrder(builder.updateTransportOrder);</span>
+<span class="nc" id="L36">        setType(builder.type);</span>
+<span class="nc" id="L37">    }</span>
+
+    public static Builder newBuilder() {
+<span class="nc" id="L40">        return new Builder();</span>
+    }
+
+<span class="nc" id="L43">    public enum Type {</span>
+        /** Create a new order. */
+<span class="nc" id="L45">        CREATE,</span>
+        /** Change the target of the order. */
+<span class="nc" id="L47">        CHANGE_TARGET,</span>
+        /** Finish started order. */
+<span class="nc" id="L49">        FINISH,</span>
+        /** Cancel started order and cancel initialized ones. */
+<span class="nc" id="L51">        CANCEL_ALL</span>
+    }
+
+    public CreateTransportOrderVO getCreateTransportOrder() {
+<span class="nc" id="L55">        return createTransportOrder;</span>
+    }
+
+    public void setCreateTransportOrder(CreateTransportOrderVO createTransportOrder) {
+<span class="nc" id="L59">        this.createTransportOrder = createTransportOrder;</span>
+<span class="nc" id="L60">    }</span>
+
+    public UpdateTransportOrderVO getUpdateTransportOrder() {
+<span class="nc" id="L63">        return updateTransportOrder;</span>
+    }
+
+    public void setUpdateTransportOrder(UpdateTransportOrderVO updateTransportOrder) {
+<span class="nc" id="L67">        this.updateTransportOrder = updateTransportOrder;</span>
+<span class="nc" id="L68">    }</span>
+
+    public Type getType() {
+<span class="nc" id="L71">        return type;</span>
+    }
+
+    public void setType(Type type) {
+<span class="nc" id="L75">        this.type = type;</span>
+<span class="nc" id="L76">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L80">        return &quot;TOCommand{&quot; + &quot;createTransportOrder=&quot; + createTransportOrder + &quot;, updateTransportOrder=&quot; + updateTransportOrder + &quot;, type=&quot; + type + '}';</span>
+    }
+
+    public static final class Builder {
+        private CreateTransportOrderVO createTransportOrder;
+        private UpdateTransportOrderVO updateTransportOrder;
+        private Type type;
+
+        private Builder() {
+        }
+
+        public Builder withCreateTransportOrder(CreateTransportOrderVO val) {
+<span class="nc" id="L92">            createTransportOrder = val;</span>
+<span class="nc" id="L93">            return this;</span>
+        }
+
+        public Builder withUpdateTransportOrder(UpdateTransportOrderVO val) {
+<span class="nc" id="L97">            updateTransportOrder = val;</span>
+<span class="nc" id="L98">            return this;</span>
+        }
+
+        public Builder withType(Type val) {
+<span class="nc" id="L102">            type = val;</span>
+<span class="nc" id="L103">            return this;</span>
+        }
+
+        public TOCommand build() {
+<span class="nc" id="L107">            return new TOCommand(this);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
