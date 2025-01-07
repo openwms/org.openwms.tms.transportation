@@ -30,8 +30,6 @@ import org.springframework.security.web.SecurityFilterChain;
 class TransportationSecurityConfiguration {
 
     /**
-     * {@inheritDoc}
-     * <p>
      * API is for non browser clients and access control is handled at the API Gateway!
      */
     @Bean

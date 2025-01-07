@@ -24,7 +24,6 @@ import java.io.Serializable;
  * A LocationPK, is a value type and is used as an unique natural key for {@code Location} entities.
  *
  * @author Heiko Scherrer
- * @see Location
  */
 public class LocationPK implements Serializable {
 
