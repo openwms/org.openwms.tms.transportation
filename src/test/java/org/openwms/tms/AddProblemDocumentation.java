@@ -64,7 +64,7 @@ class AddProblemDocumentation extends TransportationTestBase {
         ;
 
         assertThat(mapper.convertToVO(readTransportOrder(vo.getpKey()).getProblem())).isEqualTo(msg);
-        assertThat(getProblemHistories()).isEmpty();
+        assertThat(getProblemHistories(vo.getpKey())).isEmpty();
     }
 
     @Test
@@ -87,7 +87,7 @@ class AddProblemDocumentation extends TransportationTestBase {
         var updatedTO = readTransportOrder(vo.getpKey());
         var msgVO = mapper.convertToVO(updatedTO.getProblem());
         assertThat(msgVO).isEqualTo(msg);
-        assertThat(getProblemHistories()).isEmpty();
+        assertThat(getProblemHistories(updatedTO.getPersistentKey())).isEmpty();
     }
 
     @Test
@@ -112,7 +112,7 @@ class AddProblemDocumentation extends TransportationTestBase {
             .andDo(document("to-patch-addsecondproblem"))
         ;
         assertThat(mapper.convertToVO(readTransportOrder(vo.getpKey()).getProblem())).isEqualTo(msg2);
-        var problemHistories = getProblemHistories();
+        var problemHistories = getProblemHistories(vo.getpKey());
         assertThat(problemHistories).hasSize(1);
     }
 
@@ -122,8 +122,9 @@ class AddProblemDocumentation extends TransportationTestBase {
         return objectMapper.readValue(objectMapper.writeValueAsString(msg), MessageVO.class);
     }
 
-    private List<ProblemHistory> getProblemHistories() {
-        return em.createQuery("select ph from ProblemHistory ph", ProblemHistory.class).getResultList();
+    private List<ProblemHistory> getProblemHistories(String pKey) {
+        return em.createQuery("select ph from ProblemHistory ph where ph.transportOrder.pKey = :pKey", ProblemHistory.class)
+                .setParameter("pKey", pKey).getResultList();
     }
 
     private void addProblem(CreateTransportOrderVO vo) throws Exception {

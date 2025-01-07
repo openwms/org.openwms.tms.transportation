@@ -23,6 +23,7 @@ import org.openwms.tms.api.CreateTransportOrderVO;
 import org.openwms.tms.api.TMSApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.test.context.jdbc.Sql;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -34,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author Heiko Scherrer
  */
+@Sql(scripts = "classpath:delete-all.sql")
 class ChangeStateDocumentation extends TransportationTestBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChangeStateDocumentation.class);
