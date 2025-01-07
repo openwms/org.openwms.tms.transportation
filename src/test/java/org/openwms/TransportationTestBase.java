@@ -31,11 +31,11 @@ import org.openwms.tms.TMSApplicationTest;
 import org.openwms.tms.api.CreateTransportOrderVO;
 import org.openwms.tms.api.TMSApi;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -60,14 +60,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public abstract class TransportationTestBase {
 
     @Autowired
-    //@Qualifier("jacksonOM")
     protected ObjectMapper objectMapper;
     protected MockMvc mockMvc;
-    @MockBean
+    @MockitoBean
     protected LocationApi locationApi;
-    @MockBean
+    @MockitoBean
     protected LocationGroupApi locationGroupApi;
-    @MockBean
+    @MockitoBean
     protected TransportUnitApi transportUnitApi;
     public static final String NOTLOGGED = "--";
     public static final String INIT_LOC_STRING = "INIT/0000/0000/0000/0000";
