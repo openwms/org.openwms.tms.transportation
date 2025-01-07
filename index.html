@@ -94,26 +94,22 @@
 <section><section><a id="Purpose"></a>
 <h2>Purpose</h2>
 <p><strong>TMS Transportation</strong> allows to create <code>TransportOrders</code> in automated warehouses. A <code>TransportOrder</code> is used to move <code>TransportUnits</code> (e.g.
-pallets, boxes, cartons) between warehouse <code>Locations</code>. <code>TransportOrder</code>s are created when a customer order is received or goods enter the
+pallets, boxes, cartons) between warehouse <code>Locations</code>. <code>TransportOrders</code> are created when a customer order is received or goods enter the
 warehouse.</p>
 <p>These kinds of <code>TransportOrders</code> are meant to be used in automated warehouses only. Other concepts with other types of transports, like
-<code>Movements</code>, do better apply for manual warehouses (see the Movements Service for manual warehouses).</p></section><section><a id="Deployment"></a>
+<code>Movements</code>, do better apply for manual warehouses (see the <a href="https://openwms.github.io/org.openwms.wms.movements" class="externalLink">Movements Service</a> for manual warehouses).</p></section><section><a id="Deployment"></a>
 <h2>Deployment</h2>
 <p>This component is a crucial part of the TMS (Transport Management System) and is required
-across projects - perhaps in different flavor. The microservice is deployed as RTU
+across projects - perhaps in different flavour. The microservice is deployed as RTU
 (ready-to-use) box in following environments:</p>
 <table class="table table-striped">
 <thead>
 <tr class="a">
-<th>endpoints</th>
-<th>billed</th>
-<th>SLA</th></tr></thead><tbody>
+<th>Endpoint</th>
+<th>Billed</th>
+<th>SLA.</th></tr></thead><tbody>
 <tr class="b">
-<td><a href="https://openwms-tms-transportation.herokuapp.com" class="externalLink">https://openwms-tms-transportation.herokuapp.com</a></td>
-<td>no</td>
-<td>Heroku SLA for Europe region depends on AWS Europe region</td></tr>
-<tr class="a">
-<td><a href="https://openwms.org/tms/transportation" class="externalLink">https://openwms.org/tms/transportation</a></td>
+<td><a href="https://gateway.demo.openwms.cloud/transportation" class="externalLink">https://gateway.demo.openwms.cloud/transportation</a></td>
 <td>no</td>
 <td>No SLA</td></tr></tbody>
 </table>
