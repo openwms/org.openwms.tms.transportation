@@ -30,14 +30,12 @@ import org.springframework.security.web.SecurityFilterChain;
 <span class="fc" id="L30">class TransportationSecurityConfiguration {</span>
 
     /**
-     * {@inheritDoc}
-     * &lt;p&gt;
      * API is for non browser clients and access control is handled at the API Gateway!
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-<span class="fc" id="L39">        http.authorizeHttpRequests(x -&gt; x.anyRequest().permitAll()).csrf(AbstractHttpConfigurer::disable);</span>
-<span class="fc" id="L40">        return http.build();</span>
+<span class="fc" id="L37">        http.authorizeHttpRequests(x -&gt; x.anyRequest().permitAll()).csrf(AbstractHttpConfigurer::disable);</span>
+<span class="fc" id="L38">        return http.build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
