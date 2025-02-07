@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.redirection;
 
+import org.ameba.i18n.Translator;
 import org.openwms.common.location.api.LocationApi;
 import org.openwms.common.location.api.LocationVO;
 import org.openwms.common.transport.TransportUnitEvent;
@@ -39,7 +40,8 @@ class LocationRedirector extends TargetRedirector<LocationVO> {
     private final LocationApi locationApi;
     private final ApplicationContext ctx;
 
-    LocationRedirector(LocationApi locationApi, ApplicationContext ctx) {
+    LocationRedirector(Translator translator, LocationApi locationApi, ApplicationContext ctx) {
+        super(translator);
         this.locationApi = locationApi;
         this.ctx = ctx;
     }

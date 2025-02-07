@@ -23,6 +23,7 @@ import jakarta.persistence.Table;
 import org.ameba.integration.jpa.BaseEntity;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
@@ -41,8 +42,7 @@ public class ProblemHistory extends BaseEntity implements Serializable {
     private Message problem;
 
     /** Dear JPA ... */
-    protected ProblemHistory() {
-    }
+    protected ProblemHistory() {}
 
     /**
      * Full constructor.
@@ -79,5 +79,23 @@ public class ProblemHistory extends BaseEntity implements Serializable {
                 .add("transportOrderPKey=" + transportOrder.getPersistentKey())
                 .add("problem=" + problem)
                 .toString();
+    }
+
+    /**
+     * All fields.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ProblemHistory that = (ProblemHistory) o;
+        return Objects.equals(transportOrder, that.transportOrder) && Objects.equals(problem, that.problem);
+    }
+
+    /**
+     * All fields.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(transportOrder, problem);
     }
 }

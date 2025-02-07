@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.redirection;
 
+import org.ameba.i18n.Translator;
 import org.openwms.common.location.api.LocationGroupApi;
 import org.openwms.common.location.api.LocationGroupVO;
 import org.springframework.context.annotation.Lazy;
@@ -36,7 +37,8 @@ class LocationGroupRedirector extends TargetRedirector<LocationGroupVO> {
 
     private final LocationGroupApi locationGroupApi;
 
-    public LocationGroupRedirector(LocationGroupApi locationGroupApi) {
+    public LocationGroupRedirector(Translator translator, LocationGroupApi locationGroupApi) {
+        super(translator);
         this.locationGroupApi = locationGroupApi;
     }
 

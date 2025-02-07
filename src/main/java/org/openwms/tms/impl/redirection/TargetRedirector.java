@@ -22,7 +22,6 @@ import org.openwms.tms.Message;
 import org.openwms.tms.TMSMessageCodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
@@ -33,9 +32,12 @@ import java.util.Optional;
  */
 abstract class TargetRedirector<T extends TargetVO> implements DecisionVoter<RedirectVote> {
 
-    @Autowired
-    private Translator translator;
+    private final Translator translator;
     private static final Logger LOGGER = LoggerFactory.getLogger(TargetRedirector.class);
+
+    TargetRedirector(Translator translator) {
+        this.translator = translator;
+    }
 
     /**
      * The implementation has to vote for a certain vote on particular rules that are implemented by the voter.
