@@ -21,7 +21,7 @@ OpenWMS.org TMS: Transportation Services,org.openwms.tms,TransportServiceEvent,4
 OpenWMS.org TMS: Transportation Services,org.openwms.tms,TransportationRunner,5,3,0,0,2,1,1,1,1,1
 OpenWMS.org TMS: Transportation Services,org.openwms.tms,TransportOrder,208,137,36,10,19,41,25,28,5,25
 OpenWMS.org TMS: Transportation Services,org.openwms.tms,Message,48,82,10,4,3,22,8,9,1,9
-OpenWMS.org TMS: Transportation Services,org.openwms.tms,ProblemHistory,26,12,0,0,6,6,3,2,3,2
+OpenWMS.org TMS: Transportation Services,org.openwms.tms,ProblemHistory,68,12,8,0,10,5,9,2,5,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms,Message.Builder,0,28,0,0,0,10,0,6,0,6
 OpenWMS.org TMS: Transportation Services,org.openwms.tms,TransportServiceEvent.TYPE,18,59,4,4,4,13,4,5,0,2
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.api.requests.state,StateChangeResponse,54,0,6,0,18,0,12,0,9,0
@@ -62,10 +62,10 @@ OpenWMS.org TMS: Transportation Services,org.openwms.tms.events,TransportOrderEv
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.removal,TransportUnitRemovalListener,72,0,6,0,20,0,7,0,4,0
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.removal,RemovalNotAllowedException,5,0,0,0,2,0,1,0,1,0
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.removal,TransportUnitRemovalHandler,321,27,33,1,82,11,26,2,9,2
-OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.redirection,LocationRedirector,2,47,2,2,1,16,2,4,0,4
+OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.redirection,LocationRedirector,2,48,2,2,1,16,2,4,0,4
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.redirection,RedirectVote,0,21,0,0,0,8,0,4,0,4
-OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.redirection,LocationGroupRedirector,2,29,2,2,1,8,2,4,0,4
-OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.redirection,TargetRedirector,0,64,0,4,0,15,0,5,0,3
+OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.redirection,LocationGroupRedirector,2,30,2,2,1,8,2,4,0,4
+OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.redirection,TargetRedirector,0,67,0,4,0,17,0,5,0,3
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.redirection,Vote,0,34,0,2,0,9,0,7,0,6
 OpenWMS.org TMS: Transportation Services,org.openwms.tms.impl.redirection,RedirectTO,28,109,20,12,4,24,13,8,0,5
 OpenWMS.org TMS: Transportation Services,org.openwms.common.transport,TransportUnitEvent.TransportUnitEventType,0,9,0,0,0,2,0,1,0,1

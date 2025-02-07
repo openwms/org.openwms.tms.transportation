@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.redirection;
 
+import org.ameba.i18n.Translator;
 import org.openwms.common.location.api.LocationGroupApi;
 import org.openwms.common.location.api.LocationGroupVO;
 import org.springframework.context.annotation.Lazy;
@@ -36,16 +37,17 @@ class LocationGroupRedirector extends TargetRedirector&lt;LocationGroupVO&gt; {
 
     private final LocationGroupApi locationGroupApi;
 
-<span class="fc" id="L39">    public LocationGroupRedirector(LocationGroupApi locationGroupApi) {</span>
-<span class="fc" id="L40">        this.locationGroupApi = locationGroupApi;</span>
-<span class="fc" id="L41">    }</span>
+    public LocationGroupRedirector(Translator translator, LocationGroupApi locationGroupApi) {
+<span class="fc" id="L41">        super(translator);</span>
+<span class="fc" id="L42">        this.locationGroupApi = locationGroupApi;</span>
+<span class="fc" id="L43">    }</span>
 
     /**
      * {@inheritDoc}
      */
     @Override
     protected boolean isTargetAvailable(LocationGroupVO target) {
-<span class="fc" id="L48">        return target.isIncomingActive();</span>
+<span class="fc" id="L50">        return target.isIncomingActive();</span>
     }
 
     /**
@@ -53,9 +55,9 @@ class LocationGroupRedirector extends TargetRedirector&lt;LocationGroupVO&gt; {
      */
     @Override
     protected Optional&lt;LocationGroupVO&gt; resolveTarget(RedirectVote vote) {
-<span class="pc bpc" id="L56" title="2 of 4 branches missed.">        return (vote.getTargetLocationGroup() == null || vote.getTargetLocationGroup().isEmpty())</span>
-<span class="nc" id="L57">                ? Optional.empty()</span>
-<span class="fc" id="L58">                : locationGroupApi.findByName(vote.getTargetLocationGroup()</span>
+<span class="pc bpc" id="L58" title="2 of 4 branches missed.">        return (vote.getTargetLocationGroup() == null || vote.getTargetLocationGroup().isEmpty())</span>
+<span class="nc" id="L59">                ? Optional.empty()</span>
+<span class="fc" id="L60">                : locationGroupApi.findByName(vote.getTargetLocationGroup()</span>
         );
     }
 
@@ -64,7 +66,7 @@ class LocationGroupRedirector extends TargetRedirector&lt;LocationGroupVO&gt; {
      */
     @Override
     protected void assignTarget(RedirectVote vote) {
-<span class="fc" id="L67">        vote.getTransportOrder().setTargetLocationGroup(vote.getTargetLocationGroup());</span>
-<span class="fc" id="L68">    }</span>
+<span class="fc" id="L69">        vote.getTransportOrder().setTargetLocationGroup(vote.getTargetLocationGroup());</span>
+<span class="fc" id="L70">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

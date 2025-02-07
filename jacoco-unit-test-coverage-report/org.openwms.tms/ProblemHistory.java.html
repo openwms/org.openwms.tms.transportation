@@ -23,6 +23,7 @@ import jakarta.persistence.Table;
 import org.ameba.integration.jpa.BaseEntity;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.StringJoiner;
 
 /**
@@ -41,8 +42,7 @@ public class ProblemHistory extends BaseEntity implements Serializable {
     private Message problem;
 
     /** Dear JPA ... */
-<span class="nc" id="L44">    protected ProblemHistory() {</span>
-<span class="nc" id="L45">    }</span>
+<span class="nc" id="L45">    protected ProblemHistory() {}</span>
 
     /**
      * Full constructor.
@@ -79,6 +79,24 @@ public class ProblemHistory extends BaseEntity implements Serializable {
 <span class="nc" id="L79">                .add(&quot;transportOrderPKey=&quot; + transportOrder.getPersistentKey())</span>
 <span class="nc" id="L80">                .add(&quot;problem=&quot; + problem)</span>
 <span class="nc" id="L81">                .toString();</span>
+    }
+
+    /**
+     * All fields.
+     */
+    @Override
+    public boolean equals(Object o) {
+<span class="nc bnc" id="L89" title="All 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="nc" id="L90">        ProblemHistory that = (ProblemHistory) o;</span>
+<span class="nc bnc" id="L91" title="All 4 branches missed.">        return Objects.equals(transportOrder, that.transportOrder) &amp;&amp; Objects.equals(problem, that.problem);</span>
+    }
+
+    /**
+     * All fields.
+     */
+    @Override
+    public int hashCode() {
+<span class="nc" id="L99">        return Objects.hash(transportOrder, problem);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

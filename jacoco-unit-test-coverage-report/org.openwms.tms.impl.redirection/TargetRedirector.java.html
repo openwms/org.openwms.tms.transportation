@@ -22,7 +22,6 @@ import org.openwms.tms.Message;
 import org.openwms.tms.TMSMessageCodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
@@ -31,11 +30,14 @@ import java.util.Optional;
  *
  * @author Heiko Scherrer
  */
-<span class="nc" id="L34">abstract class TargetRedirector&lt;T extends TargetVO&gt; implements DecisionVoter&lt;RedirectVote&gt; {</span>
+abstract class TargetRedirector&lt;T extends TargetVO&gt; implements DecisionVoter&lt;RedirectVote&gt; {
 
-    @Autowired
-    private Translator translator;
-<span class="nc" id="L38">    private static final Logger LOGGER = LoggerFactory.getLogger(TargetRedirector.class);</span>
+    private final Translator translator;
+<span class="nc" id="L36">    private static final Logger LOGGER = LoggerFactory.getLogger(TargetRedirector.class);</span>
+
+<span class="nc" id="L38">    TargetRedirector(Translator translator) {</span>
+<span class="nc" id="L39">        this.translator = translator;</span>
+<span class="nc" id="L40">    }</span>
 
     /**
      * The implementation has to vote for a certain vote on particular rules that are implemented by the voter.
@@ -45,23 +47,23 @@ import java.util.Optional;
      */
     @Override
     public void voteFor(RedirectVote vote) throws DeniedException {
-<span class="nc" id="L48">        Optional&lt;T&gt; optionalTarget = resolveTarget(vote);</span>
-<span class="nc bnc" id="L49" title="All 2 branches missed.">        if (optionalTarget.isPresent()) {</span>
-<span class="nc bnc" id="L50" title="All 2 branches missed.">            if (isTargetAvailable(optionalTarget.get())) {</span>
-<span class="nc" id="L51">                assignTarget(vote);</span>
-<span class="nc" id="L52">                vote.complete();</span>
+<span class="nc" id="L50">        Optional&lt;T&gt; optionalTarget = resolveTarget(vote);</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        if (optionalTarget.isPresent()) {</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">            if (isTargetAvailable(optionalTarget.get())) {</span>
+<span class="nc" id="L53">                assignTarget(vote);</span>
+<span class="nc" id="L54">                vote.complete();</span>
             } else {
-<span class="nc" id="L54">                var msg = translator.translate(TMSMessageCodes.TARGET_BLOCKED_MSG, vote.getTargetLocation(),</span>
-<span class="nc" id="L55">                        vote.getTargetLocationGroup(), vote.getTransportOrder().getPersistentKey());</span>
-<span class="nc" id="L56">                vote.addMessage(new Message.Builder()</span>
-<span class="nc" id="L57">                        .messageText(msg)</span>
-<span class="nc" id="L58">                        .messageNo(TMSMessageCodes.TARGET_BLOCKED_MSG)</span>
-<span class="nc" id="L59">                        .build()</span>
+<span class="nc" id="L56">                var msg = translator.translate(TMSMessageCodes.TARGET_BLOCKED_MSG, vote.getTargetLocation(),</span>
+<span class="nc" id="L57">                        vote.getTargetLocationGroup(), vote.getTransportOrder().getPersistentKey());</span>
+<span class="nc" id="L58">                vote.addMessage(new Message.Builder()</span>
+<span class="nc" id="L59">                        .messageText(msg)</span>
+<span class="nc" id="L60">                        .messageNo(TMSMessageCodes.TARGET_BLOCKED_MSG)</span>
+<span class="nc" id="L61">                        .build()</span>
                 );
-<span class="nc" id="L61">                LOGGER.info(msg);</span>
+<span class="nc" id="L63">                LOGGER.info(msg);</span>
             }
         }
-<span class="nc" id="L64">    }</span>
+<span class="nc" id="L66">    }</span>
 
     protected abstract boolean isTargetAvailable(T target);
 

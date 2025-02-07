@@ -15,6 +15,7 @@
  */
 package org.openwms.tms.impl.redirection;
 
+import org.ameba.i18n.Translator;
 import org.openwms.common.location.api.LocationApi;
 import org.openwms.common.location.api.LocationVO;
 import org.openwms.common.transport.TransportUnitEvent;
@@ -39,17 +40,18 @@ class LocationRedirector extends TargetRedirector&lt;LocationVO&gt; {
     private final LocationApi locationApi;
     private final ApplicationContext ctx;
 
-<span class="nc" id="L42">    LocationRedirector(LocationApi locationApi, ApplicationContext ctx) {</span>
-<span class="nc" id="L43">        this.locationApi = locationApi;</span>
-<span class="nc" id="L44">        this.ctx = ctx;</span>
-<span class="nc" id="L45">    }</span>
+    LocationRedirector(Translator translator, LocationApi locationApi, ApplicationContext ctx) {
+<span class="nc" id="L44">        super(translator);</span>
+<span class="nc" id="L45">        this.locationApi = locationApi;</span>
+<span class="nc" id="L46">        this.ctx = ctx;</span>
+<span class="nc" id="L47">    }</span>
 
     /**
      * {@inheritDoc}
      */
     @Override
     protected boolean isTargetAvailable(LocationVO target) {
-<span class="nc" id="L52">        return target.getIncomingActive();</span>
+<span class="nc" id="L54">        return target.getIncomingActive();</span>
     }
 
     /**
@@ -57,9 +59,9 @@ class LocationRedirector extends TargetRedirector&lt;LocationVO&gt; {
      */
     @Override
     protected Optional&lt;LocationVO&gt; resolveTarget(RedirectVote vote) {
-<span class="nc bnc" id="L60" title="All 4 branches missed.">        return (vote.getTargetLocation() == null || vote.getTargetLocation().isEmpty())</span>
-<span class="nc" id="L61">                ? Optional.empty()</span>
-<span class="nc" id="L62">                : locationApi.findById(vote.getTargetLocation()</span>
+<span class="nc bnc" id="L62" title="All 4 branches missed.">        return (vote.getTargetLocation() == null || vote.getTargetLocation().isEmpty())</span>
+<span class="nc" id="L63">                ? Optional.empty()</span>
+<span class="nc" id="L64">                : locationApi.findById(vote.getTargetLocation()</span>
         );
     }
 
@@ -68,15 +70,15 @@ class LocationRedirector extends TargetRedirector&lt;LocationVO&gt; {
      */
     @Override
     protected void assignTarget(RedirectVote vote) {
-<span class="nc" id="L71">        vote.getTransportOrder().setTargetLocation(vote.getTargetLocation());</span>
-<span class="nc" id="L72">        ctx.publishEvent(</span>
-<span class="nc" id="L73">                TransportUnitEvent.newBuilder()</span>
-<span class="nc" id="L74">                        .tu(TransportUnitVO.builder()</span>
-<span class="nc" id="L75">                                .barcode(vote.getTransportOrder().getTransportUnitBK())</span>
-<span class="nc" id="L76">                                .build())</span>
-<span class="nc" id="L77">                        .type(TransportUnitEvent.TransportUnitEventType.CHANGE_TARGET)</span>
-<span class="nc" id="L78">                        .build()</span>
+<span class="nc" id="L73">        vote.getTransportOrder().setTargetLocation(vote.getTargetLocation());</span>
+<span class="nc" id="L74">        ctx.publishEvent(</span>
+<span class="nc" id="L75">                TransportUnitEvent.newBuilder()</span>
+<span class="nc" id="L76">                        .tu(TransportUnitVO.builder()</span>
+<span class="nc" id="L77">                                .barcode(vote.getTransportOrder().getTransportUnitBK())</span>
+<span class="nc" id="L78">                                .build())</span>
+<span class="nc" id="L79">                        .type(TransportUnitEvent.TransportUnitEventType.CHANGE_TARGET)</span>
+<span class="nc" id="L80">                        .build()</span>
         );
-<span class="nc" id="L80">    }</span>
+<span class="nc" id="L82">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
