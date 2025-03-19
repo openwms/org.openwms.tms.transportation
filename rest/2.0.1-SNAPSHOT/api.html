@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<meta name="author" content="(2.0.1-SNAPSHOT-64)">
+<meta name="author" content="(2.0.1-SNAPSHOT-65)">
 <title>OpenWMS.org TMS: RESTful API (Transportation Service)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>OpenWMS.org TMS: RESTful API (Transportation Service)</h1>
 <div class="details">
-<span id="author" class="author">(2.0.1-SNAPSHOT-64)</span><br>
+<span id="author" class="author">(2.0.1-SNAPSHOT-65)</span><br>
 <span id="revdate">Heiko Scherrer;</span>
 </div>
 <div id="toc" class="toc">
@@ -747,7 +747,7 @@ priority might be started and executed before those with lower priority.</p>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-Location: http://localhost:8080/v1/transport-orders/c10c1f63-c7e4-4ad0-8c0b-e9848fd1567c</code></pre>
+Location: http://localhost:8080/v1/transport-orders/95899273-cc85-40e7-a64b-b8e91985d63a</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -758,7 +758,7 @@ Location: http://localhost:8080/v1/transport-orders/c10c1f63-c7e4-4ad0-8c0b-e984
 <h3 id="_lookup_the_created_transportorder"><a class="anchor" href="#_lookup_the_created_transportorder"></a><a class="link" href="#_lookup_the_created_transportorder">Lookup the created TransportOrder</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/v1/transport-orders/cb3e6deb-afff-4d49-b0bc-bd20476bf9f5' -i -X GET</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/v1/transport-orders/825c58b9-0580-4544-9ac6-812595261b96' -i -X GET</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -779,7 +779,7 @@ Content-Length: 271
   "sourceLocation" : "INIT/0000/0000/0000/0000",
   "targetLocation" : "ERR_/0000/0000/0000/0000",
   "targetLocationGroup" : null,
-  "persistentKey" : "cb3e6deb-afff-4d49-b0bc-bd20476bf9f5",
+  "persistentKey" : "825c58b9-0580-4544-9ac6-812595261b96",
   "transportUnitBK" : "4711"
 }</code></pre>
 </div>
@@ -827,10 +827,10 @@ where the API expects the partial representation of the <code>TransportOrder</co
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/v1/transport-orders/3d29f8d3-0e73-4de8-b17b-bfde2152ec73' -i -X PATCH \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/v1/transport-orders/21857c44-9a0c-4ba1-8c20-abbec081fd88' -i -X PATCH \
     -H 'Content-Type: application/json;charset=UTF-8' \
     -d '{
-  "pKey" : "3d29f8d3-0e73-4de8-b17b-bfde2152ec73",
+  "pKey" : "21857c44-9a0c-4ba1-8c20-abbec081fd88",
   "barcode" : "4711",
   "priority" : "HIGHEST",
   "problem" : null,
@@ -850,10 +850,10 @@ Notice that the <code>TransportOrder</code> does not need to be started yet.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/v1/transport-orders/f954d2ce-e578-4131-bc00-f2660f85aefa' -i -X PATCH \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl 'http://localhost:8080/v1/transport-orders/18e2ba27-8563-4dc0-a240-ba8ef26b963e' -i -X PATCH \
     -H 'Content-Type: application/json;charset=UTF-8' \
     -d '{
-  "pKey" : "f954d2ce-e578-4131-bc00-f2660f85aefa",
+  "pKey" : "18e2ba27-8563-4dc0-a240-ba8ef26b963e",
   "barcode" : "4711",
   "priority" : "NORMAL",
   "problem" : null,
@@ -899,7 +899,7 @@ Content-Length: 129
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-10 21:01:20 UTC
+Last updated 2025-03-19 06:36:31 UTC
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
